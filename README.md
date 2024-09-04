@@ -8,7 +8,7 @@
 
 ## Overview
 
-This project aims to develop a simplified medicine shop application similar to Arogga.com. The application will focus primarily on the core functionalities of buying and selling medicines. It will cater to users looking to search for medicines based on their name or generic name, add selected medicines to a cart, and complete transactions seamlessly. The application will also allow users to search for products by categories like eye care, diabetes, pressure management, ENT, dental, etc. Upon completing transactions, users will receive invoices and delivery information.
+This project aims to develop a simplified medicine shop application similar to [Arogga](https://www.arogga.com/). The application will focus primarily on the core functionalities of buying and selling medicines. It will cater to users looking to search for medicines based on their name or generic name, add selected medicines to a cart, and complete transactions seamlessly. The application will also allow users to search for products by categories like eye care, diabetes, pressure management, ENT, dental, etc. Upon completing transactions, users will receive invoices and delivery information.
 
 ## Objectives
 

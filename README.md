@@ -1,10 +1,11 @@
-# Project Proposal: Medicine Shop Application Development(MSAD)
+# Project Proposal: Medicine Shop Application Development
 
-## Platform: Leaning with [Tapos](https://www.linkedin.com/in/taposg/)
+## Introduction
 
-## Course Title: ASP.NET Core 8
-
-## Practical Project-01: Medicine Shop Application Development (MSAD)
+1. **Platform: Leaning with [Tapos](https://www.linkedin.com/in/taposg/)**
+2. **Course Title: ASP.NET Core 8**
+3. **Course Title: ASP.NET Core 8**
+4. **Practical Project-01: Medicine Shop Application Development**
 
 ## Overview
 

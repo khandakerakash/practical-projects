@@ -4,8 +4,7 @@
 
 1. **Platform: Leaning with [Tapos](https://www.linkedin.com/in/taposg/)**
 2. **Course Title: ASP.NET Core 8**
-3. **Course Title: ASP.NET Core 8**
-4. **Practical Project-01: Medicine Shop Application Development**
+3. **Project-01: Medicine Shop Application Development**
 
 ## Overview
 

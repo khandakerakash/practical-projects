@@ -1,0 +1,6 @@
+@MedicineShopApplication.API_HostAddress = http://localhost:5163
+
+GET {{MedicineShopApplication.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

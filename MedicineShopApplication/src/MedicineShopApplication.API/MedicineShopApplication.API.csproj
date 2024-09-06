@@ -21,4 +21,9 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MedicineShopApplication.BLL\MedicineShopApplication.BLL.csproj" />
+    <ProjectReference Include="..\MedicineShopApplication.DLL\MedicineShopApplication.DLL.csproj" />
+  </ItemGroup>
+
 </Project>

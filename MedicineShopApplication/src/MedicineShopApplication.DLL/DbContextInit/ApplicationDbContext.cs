@@ -26,6 +26,9 @@ namespace MedicineShopApplication.DLL.DbContextInit
             modelBuilder.ApplyConfiguration(new CartConfiguration());
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new InvoiceConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+            modelBuilder.ApplyConfiguration(new PaymentConfiguration());
             modelBuilder.ApplyConfiguration(new CategoryProductConfiguration());
         }
 

@@ -8,6 +8,11 @@ namespace MedicineShopApplication.DLL.Configs
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
+            // Setting precision and scale for decimal properties
+            builder
+                .Property(x => x.Price)
+                .HasPrecision(18, 2);
+
             // Product - CartItem (one-to-many) relationship
             builder
                 .HasMany(p => p.CartItems)

@@ -164,20 +164,23 @@ namespace MedicineShopApplication.BLL.Services
                 throw new Exception("The user that you want to update has not been found.");
             }
 
-            if(user.FirstName.IsNullOrEmpty())
+            if(!userUpdateDto.FirstName.IsNullOrEmpty())
             {
                 user.FirstName = userUpdateDto.FirstName;
             }
 
-            if(user.LastName.IsNullOrEmpty())
+            if(!userUpdateDto.LastName.IsNullOrEmpty())
             {
                 user.LastName = userUpdateDto.LastName;
             }
 
-            if(user.Address.IsNullOrEmpty()) 
+            if(!userUpdateDto.Address.IsNullOrEmpty()) 
             {
                 user.Address = userUpdateDto.Address;
             }
+
+            user.UpdatedBy = userUpdateDto.UpdatedBy;
+            user.UpdatedAt = userUpdateDto.UpdatedAt;
 
             _unitOfWork.UserRepository.Update(user);
 

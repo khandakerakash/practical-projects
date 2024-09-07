@@ -1,5 +1,4 @@
-﻿
-
+﻿using MedicineShopApplication.BLL.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MedicineShopApplication.BLL
@@ -8,6 +7,7 @@ namespace MedicineShopApplication.BLL
     {
         public static IServiceCollection AddBLLDependency(this IServiceCollection services)
         {
+            services.AddScoped<IUserService, UserService>();
             return services;
         }
     }

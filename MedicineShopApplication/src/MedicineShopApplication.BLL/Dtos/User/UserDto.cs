@@ -1,5 +1,5 @@
-﻿using MedicineShopApplication.BLL.Dtos.Cart;
-using MedicineShopApplication.BLL.Dtos.Common;
+﻿using MedicineShopApplication.BLL.Dtos.Base;
+using MedicineShopApplication.BLL.Dtos.Cart;
 using MedicineShopApplication.BLL.Dtos.Order;
 using MedicineShopApplication.BLL.Dtos.Payment;
 
@@ -16,7 +16,7 @@ namespace MedicineShopApplication.BLL.Dtos.User
         public string Address { get; set; }
 
         public CartDto CartDto { get; set; }
-        public List<OrderDto> OrderDtos { get; set; }
-        public List<PaymentDto> PaymentDtos { get; set; }
+        public List<OrderDto> OrdersDto { get; set; }
+        public List<PaymentDto> PaymentsDto { get; set; }
     }
 }

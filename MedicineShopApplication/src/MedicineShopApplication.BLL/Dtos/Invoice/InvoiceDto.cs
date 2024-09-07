@@ -1,4 +1,4 @@
-﻿using MedicineShopApplication.BLL.Dtos.Common;
+﻿using MedicineShopApplication.BLL.Dtos.Base;
 using MedicineShopApplication.BLL.Dtos.Order;
 
 namespace MedicineShopApplication.BLL.Dtos.Invoice

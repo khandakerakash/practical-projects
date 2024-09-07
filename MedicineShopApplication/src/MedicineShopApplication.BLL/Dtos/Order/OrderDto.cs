@@ -1,4 +1,4 @@
-﻿using MedicineShopApplication.BLL.Dtos.Common;
+﻿using MedicineShopApplication.BLL.Dtos.Base;
 using MedicineShopApplication.BLL.Dtos.Invoice;
 using MedicineShopApplication.BLL.Dtos.OrderItem;
 using MedicineShopApplication.BLL.Dtos.Payment;
@@ -14,7 +14,7 @@ namespace MedicineShopApplication.BLL.Dtos.Order
         public string DeliveryAddress { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
-        public List<OrderItemDto> OrderItemDtos { get; set; }
+        public List<OrderItemDto> OrderItemsDto { get; set; }
         public int UserDtoId { get; set; }
         public UserDto UserDto { get; set; }
         public PaymentDto PaymentDto { get; set; }

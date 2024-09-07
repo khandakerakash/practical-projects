@@ -155,14 +155,57 @@ namespace MedicineShopApplication.BLL.Services
             throw new Exception("Something went wrong, when insert the user.");
         }
 
-        public Task UpdateUser(UserUpdateDto userUpdateDto)
+        public async Task UpdateUser(UserUpdateDto userUpdateDto)
         {
-            throw new NotImplementedException();
+            var user = await _unitOfWork.UserRepository.FindByCondition(u => u.UserId == userUpdateDto.UserDtoId).FirstOrDefaultAsync();
+
+            if (user == null || user.IsDeleted) 
+            {
+                throw new Exception("The user that you want to update has not been found.");
+            }
+
+            if(user.FirstName.IsNullOrEmpty())
+            {
+                user.FirstName = userUpdateDto.FirstName;
+            }
+
+            if(user.LastName.IsNullOrEmpty())
+            {
+                user.LastName = userUpdateDto.LastName;
+            }
+
+            if(user.Address.IsNullOrEmpty()) 
+            {
+                user.Address = userUpdateDto.Address;
+            }
+
+            _unitOfWork.UserRepository.Update(user);
+
+            if(await _unitOfWork.SaveChangesAsync())
+            {
+                return;
+            }
+
+            throw new Exception("Something went wrong, when updating the user.");
         }
 
-        public Task DeleteUser(int id)
+        public async Task DeleteUser(int id)
         {
-            throw new NotImplementedException();
+            var user = await _unitOfWork.UserRepository.FindByCondition(u => u.UserId == id).FirstOrDefaultAsync();
+
+            if(user == null || user.IsDeleted) 
+            { 
+                throw new Exception("The user that you want to delete has not been found."); 
+            }
+
+            _unitOfWork.UserRepository.Delete(user);
+
+            if(await _unitOfWork.SaveChangesAsync()) 
+            { 
+                return; 
+            }
+
+            throw new Exception("Something went wrong, when deleting the user");
         }
     }
 }

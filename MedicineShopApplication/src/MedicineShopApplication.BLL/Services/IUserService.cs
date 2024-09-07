@@ -2,8 +2,10 @@
 using MedicineShopApplication.BLL.Dtos.Order;
 using MedicineShopApplication.BLL.Dtos.Payment;
 using MedicineShopApplication.BLL.Dtos.User;
+using MedicineShopApplication.DLL.Models;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -43,6 +45,10 @@ namespace MedicineShopApplication.BLL.Services
                     Email = u.Email,
                     PhoneNumber = u.PhoneNumber,
                     Address = u.Address,
+                    CreatedBy = u.CreatedBy,
+                    UpdatedBy = u.UpdatedBy,
+                    CreatedAt = u.CreatedAt,
+                    UpdatedAt = u.UpdatedAt,
 
                     CartDto = u.Cart == null ? null : new CartDto
                     {
@@ -73,14 +79,80 @@ namespace MedicineShopApplication.BLL.Services
             return usersDto;    
         }
 
-        public Task<UserDto> GetUserById(int id)
+        public async Task<UserDto> GetUserById(int id)
         {
-            throw new NotImplementedException();
+            var user = await _unitOfWork.UserRepository.FindByCondition(u => u.UserId == id).FirstOrDefaultAsync();
+
+            if (user == null || user.IsDeleted) return null;
+
+            var userDto = new UserDto
+            {
+                UserDtoId = user.UserId,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                CreatedBy = user.CreatedBy,
+                UpdatedBy = user.UpdatedBy,
+                CreatedAt = user.CreatedAt,
+                UpdatedAt = user.UpdatedAt,
+            };
+
+            return userDto;
         }
 
-        public Task<UserDto> AddUser(UserInsertDto userInsertDto)
+        public async Task<UserDto> AddUser(UserInsertDto userInsertDto)
         {
-            throw new NotImplementedException();
+            if (userInsertDto == null) return null;
+
+            if(userInsertDto.UserName.IsNullOrEmpty())
+            {
+                throw new Exception("UserName must not be empty");
+            }
+
+            if (userInsertDto.FirstName.IsNullOrEmpty())
+            {
+                throw new Exception("First Name must not be empty");
+            }
+
+            if(userInsertDto.Email.IsNullOrEmpty()) 
+            {
+                throw new Exception("Email must not be empty");
+            }
+
+            if (userInsertDto.PhoneNumber.IsNullOrEmpty())
+            {
+                throw new Exception("Phone Number must not be empty");
+            }
+
+            var user = new User
+            {
+                UserName = userInsertDto.UserName,
+                FirstName = userInsertDto.FirstName,
+                LastName = userInsertDto.LastName,
+                Email = userInsertDto.Email,
+                PhoneNumber = userInsertDto.PhoneNumber,
+                Address = userInsertDto.Address
+            };
+
+            await _unitOfWork.UserRepository.Create(user);
+
+            if (await _unitOfWork.SaveChangesAsync())
+            {
+                return new UserDto
+                {
+                    UserName = userInsertDto.UserName,
+                    FirstName = userInsertDto.FirstName,
+                    LastName = userInsertDto.LastName,
+                    Email = userInsertDto.Email,
+                    PhoneNumber = userInsertDto.PhoneNumber,
+                    Address = userInsertDto.Address
+                };
+            }
+
+            throw new Exception("Something went wrong, when insert the user.");
         }
 
         public Task UpdateUser(UserUpdateDto userUpdateDto)

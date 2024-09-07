@@ -1,4 +1,4 @@
-﻿namespace MedicineShopApplication.BLL.Dtos
+﻿namespace MedicineShopApplication.BLL.Dtos.Common
 {
     public class BaseEntityDto
     {

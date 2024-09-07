@@ -1,4 +1,10 @@
-﻿namespace MedicineShopApplication.BLL.Dtos
+﻿using MedicineShopApplication.BLL.Dtos.Common;
+using MedicineShopApplication.BLL.Dtos.Invoice;
+using MedicineShopApplication.BLL.Dtos.OrderItem;
+using MedicineShopApplication.BLL.Dtos.Payment;
+using MedicineShopApplication.BLL.Dtos.User;
+
+namespace MedicineShopApplication.BLL.Dtos.Order
 {
     public class OrderDto : BaseEntityDto
     {

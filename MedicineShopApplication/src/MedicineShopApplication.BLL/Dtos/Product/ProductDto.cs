@@ -1,4 +1,9 @@
-﻿namespace MedicineShopApplication.BLL.Dtos
+﻿using MedicineShopApplication.BLL.Dtos.CartItem;
+using MedicineShopApplication.BLL.Dtos.CategoryProduct;
+using MedicineShopApplication.BLL.Dtos.Common;
+using MedicineShopApplication.BLL.Dtos.OrderItem;
+
+namespace MedicineShopApplication.BLL.Dtos.Product
 {
     public class ProductDto : BaseEntityDto
     {

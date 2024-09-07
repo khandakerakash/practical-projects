@@ -1,4 +1,8 @@
-﻿namespace MedicineShopApplication.BLL.Dtos
+﻿using MedicineShopApplication.BLL.Dtos.Common;
+using MedicineShopApplication.BLL.Dtos.Order;
+using MedicineShopApplication.BLL.Dtos.Product;
+
+namespace MedicineShopApplication.BLL.Dtos.OrderItem
 {
     public class OrderItemDto : BaseEntityDto
     {

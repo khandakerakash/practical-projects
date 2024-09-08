@@ -35,7 +35,7 @@ namespace MedicineShopApplication.BLL.Services
                 .Include(u => u.Payments)
                 .ToListAsync();
 
-            var usersDto = users.Where(u => !u.IsDeleted)
+            var usersDto = users
                 .Select(u => new UserDto
                 {
                     UserDtoId = u.UserId,
@@ -83,7 +83,7 @@ namespace MedicineShopApplication.BLL.Services
         {
             var user = await _unitOfWork.UserRepository.FindByCondition(u => u.UserId == id).FirstOrDefaultAsync();
 
-            if (user == null || user.IsDeleted) return null;
+            if (user == null) return null;
 
             var userDto = new UserDto
             {

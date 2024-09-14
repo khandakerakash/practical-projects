@@ -61,7 +61,7 @@ namespace MedicineShopApplication.BLL.Services
                         TotalAmount = o.TotalAmount,
                         PaymentStatus = o.PaymentStatus,
                         DeliveryAddress = o.DeliveryAddress,
-                        OrderDate = o.OrderDate
+                        OrderDate = o.OrderAt
                     }).ToList(),
 
                     PaymentsDto = u.Payments?.Select(p => new PaymentDto
@@ -71,7 +71,7 @@ namespace MedicineShopApplication.BLL.Services
                         PaymentAmount = p.PaymentAmount,
                         PaymentStatus = p.PaymentStatus,
                         PaymentMethod = p.PaymentMethod,
-                        PaymentDate = p.PaymentDate,
+                        PaymentDate = p.PaymentAt,
                     }).ToList()
 
                 }).ToList();

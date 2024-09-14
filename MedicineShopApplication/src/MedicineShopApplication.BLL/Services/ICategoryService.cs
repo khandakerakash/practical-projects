@@ -19,5 +19,25 @@ namespace MedicineShopApplication.BLL.Services
         {
             _unitOfWork = unitOfWork;
         }
+
+        public Task<CategoryDto> AddCategory(CategoryInsertDto categoryInsertDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<CategoryDto>> GetAllCategories()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<CategoryDto> GetCategoryById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpgradeCategory()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

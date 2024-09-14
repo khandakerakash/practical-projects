@@ -14,7 +14,7 @@ builder.Services.AddDLLDependency();
 builder.Services.AddBLLDependency();
 
 
-// Register the containers.
+// Register the controllers
 builder.Services.AddControllers();
 
 // Register Swagger/OpenAPI

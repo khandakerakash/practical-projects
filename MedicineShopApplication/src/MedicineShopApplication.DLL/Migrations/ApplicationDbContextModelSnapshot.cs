@@ -211,7 +211,7 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Inventory");
+                    b.ToTable("Inventories");
                 });
 
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.Invoice", b =>

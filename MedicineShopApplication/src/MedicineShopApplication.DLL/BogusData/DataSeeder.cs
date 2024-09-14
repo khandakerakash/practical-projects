@@ -8,7 +8,6 @@ namespace MedicineShopApplication.DLL.BogusData
         public static List<User> GenerateUsers(int count)
         {
             var userFaker = new Faker<User>()
-                .RuleFor(u => u.UserId, f => f.IndexFaker + 1)
                 .RuleFor(u => u.UserName, f => f.Internet.UserName())
                 .RuleFor(u => u.FirstName, f => f.Name.FirstName())
                 .RuleFor(u => u.LastName, f => f.Name.LastName())
@@ -24,7 +23,6 @@ namespace MedicineShopApplication.DLL.BogusData
         public static List<Category> GenerateCategories(int count)
         {
             var categoryFaker = new Faker<Category>()
-                .RuleFor(c => c.CategoryId, f => f.IndexFaker + 1)
                 .RuleFor(c => c.Code, f => f.Commerce.Ean8())
                 .RuleFor(c => c.Name, f => f.Commerce.Categories(1).First())
                 .RuleFor(c => c.Description, f => f.Commerce.ProductDescription())
@@ -36,7 +34,6 @@ namespace MedicineShopApplication.DLL.BogusData
         public static List<Product> GenerateProducts(int count, List<Category> categories)
         {
             var productFaker = new Faker<Product>()
-                .RuleFor(p => p.ProductId, f => f.IndexFaker + 1)
                 .RuleFor(p => p.Code, f => f.Commerce.Ean13())
                 .RuleFor(p => p.Name, f => f.Commerce.ProductName())
                 .RuleFor(p => p.GenericName, f => f.Commerce.ProductMaterial())
@@ -60,16 +57,15 @@ namespace MedicineShopApplication.DLL.BogusData
         public static List<Inventory> GenerateInventories(int count, List<Product> products)
         {
             var inventoryFaker = new Faker<Inventory>()
-                .RuleFor(i => i.InventoryId, f => f.IndexFaker + 1)
                 .RuleFor(i => i.QuantityInStock, f => f.Random.Int(0, 500))
                 .RuleFor(i => i.ReorderLevel, f => f.Random.Int(10, 50))
                 .RuleFor(i => i.Location, f => f.Address.City())
-                .RuleFor(i => i.CostPrice, (f, i) => i.Product.CostPrice) // Match product cost price
-                .RuleFor(i => i.SellingPrice, (f, i) => i.Product.SellingPrice) // Match product selling price
-                .RuleFor(i => i.Status, f => f.PickRandom(new[] { "Available", "Out of Stock", "Damaged" }))
-                .RuleFor(i => i.Notes, f => f.Lorem.Sentence())
                 .RuleFor(i => i.Product, f => f.PickRandom(products))
-                .RuleFor(i => i.ProductId, (f, i) => i.Product.ProductId);
+                .RuleFor(i => i.ProductId, (f, i) => i.Product.ProductId)
+                .RuleFor(i => i.CostPrice, (f, i) => i.Product.CostPrice)
+                .RuleFor(i => i.SellingPrice, (f, i) => i.Product.SellingPrice)
+                .RuleFor(i => i.Status, f => f.PickRandom(new[] { "Available", "Out of Stock", "Damaged" }))
+                .RuleFor(i => i.Notes, f => f.Lorem.Sentence());
 
             return inventoryFaker.Generate(count);
         }

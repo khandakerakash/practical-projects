@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedicineShopApplication.DLL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240914143910_InitialCreate")]
+    [Migration("20240914154317_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -214,7 +214,7 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Inventory");
+                    b.ToTable("Inventories");
                 });
 
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.Invoice", b =>

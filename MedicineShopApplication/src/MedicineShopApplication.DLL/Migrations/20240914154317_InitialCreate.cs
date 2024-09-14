@@ -152,7 +152,7 @@ namespace MedicineShopApplication.DLL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Inventory",
+                name: "Inventories",
                 columns: table => new
                 {
                     InventoryId = table.Column<int>(type: "int", nullable: false)
@@ -175,9 +175,9 @@ namespace MedicineShopApplication.DLL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Inventory", x => x.InventoryId);
+                    table.PrimaryKey("PK_Inventories", x => x.InventoryId);
                     table.ForeignKey(
-                        name: "FK_Inventory_Products_ProductId",
+                        name: "FK_Inventories_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "ProductId",
@@ -336,8 +336,8 @@ namespace MedicineShopApplication.DLL.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Inventory_ProductId",
-                table: "Inventory",
+                name: "IX_Inventories_ProductId",
+                table: "Inventories",
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
@@ -385,7 +385,7 @@ namespace MedicineShopApplication.DLL.Migrations
                 name: "CartItems");
 
             migrationBuilder.DropTable(
-                name: "Inventory");
+                name: "Inventories");
 
             migrationBuilder.DropTable(
                 name: "Invoices");

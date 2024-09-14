@@ -10,7 +10,11 @@ namespace MedicineShopApplication.DLL.Configs
         {
             // Setting precision and scale for decimal properties
             builder
-                .Property(x => x.Price)
+                .Property(p => p.CostPrice)
+                .HasPrecision(18, 2);
+
+            builder
+                .Property(p => p.SellingPrice)
                 .HasPrecision(18, 2);
 
             // Product - CartItem (one-to-many) relationship
@@ -25,6 +29,13 @@ namespace MedicineShopApplication.DLL.Configs
                 .HasMany(p => p.OrderItems)
                 .WithOne(oi => oi.Product)
                 .HasForeignKey(oi => oi.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Product - Inventory (one-to-many) relationship
+            builder
+                .HasMany(i => i.Inventories)
+                .WithOne(p => p.Product)
+                .HasForeignKey(i => i.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

@@ -7,12 +7,19 @@
         public string Name { get; set; }
         public string GenericName { get; set; }
         public string Description { get; set; }
-        public decimal Price { get; set; }
-        public int Stock { get; set; }
+        public string Brand { get; set; }
+        public decimal CostPrice { get; set; }
+        public decimal SellingPrice { get; set; }
+        public string UnitOfMeasure { get; set; }
+        public string Status { get; set; }
         public string ImageUrl { get; set; }
+        public string Notes { get; set; }
 
-        public List<CategoryProduct> CategoryProducts { get; set; }
-        public List<CartItem> CartItems { get; set; }
-        public List<OrderItem> OrderItems { get; set; }
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
+        public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        public ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
+
     }
 }

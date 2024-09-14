@@ -11,7 +11,7 @@
         public string Address { get; set; }
 
         public Cart Cart { get; set; }
-        public List<Order> Orders { get; set; }
-        public List<Payment> Payments { get; set; }
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }
 }

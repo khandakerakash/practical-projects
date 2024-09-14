@@ -4,7 +4,7 @@
     {
         public int InvoiceId { get; set; }
         public decimal TotalAmount { get; set; }
-        public DateTime InvoiceDate { get; set; } = DateTime.UtcNow;
+        public DateTime InvoiceAt { get; set; } = DateTime.UtcNow;
 
         public int OrderId { get; set; }
         public Order Order { get; set; }

@@ -1,6 +1,8 @@
-﻿namespace MedicineShopApplication.DLL.Models
+﻿using MedicineShopApplication.DLL.Models.Common;
+
+namespace MedicineShopApplication.DLL.Models.General
 {
-    public class Invoice : BaseEntity
+    public class Invoice : AuditableEntity
     {
         public int InvoiceId { get; set; }
         public decimal TotalAmount { get; set; }

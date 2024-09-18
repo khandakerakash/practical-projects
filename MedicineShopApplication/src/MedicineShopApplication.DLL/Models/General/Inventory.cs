@@ -1,6 +1,8 @@
-﻿namespace MedicineShopApplication.DLL.Models
+﻿using MedicineShopApplication.DLL.Models.Common;
+
+namespace MedicineShopApplication.DLL.Models.General
 {
-    public class Inventory : BaseEntity
+    public class Inventory : AuditableEntity
     {
         public int InventoryId { get; set; }
         public int QuantityInStock { get; set; }

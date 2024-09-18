@@ -1,6 +1,9 @@
-﻿namespace MedicineShopApplication.DLL.Models
+﻿using MedicineShopApplication.DLL.Models.Common;
+using MedicineShopApplication.DLL.Models.Users;
+
+namespace MedicineShopApplication.DLL.Models.General
 {
-    public class Order : BaseEntity
+    public class Order : AuditableEntity
     {
         public int OrderId { get; set; }
         public decimal TotalAmount { get; set; }
@@ -9,7 +12,7 @@
         public DateTime OrderAt { get; set; } = DateTime.UtcNow;
 
         public int UserId { get; set; }
-        public User User { get; set; }
+        public ApplicationUser User { get; set; }
         public Payment Payment { get; set; }
         public Invoice Invoice { get; set; }
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();

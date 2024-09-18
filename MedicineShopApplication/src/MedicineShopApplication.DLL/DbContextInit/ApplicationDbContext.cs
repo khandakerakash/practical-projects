@@ -1,14 +1,15 @@
-﻿using MedicineShopApplication.DLL.Configs;
-using MedicineShopApplication.DLL.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using MedicineShopApplication.DLL.Configs;
+using MedicineShopApplication.DLL.Models.Users;
+using MedicineShopApplication.DLL.Models.General;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace MedicineShopApplication.DLL.DbContextInit
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
     {
         public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
-        public DbSet<User> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Inventory> Inventories { get; set; }
@@ -23,7 +24,7 @@ namespace MedicineShopApplication.DLL.DbContextInit
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
             modelBuilder.ApplyConfiguration(new CartConfiguration());
             modelBuilder.ApplyConfiguration(new OrderConfiguration());
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());

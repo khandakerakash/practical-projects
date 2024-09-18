@@ -2,7 +2,7 @@
 
 namespace MedicineShopApplication.BLL.Dtos.Category
 {
-    public class CategoryResponseDto : BaseEntityDto
+    public class CategoryResponseDto : AuditableEntityDto
     {
         public int CategoryDtoId { get; set; }
         public string Code { get; set; }

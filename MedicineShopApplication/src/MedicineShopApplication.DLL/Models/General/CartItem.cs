@@ -1,6 +1,8 @@
-﻿namespace MedicineShopApplication.DLL.Models
+﻿using MedicineShopApplication.DLL.Models.Common;
+
+namespace MedicineShopApplication.DLL.Models.General
 {
-    public class CartItem : BaseEntity
+    public class CartItem : AuditableEntity
     {
         public int CartItemId { get; set; }
         public int Quantity { get; set; }

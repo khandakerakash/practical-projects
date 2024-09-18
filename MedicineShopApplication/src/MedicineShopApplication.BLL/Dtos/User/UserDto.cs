@@ -5,7 +5,7 @@ using MedicineShopApplication.BLL.Dtos.Payment;
 
 namespace MedicineShopApplication.BLL.Dtos.User
 {
-    public class UserDto : BaseEntityDto
+    public class UserDto : AuditableEntityDto
     {
         public int UserDtoId { get; set; }
         public string UserName { get; set; }

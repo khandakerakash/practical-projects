@@ -5,7 +5,7 @@ using MedicineShopApplication.BLL.Dtos.OrderItem;
 
 namespace MedicineShopApplication.BLL.Dtos.Product
 {
-    public class ProductDto : BaseEntityDto
+    public class ProductDto : AuditableEntityDto
     {
         public int ProductDtoId { get; set; }
         public string Code { get; set; }

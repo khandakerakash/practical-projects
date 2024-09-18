@@ -1,5 +1,6 @@
 using MedicineShopApplication.DLL;
 using MedicineShopApplication.BLL;
+using MedicineShopApplication.API.Middleware;
 using MedicineShopApplication.API.StartupExtension;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,13 +14,19 @@ builder.Services.AddDLLDependency();
 // Register the BLL Dependencies
 builder.Services.AddBLLDependency();
 
-
 // Register the controllers
 builder.Services.AddControllers();
 
 // Register Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerExtensionHelper();
+
+// Register the Global Exception Handler
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
+// Register the Identity
+builder.Services.AddIdentityCustomExtensionHelper();
 
 var app = builder.Build();
 
@@ -31,9 +38,11 @@ if (app.Environment.IsDevelopment())
     app.RunMigration();
 }
 
+app.UseExceptionHandler();
+
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseAppAuthentication();
 
 app.MapControllers();
 

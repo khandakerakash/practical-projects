@@ -1,6 +1,9 @@
-﻿namespace MedicineShopApplication.DLL.Models
+﻿using MedicineShopApplication.DLL.Models.Common;
+using MedicineShopApplication.DLL.Models.Users;
+
+namespace MedicineShopApplication.DLL.Models.General
 {
-    public class Payment : BaseEntity
+    public class Payment : AuditableEntity
     {
         public int PaymentId { get; set; }
         public string TransactionId { get; set; }
@@ -12,6 +15,6 @@
         public int OrderId { get; set; }
         public Order Order { get; set; }
         public int UserId { get; set; }
-        public User User { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace MedicineShopApplication.BLL.Dtos.User
 {
-    public class UserInsertDto
+    public class CreateUserRequestDto
     {
         public string UserName { get; set; }
         public string FirstName { get; set; }

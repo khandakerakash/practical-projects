@@ -1,5 +1,5 @@
 ﻿using MedicineShopApplication.DLL.DbContextInit;
-using MedicineShopApplication.DLL.Models;
+using MedicineShopApplication.DLL.Models.General;
 
 namespace MedicineShopApplication.DLL.Repositories
 {

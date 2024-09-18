@@ -1,6 +1,8 @@
-﻿namespace MedicineShopApplication.DLL.Models
+﻿using MedicineShopApplication.DLL.Models.Common;
+
+namespace MedicineShopApplication.DLL.Models.General
 {
-    public class OrderItem : BaseEntity
+    public class OrderItem : AuditableEntity
     {
         public int OrderItemId { get; set; }
         public int Quantity { get; set; }

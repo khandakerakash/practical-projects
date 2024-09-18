@@ -1,12 +1,13 @@
-﻿using MedicineShopApplication.DLL.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using MedicineShopApplication.DLL.Models.Users;
+using MedicineShopApplication.DLL.Models.General;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MedicineShopApplication.DLL.Configs
 {
-    public class UserConfiguration : IEntityTypeConfiguration<User>
+    public class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
     {
-        public void Configure(EntityTypeBuilder<User> builder)
+        public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
             // Configure User - Order (one-to-many) relasionship
             builder

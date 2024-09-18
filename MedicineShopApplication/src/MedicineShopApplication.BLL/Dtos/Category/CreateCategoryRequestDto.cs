@@ -3,7 +3,7 @@ using MedicineShopApplication.BLL.Dtos.Product;
 
 namespace MedicineShopApplication.BLL.Dtos.Category
 {
-    public class CategoryInsertDto : BaseEntityDto
+    public class CreateCategoryRequestDto : AuditableEntityDto
     {
         public string Code { get; set; }
         public string Name { get; set; }

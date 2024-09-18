@@ -6,10 +6,10 @@ namespace MedicineShopApplication.DLL.Repositories
 {
     public interface IRepositoryBase<T> where T : class
     {
-        IQueryable<T> FindAll(params Expression<Func<T, object>>[] includes);
-        IQueryable<T> FindByCondition(Expression<Func<T, bool>> condition);
-        Task Create(T entity);
-        Task CreateRange(List<T> entities);
+        IQueryable<T> FindAllAsync(params Expression<Func<T, object>>[] includes);
+        IQueryable<T> FindByConditionAsync(Expression<Func<T, bool>> condition);
+        Task CreateAsync(T entity);
+        Task CreateRangeAsync(List<T> entities);
         void Update(T entity);
         void UpdateRange(List<T> entities);
         void Delete(T entity);
@@ -27,7 +27,7 @@ namespace MedicineShopApplication.DLL.Repositories
             _dbSet = context.Set<T>();
         }
 
-        public IQueryable<T> FindAll(params Expression<Func<T, object>>[] includes)
+        public IQueryable<T> FindAllAsync(params Expression<Func<T, object>>[] includes)
         {
             IQueryable<T> query = _dbSet.AsNoTracking();
 
@@ -40,17 +40,17 @@ namespace MedicineShopApplication.DLL.Repositories
             return query;
         }
 
-        public IQueryable<T> FindByCondition(Expression<Func<T, bool>> condition)
+        public IQueryable<T> FindByConditionAsync(Expression<Func<T, bool>> condition)
         {
             return _dbSet.Where(condition).AsNoTracking();
         }
 
-        public async Task Create(T entity)
+        public async Task CreateAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
         }
 
-        public async Task CreateRange(List<T> entities)
+        public async Task CreateRangeAsync(List<T> entities)
         {
             await _dbSet.AddRangeAsync(entities);
         }

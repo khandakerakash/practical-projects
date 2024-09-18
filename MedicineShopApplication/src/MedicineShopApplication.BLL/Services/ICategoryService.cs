@@ -7,7 +7,7 @@ namespace MedicineShopApplication.BLL.Services
     {
         Task<List<CategoryDto>> GetAllCategories();
         Task<CategoryDto> GetCategoryById(int id);
-        Task<CategoryDto> AddCategory(CategoryInsertDto categoryInsertDto);
+        Task<CategoryDto> AddCategory(CreateCategoryRequestDto request);
         void UpgradeCategory();
     }
 
@@ -20,7 +20,7 @@ namespace MedicineShopApplication.BLL.Services
             _unitOfWork = unitOfWork;
         }
 
-        public Task<CategoryDto> AddCategory(CategoryInsertDto categoryInsertDto)
+        public Task<CategoryDto> AddCategory(CreateCategoryRequestDto request)
         {
             throw new NotImplementedException();
         }

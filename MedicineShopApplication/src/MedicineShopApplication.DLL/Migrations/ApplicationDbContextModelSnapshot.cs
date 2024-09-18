@@ -22,7 +22,7 @@ namespace MedicineShopApplication.DLL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Cart", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Cart", b =>
                 {
                     b.Property<int>("CartId")
                         .ValueGeneratedOnAdd()
@@ -35,15 +35,6 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -62,7 +53,7 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.ToTable("Carts");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.CartItem", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.CartItem", b =>
                 {
                     b.Property<int>("CartItemId")
                         .ValueGeneratedOnAdd()
@@ -78,15 +69,6 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -109,7 +91,7 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.ToTable("CartItems");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Category", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Category", b =>
                 {
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
@@ -126,17 +108,8 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -152,7 +125,7 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Inventory", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Inventory", b =>
                 {
                     b.Property<int>("InventoryId")
                         .ValueGeneratedOnAdd()
@@ -169,15 +142,6 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
@@ -214,7 +178,7 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.ToTable("Inventories");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Invoice", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Invoice", b =>
                 {
                     b.Property<int>("InvoiceId")
                         .ValueGeneratedOnAdd()
@@ -228,17 +192,8 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("InvoiceAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -261,7 +216,7 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.ToTable("Invoices");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Order", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Order", b =>
                 {
                     b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd()
@@ -275,17 +230,8 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
                     b.Property<string>("DeliveryAddress")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("OrderAt")
                         .HasColumnType("datetime2");
@@ -313,7 +259,7 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.OrderItem", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.OrderItem", b =>
                 {
                     b.Property<int>("OrderItemId")
                         .ValueGeneratedOnAdd()
@@ -326,15 +272,6 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -364,7 +301,7 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Payment", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Payment", b =>
                 {
                     b.Property<int>("PaymentId")
                         .ValueGeneratedOnAdd()
@@ -377,15 +314,6 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -425,7 +353,7 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Product", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Product", b =>
                 {
                     b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
@@ -452,12 +380,6 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -466,9 +388,6 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -499,78 +418,257 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.User", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Users.ApplicationRole", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Users.ApplicationUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
 
                     b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatedBy")
+                    b.Property<int?>("CreatedBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DeletedBy")
-                        .HasColumnType("int");
+                    b.Property<string>("DateOfBirth")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("LastUpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NationalIdentityCard")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
 
-                    b.Property<int?>("UpdatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserName")
+                    b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserId");
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Users");
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Cart", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("MedicineShopApplication.DLL.Models.User", "User")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Cart", b =>
+                {
+                    b.HasOne("MedicineShopApplication.DLL.Models.Users.ApplicationUser", "User")
                         .WithOne("Cart")
-                        .HasForeignKey("MedicineShopApplication.DLL.Models.Cart", "UserId")
+                        .HasForeignKey("MedicineShopApplication.DLL.Models.General.Cart", "UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.CartItem", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.CartItem", b =>
                 {
-                    b.HasOne("MedicineShopApplication.DLL.Models.Cart", "Cart")
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.Cart", "Cart")
                         .WithMany("CartItems")
                         .HasForeignKey("CartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MedicineShopApplication.DLL.Models.Product", "Product")
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.Product", "Product")
                         .WithMany("CartItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -581,9 +679,9 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Inventory", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Inventory", b =>
                 {
-                    b.HasOne("MedicineShopApplication.DLL.Models.Product", "Product")
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.Product", "Product")
                         .WithMany("Inventories")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -592,20 +690,20 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Invoice", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Invoice", b =>
                 {
-                    b.HasOne("MedicineShopApplication.DLL.Models.Order", "Order")
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.Order", "Order")
                         .WithOne("Invoice")
-                        .HasForeignKey("MedicineShopApplication.DLL.Models.Invoice", "OrderId")
+                        .HasForeignKey("MedicineShopApplication.DLL.Models.General.Invoice", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Order", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Order", b =>
                 {
-                    b.HasOne("MedicineShopApplication.DLL.Models.User", "User")
+                    b.HasOne("MedicineShopApplication.DLL.Models.Users.ApplicationUser", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -614,15 +712,15 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.OrderItem", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.OrderItem", b =>
                 {
-                    b.HasOne("MedicineShopApplication.DLL.Models.Order", "Order")
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MedicineShopApplication.DLL.Models.Product", "Product")
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.Product", "Product")
                         .WithMany("OrderItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -633,15 +731,15 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Payment", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Payment", b =>
                 {
-                    b.HasOne("MedicineShopApplication.DLL.Models.Order", "Order")
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.Order", "Order")
                         .WithOne("Payment")
-                        .HasForeignKey("MedicineShopApplication.DLL.Models.Payment", "OrderId")
+                        .HasForeignKey("MedicineShopApplication.DLL.Models.General.Payment", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MedicineShopApplication.DLL.Models.User", "User")
+                    b.HasOne("MedicineShopApplication.DLL.Models.Users.ApplicationUser", "User")
                         .WithMany("Payments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -652,9 +750,9 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Product", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Product", b =>
                 {
-                    b.HasOne("MedicineShopApplication.DLL.Models.Category", "Category")
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -663,17 +761,68 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Cart", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+                {
+                    b.HasOne("MedicineShopApplication.DLL.Models.Users.ApplicationRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.HasOne("MedicineShopApplication.DLL.Models.Users.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+                {
+                    b.HasOne("MedicineShopApplication.DLL.Models.Users.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.HasOne("MedicineShopApplication.DLL.Models.Users.ApplicationRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MedicineShopApplication.DLL.Models.Users.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+                {
+                    b.HasOne("MedicineShopApplication.DLL.Models.Users.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Cart", b =>
                 {
                     b.Navigation("CartItems");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Category", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Category", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Order", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Order", b =>
                 {
                     b.Navigation("Invoice");
 
@@ -682,7 +831,7 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Navigation("Payment");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Product", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Product", b =>
                 {
                     b.Navigation("CartItems");
 
@@ -691,7 +840,7 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Navigation("OrderItems");
                 });
 
-            modelBuilder.Entity("MedicineShopApplication.DLL.Models.User", b =>
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.Users.ApplicationUser", b =>
                 {
                     b.Navigation("Cart");
 

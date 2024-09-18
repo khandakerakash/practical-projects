@@ -1,6 +1,8 @@
-﻿namespace MedicineShopApplication.DLL.Models
+﻿using MedicineShopApplication.DLL.Models.Common;
+
+namespace MedicineShopApplication.DLL.Models.General
 {
-    public class Product : BaseEntity
+    public class Product : AuditableEntity
     {
         public int ProductId { get; set; }
         public string Code { get; set; }

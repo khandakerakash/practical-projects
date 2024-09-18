@@ -6,7 +6,7 @@ using MedicineShopApplication.BLL.Dtos.User;
 
 namespace MedicineShopApplication.BLL.Dtos.Order
 {
-    public class OrderDto : BaseEntityDto
+    public class OrderDto : AuditableEntityDto
     {
         public int OrderDtoId { get; set; }
         public decimal TotalAmount { get; set; }

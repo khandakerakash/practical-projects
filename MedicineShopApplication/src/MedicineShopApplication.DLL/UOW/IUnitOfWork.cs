@@ -5,7 +5,7 @@ namespace MedicineShopApplication.DLL.UOW
 {
     public interface IUnitOfWork : IDisposable
     {
-        IUserRepository UserRepository { get; }
+        //IUserRepository UserRepository { get; }
         ICategoryRepository CategoryRepository { get; }
         IProductRepository ProductRepository { get; }
         ICartRepository CartRepository { get; }
@@ -27,7 +27,7 @@ namespace MedicineShopApplication.DLL.UOW
             _context = context;
         }
 
-        private IUserRepository _userRepository;
+        //private IUserRepository _userRepository;
         private ICategoryRepository _categoryRepository;
         private IProductRepository _productRepository;
         private ICartRepository _cartRepository;
@@ -37,7 +37,7 @@ namespace MedicineShopApplication.DLL.UOW
         private IPaymentRepository _paymentRepository;
         private IInvoiceRepository _invoiceRepository;
 
-        public IUserRepository UserRepository => _userRepository ??= new UserRepository(_context);
+        //public IUserRepository UserRepository => _userRepository ??= new UserRepository(_context);
 
         public ICategoryRepository CategoryRepository => _categoryRepository ??= new CategoryRepository(_context);
 

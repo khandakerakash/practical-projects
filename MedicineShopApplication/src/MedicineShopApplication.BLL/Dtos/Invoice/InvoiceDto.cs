@@ -3,7 +3,7 @@ using MedicineShopApplication.BLL.Dtos.Order;
 
 namespace MedicineShopApplication.BLL.Dtos.Invoice
 {
-    public class InvoiceDto : BaseEntityDto
+    public class InvoiceDto : AuditableEntityDto
     {
         public int InvoiceDtoId { get; set; }
         public decimal TotalAmount { get; set; }

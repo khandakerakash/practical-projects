@@ -1,4 +1,4 @@
-﻿using MedicineShopApplication.DLL.Models;
+﻿using MedicineShopApplication.DLL.Models.General;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -4,7 +4,7 @@ using MedicineShopApplication.BLL.Dtos.Product;
 
 namespace MedicineShopApplication.BLL.Dtos.OrderItem
 {
-    public class OrderItemDto : BaseEntityDto
+    public class OrderItemDto : AuditableEntityDto
     {
         public int OrderItemDtoId { get; set; }
         public int Quantity { get; set; }

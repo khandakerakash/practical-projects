@@ -1,23 +1,25 @@
 ﻿using Bogus;
-using MedicineShopApplication.DLL.Models;
+using MedicineShopApplication.DLL.Models.General;
+using MedicineShopApplication.DLL.Models.Users;
 
 namespace MedicineShopApplication.DLL.BogusData
 {
     public static class DataSeeder
     {
-        public static List<User> GenerateUsers(int count)
+        public static List<ApplicationUser> GenerateUsers(int count)
         {
-            var userFaker = new Faker<User>()
-                .RuleFor(u => u.UserName, f => f.Internet.UserName())
-                .RuleFor(u => u.FirstName, f => f.Name.FirstName())
-                .RuleFor(u => u.LastName, f => f.Name.LastName())
-                .RuleFor(u => u.Email, f => f.Internet.Email())
-                .RuleFor(u => u.PhoneNumber, f => f.Phone.PhoneNumber())
-                .RuleFor(u => u.Address, f => f.Address.FullAddress())
-                .RuleFor(u => u.Orders, _ => new List<Order>())
-                .RuleFor(u => u.Payments, _ => new List<Payment>());
+            //var userFaker = new Faker<ApplicationUser>()
+            //    .RuleFor(u => u.UserName, f => f.Internet.UserName())
+            //    .RuleFor(u => u.FirstName, f => f.Name.FirstName())
+            //    .RuleFor(u => u.LastName, f => f.Name.LastName())
+            //    .RuleFor(u => u.Email, f => f.Internet.Email())
+            //    .RuleFor(u => u.PhoneNumber, f => f.Phone.PhoneNumber())
+            //    .RuleFor(u => u.Address, f => f.Address.FullAddress())
+            //    .RuleFor(u => u.Orders, _ => new List<Order>())
+            //    .RuleFor(u => u.Payments, _ => new List<Payment>());
 
-            return userFaker.Generate(count);
+            //return userFaker.Generate(count);
+            return null;
         }
 
         public static List<Category> GenerateCategories(int count)

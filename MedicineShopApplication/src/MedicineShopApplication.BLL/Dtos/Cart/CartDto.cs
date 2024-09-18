@@ -4,7 +4,7 @@ using MedicineShopApplication.BLL.Dtos.User;
 
 namespace MedicineShopApplication.BLL.Dtos.Cart
 {
-    public class CartDto : BaseEntityDto
+    public class CartDto : AuditableEntityDto
     {
         public int CartDtoId { get; set; }
 

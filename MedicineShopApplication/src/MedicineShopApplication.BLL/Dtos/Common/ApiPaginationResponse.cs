@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MedicineShopApplication.BLL.Dtos.Common
+﻿namespace MedicineShopApplication.BLL.Dtos.Common
 {
     /// <summary>
     /// Represents a paginated API response.

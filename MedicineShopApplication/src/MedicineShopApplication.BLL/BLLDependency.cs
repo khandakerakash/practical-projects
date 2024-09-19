@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using MedicineShopApplication.BLL.Dtos.Authentication;
 using MedicineShopApplication.BLL.Services;
 using MedicineShopApplication.BLL.Validations;
 using Microsoft.Extensions.DependencyInjection;
+using MedicineShopApplication.BLL.Dtos.Authentication;
 
 namespace MedicineShopApplication.BLL
 {

@@ -10,6 +10,7 @@ namespace MedicineShopApplication.BLL
     {
         public static IServiceCollection AddBLLDependency(this IServiceCollection services)
         {
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUserService, UserService>();
 
 

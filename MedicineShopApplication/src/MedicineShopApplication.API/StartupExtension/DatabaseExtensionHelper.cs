@@ -17,8 +17,8 @@ namespace MedicineShopApplication.API.StartupExtension
         {
             using (var scope = app.ApplicationServices.CreateScope())
             {
-                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                db.Database.Migrate();
+                //var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                //db.Database.Migrate();
 
                 // Seed data if the User, Category, Product and Inventory Tables are empty
                 //if(!db.Users.Any() && !db.Categories.Any() && !db.Products.Any() && !db.Inventories.Any())
@@ -34,6 +34,8 @@ namespace MedicineShopApplication.API.StartupExtension
                 //    db.Users.AddRange(users);
                 //    db.SaveChanges();
                 //}
+
+                DataSeeder.GenerateRoles(scope.ServiceProvider);
             }
             return app;
         }

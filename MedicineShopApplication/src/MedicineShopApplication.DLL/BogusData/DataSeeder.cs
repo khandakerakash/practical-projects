@@ -1,11 +1,34 @@
 ﻿using Bogus;
 using MedicineShopApplication.DLL.Models.General;
 using MedicineShopApplication.DLL.Models.Users;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MedicineShopApplication.DLL.BogusData
 {
     public static class DataSeeder
     {
+        public static void GenerateRoles(IServiceProvider serviceProvider)
+        {
+            string[] roles = { "Developer", "SuperAdmin", "Admin", "Manager", "Moderator", "Salesman", "Customer" };
+
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+
+            foreach (var role in roles)
+            {
+                var lowerValue = role.ToLower();
+                var isRoleExists = roleManager.RoleExistsAsync(lowerValue).Result;
+
+                if(!isRoleExists)
+                {
+                    var response = roleManager.CreateAsync(new ApplicationRole()
+                    {
+                        Name = lowerValue,
+                    }).Result;
+                }
+            }
+        }
+
         public static List<ApplicationUser> GenerateUsers(int count)
         {
             //var userFaker = new Faker<ApplicationUser>()

@@ -5,6 +5,7 @@ using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Dtos.Authentication;
+using MedicineShopApplication.BLL.Enums;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -51,7 +52,7 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<string>(userCreationResponse.Errors);
             }
 
-            var roleAssignmentResponse = await _userManager.AddToRoleAsync(user, "customer");
+            var roleAssignmentResponse = await _userManager.AddToRoleAsync(user, UserRole.customer.ToString());
 
             if(!roleAssignmentResponse.Succeeded)
             {

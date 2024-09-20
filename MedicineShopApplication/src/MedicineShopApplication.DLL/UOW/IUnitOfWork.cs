@@ -15,7 +15,7 @@ namespace MedicineShopApplication.DLL.UOW
         IPaymentRepository PaymentRepository { get; }
         IInvoiceRepository InvoiceRepository { get; }
 
-        Task<bool> SaveChangesAsync();
+        Task<bool> CommitAsync();
     }
 
     public class UnitOfWork : IUnitOfWork
@@ -56,7 +56,7 @@ namespace MedicineShopApplication.DLL.UOW
         public IInvoiceRepository InvoiceRepository => _invoiceRepository ??= new InvoiceRepository(_context);
 
 
-        public async Task<bool> SaveChangesAsync()
+        public async Task<bool> CommitAsync()
         {
             return await _context.SaveChangesAsync() > 0;
         }

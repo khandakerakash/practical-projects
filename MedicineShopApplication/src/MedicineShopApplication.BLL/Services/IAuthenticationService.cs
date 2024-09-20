@@ -25,7 +25,7 @@ namespace MedicineShopApplication.BLL.Services
 
         public async Task<ApiResponse<string>> Register(RegisterUserRequestDto request)
         {
-            var validator = new RegisterUserRequestValidatorDto();
+            var validator = new RegisterUserRequestDtoValidator();
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)

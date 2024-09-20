@@ -3,9 +3,9 @@ using MedicineShopApplication.BLL.Dtos.Authentication;
 
 namespace MedicineShopApplication.BLL.Validations
 {
-    public class RegisterUserRequestValidatorDto : AbstractValidator<RegisterUserRequestDto>
+    public class RegisterUserRequestDtoValidator : AbstractValidator<RegisterUserRequestDto>
     {
-        public RegisterUserRequestValidatorDto()
+        public RegisterUserRequestDtoValidator()
         {
             RuleFor(x => x.PhoneNumber)
                 .NotNull().NotEmpty()

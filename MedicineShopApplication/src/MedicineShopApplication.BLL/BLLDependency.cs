@@ -3,6 +3,7 @@ using MedicineShopApplication.BLL.Services;
 using MedicineShopApplication.BLL.Validations;
 using Microsoft.Extensions.DependencyInjection;
 using MedicineShopApplication.BLL.Dtos.Authentication;
+using MedicineShopApplication.BLL.Dtos.Category;
 
 namespace MedicineShopApplication.BLL
 {
@@ -12,6 +13,7 @@ namespace MedicineShopApplication.BLL
         {
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICategoryService, CategoryService>();
 
 
             // Validation dependency
@@ -22,7 +24,8 @@ namespace MedicineShopApplication.BLL
 
         private static void AddValidatorDependencies(IServiceCollection services)
         {
-            services.AddScoped<IValidator<RegisterUserRequestDto>, RegisterUserRequestValidatorDto>();
+            services.AddScoped<IValidator<RegisterUserRequestDto>, RegisterUserRequestDtoValidator>();
+            services.AddScoped<IValidator<CreateCategoryRequestDto>, CreateCategoryRequestDtoValidator>();
         }
     }
 }

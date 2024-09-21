@@ -14,11 +14,17 @@ namespace MedicineShopApplication.API.Controllers
             _categoryService = categoryService;
         }
 
-        [Authorize]
         [HttpPost("create")]
         public async Task<IActionResult> CreateCategory(CreateCategoryRequestDto request)
         {
             var response = await _categoryService.CreateCategory(request);
+            return ToActionResult(response);
+        }
+
+        [HttpGet("dropdown-options")]
+        public async Task<IActionResult> GetCategoryDropdownOptions()
+        {
+            var response = await _categoryService.GetCategoryDropdownOptions();
             return ToActionResult(response);
         }
     }

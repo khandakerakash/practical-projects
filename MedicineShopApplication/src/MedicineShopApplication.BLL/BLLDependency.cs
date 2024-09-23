@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
 using MedicineShopApplication.BLL.Services;
 using MedicineShopApplication.BLL.Validations;
+using MedicineShopApplication.BLL.Dtos.Product;
 using Microsoft.Extensions.DependencyInjection;
-using MedicineShopApplication.BLL.Dtos.Authentication;
 using MedicineShopApplication.BLL.Dtos.Category;
+using MedicineShopApplication.BLL.Dtos.Authentication;
 
 namespace MedicineShopApplication.BLL
 {
@@ -26,6 +27,7 @@ namespace MedicineShopApplication.BLL
         {
             services.AddScoped<IValidator<RegisterUserRequestDto>, RegisterUserRequestDtoValidator>();
             services.AddScoped<IValidator<CreateCategoryRequestDto>, CreateCategoryRequestDtoValidator>();
+            services.AddScoped<IValidator<CreateProductRequestDto>, CreateProductRequestDtoValidator>();
         }
     }
 }

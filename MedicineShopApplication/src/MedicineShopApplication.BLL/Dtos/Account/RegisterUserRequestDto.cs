@@ -1,4 +1,4 @@
-﻿namespace MedicineShopApplication.BLL.Dtos.Authentication
+﻿namespace MedicineShopApplication.BLL.Dtos.Account
 {
     public class RegisterUserRequestDto
     {

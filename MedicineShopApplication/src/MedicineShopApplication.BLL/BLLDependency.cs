@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using MedicineShopApplication.BLL.Services;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.BLL.Dtos.Product;
-using Microsoft.Extensions.DependencyInjection;
 using MedicineShopApplication.BLL.Dtos.Category;
-using MedicineShopApplication.BLL.Dtos.Authentication;
+using MedicineShopApplication.BLL.Dtos.Account;
 
 namespace MedicineShopApplication.BLL
 {
@@ -12,7 +12,7 @@ namespace MedicineShopApplication.BLL
     {
         public static IServiceCollection AddBLLDependency(this IServiceCollection services)
         {
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICategoryService, CategoryService>();
 

@@ -4,21 +4,21 @@ using Microsoft.EntityFrameworkCore;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.DLL.Models.Users;
-using MedicineShopApplication.BLL.Dtos.Authentication;
 using MedicineShopApplication.BLL.Enums;
+using MedicineShopApplication.BLL.Dtos.Account;
 
 namespace MedicineShopApplication.BLL.Services
 {
-    public interface IAuthenticationService
+    public interface IAccountService
     {
         Task<ApiResponse<string>> Register(RegisterUserRequestDto request);
     }
 
-    public class AuthenticationService : IAuthenticationService
+    public class AccountService : IAccountService
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AuthenticationService(UserManager<ApplicationUser> userManager)
+        public AccountService(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
         }

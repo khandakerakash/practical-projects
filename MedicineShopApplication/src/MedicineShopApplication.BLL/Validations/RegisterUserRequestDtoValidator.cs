@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using MedicineShopApplication.BLL.Dtos.Authentication;
+using MedicineShopApplication.BLL.Dtos.Account;
 
 namespace MedicineShopApplication.BLL.Validations
 {

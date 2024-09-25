@@ -45,7 +45,7 @@ namespace MedicineShopApplication.BLL.Services
                 PhoneNumberConfirmed = true
             };
 
-            var userCreationResponse = await _userManager.CreateAsync(user);
+            var userCreationResponse = await _userManager.CreateAsync(user, request.Password);
 
             if(!userCreationResponse.Succeeded)
             {

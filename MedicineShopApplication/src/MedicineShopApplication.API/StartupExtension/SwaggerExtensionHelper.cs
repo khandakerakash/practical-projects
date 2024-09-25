@@ -8,22 +8,19 @@ namespace MedicineShopApplication.API.StartupExtension
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ShopManagement API", Version = "v1" });
-
-                // Configure Bearer token authentication
+                // Add the security definition for the Bearer token
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
+                    Type = SecuritySchemeType.Http,
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n " +
-                                  "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
-                                  "Example: \"Bearer 12345abcdef\"",
+                    Description = "Enter 'Bearer' [space] and then your valid token in the text input below.\n\nExample: \"Bearer 12345abcdef\""
                 });
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                // Add a global security requirement for the Bearer token
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
                         new OpenApiSecurityScheme
@@ -32,12 +29,9 @@ namespace MedicineShopApplication.API.StartupExtension
                             {
                                 Type = ReferenceType.SecurityScheme,
                                 Id = "Bearer"
-                            },
-                            Scheme = "oauth2",
-                            Name = "Bearer",
-                            In = ParameterLocation.Header,
+                            }
                         },
-                        new List<string>()
+                        new string[] {}
                     }
                 });
             });

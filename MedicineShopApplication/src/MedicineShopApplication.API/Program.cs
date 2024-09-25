@@ -8,6 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure the Database
 builder.Services.AddDatabaseExtensionHelper(builder.Configuration);
 
+// Register the Identity
+builder.Services.AddIdentityCustomExtensionHelper();
+
+// Register the OpenIddict
+builder.Services.AddOauth2ExtensionHelper();
+
+// Register the Global Exception Handler
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 // Register the DLL Dependencies
 builder.Services.AddDLLDependency();
 
@@ -20,13 +30,6 @@ builder.Services.AddControllers();
 // Register Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerExtensionHelper();
-
-// Register the Global Exception Handler
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-builder.Services.AddProblemDetails();
-
-// Register the Identity
-builder.Services.AddIdentityCustomExtensionHelper();
 
 var app = builder.Build();
 

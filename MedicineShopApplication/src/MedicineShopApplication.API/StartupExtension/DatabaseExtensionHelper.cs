@@ -35,6 +35,10 @@ namespace MedicineShopApplication.API.StartupExtension
                 //    db.SaveChanges();
                 //}
 
+                // Application seed
+                DataSeeder.GenerateApplication(scope.ServiceProvider);
+
+                // Application user role seed
                 DataSeeder.GenerateRoles(scope.ServiceProvider);
             }
             return app;

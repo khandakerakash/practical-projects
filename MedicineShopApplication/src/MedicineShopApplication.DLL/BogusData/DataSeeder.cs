@@ -1,13 +1,52 @@
 ﻿using Bogus;
-using MedicineShopApplication.DLL.Models.General;
-using MedicineShopApplication.DLL.Models.Users;
+using OpenIddict.Abstractions;
 using Microsoft.AspNetCore.Identity;
+using MedicineShopApplication.DLL.Models.Users;
+using MedicineShopApplication.DLL.Models.General;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MedicineShopApplication.DLL.BogusData
 {
     public static class DataSeeder
     {
+        public static void GenerateApplication(IServiceProvider serviceProvider)
+        {
+            var applicationManager = serviceProvider.GetRequiredService<IOpenIddictApplicationManager>();
+
+            if (applicationManager.FindByClientIdAsync("msa-web-dev").Result is null)
+            {
+                var appRes = applicationManager.CreateAsync(new OpenIddictApplicationDescriptor
+                {
+                    ApplicationType = "Ecommerce",
+                    ClientId = "msa-web-dev",
+                    ClientSecret = "901564A5-E7FE-42CB-W10D-61EF6A8F3654",
+                    DisplayName = "This is a Medicine Shop Web Application",
+                    Permissions =
+                    {
+                        OpenIddictConstants.Permissions.Endpoints.Token,
+                        OpenIddictConstants.Permissions.GrantTypes.Password
+                    }
+                }).Result;
+            }
+
+            if (applicationManager.FindByClientIdAsync("msa-mobile-dev").Result is null)
+            {
+                var appRes = applicationManager.CreateAsync(new OpenIddictApplicationDescriptor
+                {
+                    ApplicationType = "Ecommerce",
+                    ClientId = "msa-mobile-dev",
+                    ClientSecret = "101564A7-E7FE-42CB-M10D-61EF6A8F3607",
+                    DisplayName = "This is a Medicine Shop Mobile Application",
+                    Permissions =
+                    {
+                        OpenIddictConstants.Permissions.Endpoints.Token,
+                        OpenIddictConstants.Permissions.GrantTypes.Password,
+                        OpenIddictConstants.Permissions.GrantTypes.RefreshToken
+                    }
+                }).Result;
+            }
+        }
+
         public static void GenerateRoles(IServiceProvider serviceProvider)
         {
             string[] roles = { "Developer", "SuperAdmin", "Admin", "Manager", "Moderator", "Salesman", "Customer" };

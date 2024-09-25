@@ -4,6 +4,7 @@ using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.BLL.Dtos.Category;
 using MedicineShopApplication.DLL.Models.General;
+using System.Security.Claims;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -11,7 +12,7 @@ namespace MedicineShopApplication.BLL.Services
     {
         Task<List<CategoryDto>> GetAllCategories();
         Task<CategoryDto> GetCategoryById(int id);
-        Task<ApiResponse<CreateCategoryResponseDto>> CreateCategory(CreateCategoryRequestDto request);
+        Task<ApiResponse<CreateCategoryResponseDto>> CreateCategory(CreateCategoryRequestDto request, int userId);
         Task UpdateCategory(UpdateCategoryRequestDto request);
         Task DeleteCategory(int id);
         Task<ApiResponse<List<DropdownOptionDto>>>  GetCategoryDropdownOptions();
@@ -37,7 +38,7 @@ namespace MedicineShopApplication.BLL.Services
             throw new NotImplementedException();
         }
 
-        public async Task<ApiResponse<CreateCategoryResponseDto>> CreateCategory(CreateCategoryRequestDto request)
+        public async Task<ApiResponse<CreateCategoryResponseDto>> CreateCategory(CreateCategoryRequestDto request, int userId)
         {
             var validator = new CreateCategoryRequestDtoValidator();
             var validationResult = await validator.ValidateAsync(request);
@@ -59,7 +60,7 @@ namespace MedicineShopApplication.BLL.Services
                 Code = generatedCode,
                 Name = request.Name,
                 Description = request.Description,
-                CreatedBy = 1
+                CreatedBy = userId
             };
 
             await _unitOfWork.CategoryRepository.CreateAsync(newCategory);
@@ -96,44 +97,40 @@ namespace MedicineShopApplication.BLL.Services
 
         /// <summary>
         /// Generates a unique category code based on the given category name.
-        /// 
         /// This method dynamically creates a prefix using the first few letters of the category name:
         /// - For single-word names, it uses the first 3 letters of the word.
         /// - For multi-word names, it uses the first letter of each word, up to a maximum of 3 words.
-        /// 
         /// The method then checks the database to find how many categories already exist with the same prefix,
         /// and appends the next available numeric suffix (starting from 0001) to ensure the generated code is unique.
-        /// 
-        /// Example:
-        /// - Category Name: "Proton Pump Inhibitors" -> Generated Code: "PPI-0001"
-        /// - Category Name: "Antibiotics" -> Generated Code: "ANT-0001"
-        /// 
         /// </summary>
         /// <param name="categoryName">The name of the category for which the code will be generated.</param>
         /// <returns>A unique category code in the format "PREFIX-####", where PREFIX is derived from the category name.</returns>
         private async Task<string> GenerateCategoryCodeAsync(string categoryName)
         {
-            string[] words = categoryName.Split(new[] { ' ', '-', '_' }, StringSplitOptions.RemoveEmptyEntries);
+            // Remove special characters like parentheses, dashes, underscores
+            string cleanedName = new string(categoryName.Where(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c)).ToArray());
+
+            string[] words = cleanedName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             string prefix;
 
-            if (char.IsDigit(words[0][1]))
+            if (words.Length == 1)
             {
-                prefix = words[0].ToUpper() + string.Join("", words.Skip(1).Take(2).Select(w => w.Substring(0, 1).ToUpper()));
+                // For single-word names, take the first 3 letters (or fewer if the word is short)
+                prefix = words[0].Substring(0, Math.Min(3, words[0].Length)).ToUpper();
             }
             else
             {
-                prefix = words.Length == 1
-                    ? words[0].Substring(0, Math.Min(3, words[0].Length)).ToUpper()
-                    : string.Join("", words.Take(3).Select(word => word.Substring(0, 1).ToUpper()));
+                // For multi-word names, take the first letter of each word, up to 3 words
+                prefix = string.Join("", words.Take(3).Select(word => word.Substring(0, 1).ToUpper()));
             }
 
+            // Ensure the prefix is clean and no special characters are included
             return await GenerateUniqueCodeAsync(prefix);
         }
 
         /// <summary>
         /// Generates a unique category code by appending an incremented numeric suffix to the provided prefix.
-        /// 
         /// This method checks the database for existing codes with the same prefix and increments the suffix
         /// until a unique code is generated. The final code will be in the format "PREFIX-####".
         /// </summary>
@@ -149,7 +146,7 @@ namespace MedicineShopApplication.BLL.Services
 
             do
             {
-                generatedCode = $"{prefix}-{suffix.ToString("D4")}";
+                generatedCode = $"{prefix}-{suffix.ToString("D4")}"; // Format the suffix with leading zeroes (0001, 0002, etc.)
                 isUnique = !(await _unitOfWork.CategoryRepository
                     .FindByConditionAsync(x => x.Code == generatedCode)
                     .AnyAsync());

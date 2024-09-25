@@ -24,7 +24,7 @@ namespace MedicineShopApplication.BLL.Validations
             RuleFor(x => x.Description)
                 .NotNull()
                 .NotEmpty()
-                .MinimumLength(24)
+                .MinimumLength(15)
                 .MaximumLength(320);
         }
     }

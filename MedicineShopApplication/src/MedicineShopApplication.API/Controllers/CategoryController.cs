@@ -1,7 +1,10 @@
 ﻿using MedicineShopApplication.BLL.Dtos.Category;
 using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Authorization;
+using OpenIddict.Validation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using OpenIddict.Abstractions;
 
 namespace MedicineShopApplication.API.Controllers
 {
@@ -14,10 +17,15 @@ namespace MedicineShopApplication.API.Controllers
             _categoryService = categoryService;
         }
 
+        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
         [HttpPost("create")]
         public async Task<IActionResult> CreateCategory(CreateCategoryRequestDto request)
         {
-            var response = await _categoryService.CreateCategory(request);
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier)
+                        ?? User.FindFirstValue(OpenIddictConstants.Claims.Subject);
+            int userId = Convert.ToInt32(userIdString);
+
+            var response = await _categoryService.CreateCategory(request,  userId);
             return ToActionResult(response);
         }
 

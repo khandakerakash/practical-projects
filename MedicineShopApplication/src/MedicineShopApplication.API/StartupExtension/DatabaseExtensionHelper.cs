@@ -9,7 +9,11 @@ namespace MedicineShopApplication.API.StartupExtension
         public static IServiceCollection AddDatabaseExtensionHelper(this IServiceCollection services, IConfiguration configuration) 
         {
             services.AddDbContext<ApplicationDbContext>(option =>
-                option.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            {
+                option.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                option.UseOpenIddict<int>();
+            });
+
             return services;
         }
 

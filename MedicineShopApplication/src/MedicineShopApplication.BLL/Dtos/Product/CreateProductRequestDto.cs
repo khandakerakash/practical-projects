@@ -1,4 +1,5 @@
-﻿using MedicineShopApplication.BLL.Dtos.CategoryProduct;
+﻿using MedicineShopApplication.BLL.Dtos.Category;
+using MedicineShopApplication.BLL.Dtos.CategoryProduct;
 
 namespace MedicineShopApplication.BLL.Dtos.Product
 {
@@ -8,10 +9,14 @@ namespace MedicineShopApplication.BLL.Dtos.Product
         public string Name { get; set; }
         public string GenericName { get; set; }
         public string Description { get; set; }
-        public decimal Price { get; set; }
-        public int Stock { get; set; }
+        public string Brand { get; set; }
+        public decimal CostPrice { get; set; }
+        public decimal SellingPrice { get; set; }
+        public string UnitOfMeasure { get; set; }
+        public string Status { get; set; }
         public string ImageUrl { get; set; }
+        public string Notes { get; set; }
 
-        public List<CategoryProductDto> CategoryProductsDto { get; set; } = new List<CategoryProductDto>();
+        public List<CategoryDto> CategoryDto { get; set; } = new List<CategoryDto>();
     }
 }

@@ -24,15 +24,17 @@ namespace MedicineShopApplication.BLL.Validations
                 .NotEmpty()
                 .MinimumLength(24);
 
-            RuleFor(x => x.Price)
+            RuleFor(x => x.CostPrice)
                 .GreaterThan(0)
                 .WithMessage("Price must be greater than zero.")
                 .Must(HaveValidDecimalPlaces)
                 .WithMessage("Price must not have more than two decimal places.");
 
-            RuleFor(x => x.Stock)
-                .GreaterThanOrEqualTo(0)
-                .WithMessage("Stock must be zero or greater.");
+            RuleFor(x => x.SellingPrice)
+                .GreaterThan(0)
+                .WithMessage("Price must be greater than zero.")
+                .Must(HaveValidDecimalPlaces)
+                .WithMessage("Price must not have more than two decimal places.");
         }
 
         private bool HaveValidDecimalPlaces(decimal price)

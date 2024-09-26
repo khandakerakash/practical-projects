@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.DLL.Models.General;
 using Microsoft.Extensions.DependencyInjection;
+using MedicineShopApplication.DLL.Models.Enums;
 
 namespace MedicineShopApplication.DLL.BogusData
 {
@@ -95,22 +96,32 @@ namespace MedicineShopApplication.DLL.BogusData
             return categoryFaker.Generate(count);
         }
 
-        public static List<Product> GenerateProducts(int count, List<Category> categories)
+        public static List<Product> GenerateProducts(int count, List<Category> categories, List<Brand> brands, List<UnitOfMeasure> unitOfMeasures)
         {
             var productFaker = new Faker<Product>()
                 .RuleFor(p => p.Code, f => f.Commerce.Ean13())
                 .RuleFor(p => p.Name, f => f.Commerce.ProductName())
                 .RuleFor(p => p.GenericName, f => f.Commerce.ProductMaterial())
                 .RuleFor(p => p.Description, f => f.Commerce.ProductDescription())
-                .RuleFor(p => p.Brand, f => f.Company.CompanyName())
                 .RuleFor(p => p.CostPrice, f => f.Random.Decimal(5, 100))
                 .RuleFor(p => p.SellingPrice, (f, p) => p.CostPrice + f.Random.Decimal(1, 50))
-                .RuleFor(p => p.UnitOfMeasure, f => f.PickRandom(new[] { "Piece", "Kg", "Litre" }))
-                .RuleFor(p => p.Status, f => f.PickRandom(new[] { "Available", "Out of Stock", "Discontinued" }))
+                .RuleFor(p => p.Status, f => f.PickRandom<ProductStatus>())
                 .RuleFor(p => p.ImageUrl, f => f.Image.PicsumUrl())
                 .RuleFor(p => p.Notes, f => f.Lorem.Sentence())
+
+                // Brand: Pick a random brand and assign both Brand object and BrandId
+                .RuleFor(p => p.Brand, f => f.PickRandom(brands))
+                .RuleFor(p => p.BrandId, (f, p) => p.Brand.BrandId)
+
+                // UnitOfMeasure: Pick a random unit of measure and assign both UnitOfMeasure object and UnitOfMeasureId
+                .RuleFor(p => p.UnitOfMeasure, f => f.PickRandom(unitOfMeasures))
+                .RuleFor(p => p.UnitOfMeasureId, (f, p) => p.UnitOfMeasure.UnitOfMeasureId)
+
+                // Category: Pick a random category and assign both Category object and CategoryId
                 .RuleFor(p => p.Category, f => f.PickRandom(categories))
                 .RuleFor(p => p.CategoryId, (f, p) => p.Category.CategoryId)
+
+                // Initializing collections for CartItems, OrderItems, and Inventories
                 .RuleFor(p => p.CartItems, _ => new List<CartItem>())
                 .RuleFor(p => p.OrderItems, _ => new List<OrderItem>())
                 .RuleFor(p => p.Inventories, _ => new List<Inventory>());
@@ -124,11 +135,22 @@ namespace MedicineShopApplication.DLL.BogusData
                 .RuleFor(i => i.QuantityInStock, f => f.Random.Int(0, 500))
                 .RuleFor(i => i.ReorderLevel, f => f.Random.Int(10, 50))
                 .RuleFor(i => i.Location, f => f.Address.City())
+
+                // Product: Pick a random product and assign both Product object and ProductId
                 .RuleFor(i => i.Product, f => f.PickRandom(products))
                 .RuleFor(i => i.ProductId, (f, i) => i.Product.ProductId)
+
+                // Prices from Product
                 .RuleFor(i => i.CostPrice, (f, i) => i.Product.CostPrice)
                 .RuleFor(i => i.SellingPrice, (f, i) => i.Product.SellingPrice)
-                .RuleFor(i => i.Status, f => f.PickRandom(new[] { "Available", "Out of Stock", "Damaged" }))
+
+                // UnitOfMeasure: Assign UnitOfMeasure and UnitOfMeasureId from the Product
+                .RuleFor(i => i.UnitOfMeasure, (f, i) => i.Product.UnitOfMeasure)
+                .RuleFor(i => i.UnitOfMeasureId, (f, i) => i.Product.UnitOfMeasure.UnitOfMeasureId)
+
+                // Status: Pick a value from the InventoryStatus enum
+                .RuleFor(i => i.Status, f => f.PickRandom<InventoryStatus>())
+
                 .RuleFor(i => i.Notes, f => f.Lorem.Sentence());
 
             return inventoryFaker.Generate(count);

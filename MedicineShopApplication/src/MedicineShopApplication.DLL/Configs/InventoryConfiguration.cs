@@ -8,14 +8,7 @@ namespace MedicineShopApplication.DLL.Configs
     {
         public void Configure(EntityTypeBuilder<Inventory> builder)
         {
-            // Setting precision and scale for decimal properties
-            builder
-                .Property(i => i.CostPrice)
-                .HasPrecision(18, 2);
 
-            builder
-                .Property(i => i.SellingPrice)
-                .HasPrecision(18, 2);
         }
     }
 }

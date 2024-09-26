@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedicineShopApplication.DLL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240918175818_AddApplicationUserInIdentity")]
-    partial class AddApplicationUserInIdentity
+    [Migration("20240926173314_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,37 @@ namespace MedicineShopApplication.DLL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Brand", b =>
+                {
+                    b.Property<int>("BrandId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BrandId"));
+
+                    b.Property<int>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("BrandId");
+
+                    b.ToTable("Brands");
+                });
 
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Cart", b =>
                 {
@@ -136,10 +167,6 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InventoryId"));
 
-                    b.Property<decimal>("CostPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -161,12 +188,11 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Property<int>("ReorderLevel")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("SellingPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UnitOfMeasureId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -177,6 +203,8 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.HasKey("InventoryId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("UnitOfMeasureId");
 
                     b.ToTable("Inventories");
                 });
@@ -364,8 +392,8 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
-                    b.Property<string>("Brand")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("BrandId")
+                        .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
@@ -402,11 +430,11 @@ namespace MedicineShopApplication.DLL.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
-                    b.Property<string>("UnitOfMeasure")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UnitOfMeasureId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -416,9 +444,44 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     b.HasKey("ProductId");
 
+                    b.HasIndex("BrandId");
+
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("UnitOfMeasureId");
+
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.UnitOfMeasure", b =>
+                {
+                    b.Property<int>("UnitOfMeasureId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UnitOfMeasureId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("UnitOfMeasureId");
+
+                    b.ToTable("UnitOfMeasures");
                 });
 
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.Users.ApplicationRole", b =>
@@ -652,6 +715,225 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationType")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ClientId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ClientSecret")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClientType")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ConsentType")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayNames")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JsonWebKeySet")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Permissions")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PostLogoutRedirectUris")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RedirectUris")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Requirements")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Settings")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId")
+                        .IsUnique()
+                        .HasFilter("[ClientId] IS NOT NULL");
+
+                    b.ToTable("OpenIddictApplications", (string)null);
+                });
+
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ApplicationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Scopes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Subject")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId", "Status", "Subject", "Type");
+
+                    b.ToTable("OpenIddictAuthorizations", (string)null);
+                });
+
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreScope<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Descriptions")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayNames")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Resources")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("[Name] IS NOT NULL");
+
+                    b.ToTable("OpenIddictScopes", (string)null);
+                });
+
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreToken<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ApplicationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AuthorizationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyToken")
+                        .IsConcurrencyToken()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Payload")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Properties")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("RedemptionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReferenceId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Subject")
+                        .HasMaxLength(400)
+                        .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("Type")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorizationId");
+
+                    b.HasIndex("ReferenceId")
+                        .IsUnique()
+                        .HasFilter("[ReferenceId] IS NOT NULL");
+
+                    b.HasIndex("ApplicationId", "Status", "Subject", "Type");
+
+                    b.ToTable("OpenIddictTokens", (string)null);
+                });
+
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Cart", b =>
                 {
                     b.HasOne("MedicineShopApplication.DLL.Models.Users.ApplicationUser", "User")
@@ -690,7 +972,15 @@ namespace MedicineShopApplication.DLL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.UnitOfMeasure", "UnitOfMeasure")
+                        .WithMany("Inventories")
+                        .HasForeignKey("UnitOfMeasureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Product");
+
+                    b.Navigation("UnitOfMeasure");
                 });
 
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Invoice", b =>
@@ -755,13 +1045,29 @@ namespace MedicineShopApplication.DLL.Migrations
 
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Product", b =>
                 {
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.Brand", "Brand")
+                        .WithMany("Products")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MedicineShopApplication.DLL.Models.General.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.UnitOfMeasure", "UnitOfMeasure")
+                        .WithMany("Products")
+                        .HasForeignKey("UnitOfMeasureId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+
                     b.Navigation("Category");
+
+                    b.Navigation("UnitOfMeasure");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -815,6 +1121,35 @@ namespace MedicineShopApplication.DLL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization<int>", b =>
+                {
+                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication<int>", "Application")
+                        .WithMany("Authorizations")
+                        .HasForeignKey("ApplicationId");
+
+                    b.Navigation("Application");
+                });
+
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreToken<int>", b =>
+                {
+                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication<int>", "Application")
+                        .WithMany("Tokens")
+                        .HasForeignKey("ApplicationId");
+
+                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization<int>", "Authorization")
+                        .WithMany("Tokens")
+                        .HasForeignKey("AuthorizationId");
+
+                    b.Navigation("Application");
+
+                    b.Navigation("Authorization");
+                });
+
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Brand", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Cart", b =>
                 {
                     b.Navigation("CartItems");
@@ -843,6 +1178,13 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Navigation("OrderItems");
                 });
 
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.UnitOfMeasure", b =>
+                {
+                    b.Navigation("Inventories");
+
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.Users.ApplicationUser", b =>
                 {
                     b.Navigation("Cart");
@@ -850,6 +1192,18 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication<int>", b =>
+                {
+                    b.Navigation("Authorizations");
+
+                    b.Navigation("Tokens");
+                });
+
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization<int>", b =>
+                {
+                    b.Navigation("Tokens");
                 });
 #pragma warning restore 612, 618
         }

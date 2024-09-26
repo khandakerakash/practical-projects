@@ -12,6 +12,8 @@ namespace MedicineShopApplication.DLL.DbContextInit
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<UnitOfMeasure> UnitOfMeasures { get; set; }
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }

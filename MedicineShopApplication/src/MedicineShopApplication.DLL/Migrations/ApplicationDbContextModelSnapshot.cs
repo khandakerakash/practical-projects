@@ -22,6 +22,37 @@ namespace MedicineShopApplication.DLL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Brand", b =>
+                {
+                    b.Property<int>("BrandId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BrandId"));
+
+                    b.Property<int>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("BrandId");
+
+                    b.ToTable("Brands");
+                });
+
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Cart", b =>
                 {
                     b.Property<int>("CartId")
@@ -133,10 +164,6 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InventoryId"));
 
-                    b.Property<decimal>("CostPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -158,12 +185,11 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Property<int>("ReorderLevel")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("SellingPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UnitOfMeasureId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -174,6 +200,8 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.HasKey("InventoryId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("UnitOfMeasureId");
 
                     b.ToTable("Inventories");
                 });
@@ -361,8 +389,8 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
 
-                    b.Property<string>("Brand")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("BrandId")
+                        .HasColumnType("int");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
@@ -399,11 +427,11 @@ namespace MedicineShopApplication.DLL.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
-                    b.Property<string>("UnitOfMeasure")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UnitOfMeasureId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -413,9 +441,44 @@ namespace MedicineShopApplication.DLL.Migrations
 
                     b.HasKey("ProductId");
 
+                    b.HasIndex("BrandId");
+
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("UnitOfMeasureId");
+
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.UnitOfMeasure", b =>
+                {
+                    b.Property<int>("UnitOfMeasureId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UnitOfMeasureId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("UnitOfMeasureId");
+
+                    b.ToTable("UnitOfMeasures");
                 });
 
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.Users.ApplicationRole", b =>
@@ -906,7 +969,15 @@ namespace MedicineShopApplication.DLL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.UnitOfMeasure", "UnitOfMeasure")
+                        .WithMany("Inventories")
+                        .HasForeignKey("UnitOfMeasureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Product");
+
+                    b.Navigation("UnitOfMeasure");
                 });
 
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Invoice", b =>
@@ -971,13 +1042,29 @@ namespace MedicineShopApplication.DLL.Migrations
 
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Product", b =>
                 {
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.Brand", "Brand")
+                        .WithMany("Products")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MedicineShopApplication.DLL.Models.General.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MedicineShopApplication.DLL.Models.General.UnitOfMeasure", "UnitOfMeasure")
+                        .WithMany("Products")
+                        .HasForeignKey("UnitOfMeasureId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+
                     b.Navigation("Category");
+
+                    b.Navigation("UnitOfMeasure");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -1055,6 +1142,11 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Navigation("Authorization");
                 });
 
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Brand", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.Cart", b =>
                 {
                     b.Navigation("CartItems");
@@ -1081,6 +1173,13 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Navigation("Inventories");
 
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("MedicineShopApplication.DLL.Models.General.UnitOfMeasure", b =>
+                {
+                    b.Navigation("Inventories");
+
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("MedicineShopApplication.DLL.Models.Users.ApplicationUser", b =>

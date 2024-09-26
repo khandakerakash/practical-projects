@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MedicineShopApplication.DLL.Migrations
 {
     /// <inheritdoc />
-    public partial class AddApplicationUserInIdentity : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -63,6 +63,24 @@ namespace MedicineShopApplication.DLL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Brands",
+                columns: table => new
+                {
+                    BrandId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Brands", x => x.BrandId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -79,6 +97,71 @@ namespace MedicineShopApplication.DLL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.CategoryId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OpenIddictApplications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ClientId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ClientSecret = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ClientType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ConcurrencyToken = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ConsentType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DisplayNames = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    JsonWebKeySet = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Permissions = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PostLogoutRedirectUris = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Properties = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RedirectUris = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Requirements = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Settings = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIddictApplications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OpenIddictScopes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ConcurrencyToken = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Descriptions = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DisplayNames = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Properties = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Resources = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIddictScopes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UnitOfMeasures",
+                columns: table => new
+                {
+                    UnitOfMeasureId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    UpdatedBy = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UnitOfMeasures", x => x.UnitOfMeasureId);
                 });
 
             migrationBuilder.CreateTable(
@@ -238,6 +321,31 @@ namespace MedicineShopApplication.DLL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OpenIddictAuthorizations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationId = table.Column<int>(type: "int", nullable: true),
+                    ConcurrencyToken = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Properties = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Scopes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Subject = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIddictAuthorizations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OpenIddictAuthorizations_OpenIddictApplications_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalTable: "OpenIddictApplications",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -247,14 +355,14 @@ namespace MedicineShopApplication.DLL.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GenericName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Brand = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CostPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     SellingPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    UnitOfMeasure = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
+                    BrandId = table.Column<int>(type: "int", nullable: false),
+                    UnitOfMeasureId = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -264,11 +372,23 @@ namespace MedicineShopApplication.DLL.Migrations
                 {
                     table.PrimaryKey("PK_Products", x => x.ProductId);
                     table.ForeignKey(
+                        name: "FK_Products_Brands_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brands",
+                        principalColumn: "BrandId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "CategoryId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Products_UnitOfMeasures_UnitOfMeasureId",
+                        column: x => x.UnitOfMeasureId,
+                        principalTable: "UnitOfMeasures",
+                        principalColumn: "UnitOfMeasureId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -332,6 +452,40 @@ namespace MedicineShopApplication.DLL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OpenIddictTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ApplicationId = table.Column<int>(type: "int", nullable: true),
+                    AuthorizationId = table.Column<int>(type: "int", nullable: true),
+                    ConcurrencyToken = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Payload = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Properties = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RedemptionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ReferenceId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Subject = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIddictTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OpenIddictTokens_OpenIddictApplications_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalTable: "OpenIddictApplications",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_OpenIddictTokens_OpenIddictAuthorizations_AuthorizationId",
+                        column: x => x.AuthorizationId,
+                        principalTable: "OpenIddictAuthorizations",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CartItems",
                 columns: table => new
                 {
@@ -370,12 +524,11 @@ namespace MedicineShopApplication.DLL.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     QuantityInStock = table.Column<int>(type: "int", nullable: false),
                     ReorderLevel = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CostPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    SellingPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProductId = table.Column<int>(type: "int", nullable: false),
+                    UnitOfMeasureId = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     UpdatedBy = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -389,6 +542,12 @@ namespace MedicineShopApplication.DLL.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Inventories_UnitOfMeasures_UnitOfMeasureId",
+                        column: x => x.UnitOfMeasureId,
+                        principalTable: "UnitOfMeasures",
+                        principalColumn: "UnitOfMeasureId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -485,10 +644,51 @@ namespace MedicineShopApplication.DLL.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Inventories_UnitOfMeasureId",
+                table: "Inventories",
+                column: "UnitOfMeasureId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Invoices_OrderId",
                 table: "Invoices",
                 column: "OrderId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIddictApplications_ClientId",
+                table: "OpenIddictApplications",
+                column: "ClientId",
+                unique: true,
+                filter: "[ClientId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIddictAuthorizations_ApplicationId_Status_Subject_Type",
+                table: "OpenIddictAuthorizations",
+                columns: new[] { "ApplicationId", "Status", "Subject", "Type" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIddictScopes_Name",
+                table: "OpenIddictScopes",
+                column: "Name",
+                unique: true,
+                filter: "[Name] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIddictTokens_ApplicationId_Status_Subject_Type",
+                table: "OpenIddictTokens",
+                columns: new[] { "ApplicationId", "Status", "Subject", "Type" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIddictTokens_AuthorizationId",
+                table: "OpenIddictTokens",
+                column: "AuthorizationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIddictTokens_ReferenceId",
+                table: "OpenIddictTokens",
+                column: "ReferenceId",
+                unique: true,
+                filter: "[ReferenceId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_OrderId",
@@ -517,9 +717,19 @@ namespace MedicineShopApplication.DLL.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Products_BrandId",
+                table: "Products",
+                column: "BrandId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
                 table: "Products",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_UnitOfMeasureId",
+                table: "Products",
+                column: "UnitOfMeasureId");
         }
 
         /// <inheritdoc />
@@ -550,6 +760,12 @@ namespace MedicineShopApplication.DLL.Migrations
                 name: "Invoices");
 
             migrationBuilder.DropTable(
+                name: "OpenIddictScopes");
+
+            migrationBuilder.DropTable(
+                name: "OpenIddictTokens");
+
+            migrationBuilder.DropTable(
                 name: "OrderItems");
 
             migrationBuilder.DropTable(
@@ -562,13 +778,25 @@ namespace MedicineShopApplication.DLL.Migrations
                 name: "Carts");
 
             migrationBuilder.DropTable(
+                name: "OpenIddictAuthorizations");
+
+            migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Orders");
 
             migrationBuilder.DropTable(
+                name: "OpenIddictApplications");
+
+            migrationBuilder.DropTable(
+                name: "Brands");
+
+            migrationBuilder.DropTable(
                 name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "UnitOfMeasures");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

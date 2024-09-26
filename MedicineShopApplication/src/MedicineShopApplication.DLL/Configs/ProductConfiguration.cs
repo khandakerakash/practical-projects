@@ -37,6 +37,20 @@ namespace MedicineShopApplication.DLL.Configs
                 .WithOne(p => p.Product)
                 .HasForeignKey(i => i.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Product - Brand (many-to-one) relationship (Cascade Delete)
+            builder
+                .HasOne(p => p.Brand)
+                .WithMany(b => b.Products)
+                .HasForeignKey(p => p.BrandId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Product - UnitOfMeasure (many-to-one) relationship
+            builder
+                .HasOne(p => p.UnitOfMeasure)
+                .WithMany(u => u.Products)
+                .HasForeignKey(p => p.UnitOfMeasureId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

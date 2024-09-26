@@ -140,10 +140,6 @@ namespace MedicineShopApplication.DLL.BogusData
                 .RuleFor(i => i.Product, f => f.PickRandom(products))
                 .RuleFor(i => i.ProductId, (f, i) => i.Product.ProductId)
 
-                // Prices from Product
-                .RuleFor(i => i.CostPrice, (f, i) => i.Product.CostPrice)
-                .RuleFor(i => i.SellingPrice, (f, i) => i.Product.SellingPrice)
-
                 // UnitOfMeasure: Assign UnitOfMeasure and UnitOfMeasureId from the Product
                 .RuleFor(i => i.UnitOfMeasure, (f, i) => i.Product.UnitOfMeasure)
                 .RuleFor(i => i.UnitOfMeasureId, (f, i) => i.Product.UnitOfMeasure.UnitOfMeasureId)

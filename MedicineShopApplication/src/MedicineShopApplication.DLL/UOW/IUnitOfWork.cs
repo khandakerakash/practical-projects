@@ -8,12 +8,14 @@ namespace MedicineShopApplication.DLL.UOW
         //IUserRepository UserRepository { get; }
         ICategoryRepository CategoryRepository { get; }
         IProductRepository ProductRepository { get; }
+        IBrandRepository BrandRepository { get; }
         ICartRepository CartRepository { get; }
         ICartItemRepository CartItemRepository { get; }
         IOrderRepository OrderRepository { get; }
         IOrderItemRepository OrderItemRepository { get; }
         IPaymentRepository PaymentRepository { get; }
         IInvoiceRepository InvoiceRepository { get; }
+        IInventoryRepository InventoryRepository { get; }
 
         Task<bool> CommitAsync();
     }
@@ -30,18 +32,22 @@ namespace MedicineShopApplication.DLL.UOW
         //private IUserRepository _userRepository;
         private ICategoryRepository _categoryRepository;
         private IProductRepository _productRepository;
+        private IBrandRepository _brandRepository;
         private ICartRepository _cartRepository;
         private ICartItemRepository _cartItemRepository;
         private IOrderRepository _orderRepository;
         private IOrderItemRepository _orderItemRepository;
         private IPaymentRepository _paymentRepository;
         private IInvoiceRepository _invoiceRepository;
+        private IInventoryRepository _inventoryRepository;
 
         //public IUserRepository UserRepository => _userRepository ??= new UserRepository(_context);
 
         public ICategoryRepository CategoryRepository => _categoryRepository ??= new CategoryRepository(_context);
 
         public IProductRepository ProductRepository => _productRepository ??= new ProductRepository(_context);
+
+        public IBrandRepository BrandRepository => _brandRepository ??= new BrandRepository(_context);
 
         public ICartRepository CartRepository => _cartRepository ??= new CartRepository(_context);
 
@@ -55,6 +61,7 @@ namespace MedicineShopApplication.DLL.UOW
 
         public IInvoiceRepository InvoiceRepository => _invoiceRepository ??= new InvoiceRepository(_context);
 
+        public IInventoryRepository InventoryRepository => _inventoryRepository ??= new InventoryRepository(_context);
 
         public async Task<bool> CommitAsync()
         {

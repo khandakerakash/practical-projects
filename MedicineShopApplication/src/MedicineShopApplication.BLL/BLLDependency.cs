@@ -5,6 +5,7 @@ using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.BLL.Dtos.Product;
 using MedicineShopApplication.BLL.Dtos.Category;
 using MedicineShopApplication.BLL.Dtos.Account;
+using MedicineShopApplication.BLL.Dtos.Brand;
 
 namespace MedicineShopApplication.BLL
 {
@@ -15,6 +16,8 @@ namespace MedicineShopApplication.BLL
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IBrandService, BrandService>();
 
 
             // Validation dependency
@@ -28,6 +31,8 @@ namespace MedicineShopApplication.BLL
             services.AddScoped<IValidator<RegisterUserRequestDto>, RegisterUserRequestDtoValidator>();
             services.AddScoped<IValidator<CreateCategoryRequestDto>, CreateCategoryRequestDtoValidator>();
             services.AddScoped<IValidator<CreateProductRequestDto>, CreateProductRequestDtoValidator>();
+            services.AddScoped<IValidator<CreateBrandRequestDto>, CreateBrandRequestDtoValidator>();
+            services.AddScoped<IValidator<UpdateBrandRequestDto>, UpdateBrandRequestDtoValidator>();
         }
     }
 }

@@ -21,14 +21,25 @@ namespace MedicineShopApplication.API.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateCategory(CreateCategoryRequestDto request)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                        ?? User.FindFirstValue(OpenIddictConstants.Claims.Subject);
+            var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
             int userId = Convert.ToInt32(userIdString);
 
             var response = await _categoryService.CreateCategory(request,  userId);
             return ToActionResult(response);
         }
 
+        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+        [HttpPost("create-range")]
+        public async Task<IActionResult> CreateCategories(List<CreateCategoryRequestDto> requests)
+        {
+            var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
+            int userId = Convert.ToInt32(userIdString);
+
+            var response = await _categoryService.CreateCategories(requests, userId);
+            return ToActionResult(response);
+        }
+
+        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
         [HttpGet("dropdown-options")]
         public async Task<IActionResult> GetCategoryDropdownOptions()
         {

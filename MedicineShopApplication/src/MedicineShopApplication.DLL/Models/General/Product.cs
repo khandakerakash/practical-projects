@@ -8,6 +8,7 @@ namespace MedicineShopApplication.DLL.Models.General
         public int ProductId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
+        public string NormalizedName { get; set; }
         public string GenericName { get; set; }
         public string Description { get; set; }
         public decimal CostPrice { get; set; }

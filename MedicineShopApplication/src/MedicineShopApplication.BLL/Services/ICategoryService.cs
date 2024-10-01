@@ -1,21 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using MedicineShopApplication.DLL.UOW;
-using MedicineShopApplication.BLL.Dtos.Common;
+using MedicineShopApplication.BLL.Utils;
+using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Validations;
+using MedicineShopApplication.BLL.Dtos.Common;
+using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Dtos.Category;
 using MedicineShopApplication.DLL.Models.General;
-using MedicineShopApplication.DLL.Models.Users;
-using Microsoft.AspNetCore.Identity;
+using Azure.Core;
+
 
 namespace MedicineShopApplication.BLL.Services
 {
     public interface ICategoryService
     {
-        Task<List<CategoryDto>> GetAllCategories();
-        Task<CategoryDto> GetCategoryById(int id);
+        Task<ApiResponse<List<CategoryResponseDto>>> GetAllCategories(PaginationRequest request);
+        Task<ApiResponse<CategoryResponseDto>> GetCategoryById(int categoryId);
         Task<ApiResponse<CreateCategoryResponseDto>> CreateCategory(CreateCategoryRequestDto request, int userId);
         Task<ApiResponse<List<CreateCategoryResponseDto>>> CreateCategories(List<CreateCategoryRequestDto> requests, int userId);
-        Task UpdateCategory(UpdateCategoryRequestDto request);
+        Task<ApiResponse<string>> UpdateCategory(UpdateCategoryRequestDto request, int categoryId, int userId);
         Task DeleteCategory(int id);
         Task<ApiResponse<List<DropdownOptionDto>>>  GetCategoryDropdownOptions();
     }
@@ -33,14 +37,100 @@ namespace MedicineShopApplication.BLL.Services
             _userManager = userManager;
         }
 
-        public Task<List<CategoryDto>> GetAllCategories()
+        public async Task<ApiResponse<List<CategoryResponseDto>>> GetAllCategories(PaginationRequest request)
         {
-            throw new NotImplementedException();
+            var skipValue = PaginationUtils.SkipValue(request.Page, request.PageSize);
+
+            var categoriesQuery = _unitOfWork.CategoryRepository.FindAllAsync();
+
+            categoriesQuery = SortCategoriesQuery(categoriesQuery, request.SortBy);
+
+            var totalCategoriesCount = await categoriesQuery.CountAsync();
+
+            var userIds = categoriesQuery.Select(x => x.CreatedBy)
+                .Union(categoriesQuery.Where(x => x.UpdatedBy.HasValue).Select(x => x.UpdatedBy.Value))
+                .Distinct();
+
+            var users = await _unitOfWork.UserRepository
+                .FindByConditionAsync(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id);
+
+
+            var categoriesList = await categoriesQuery
+                .Skip(skipValue)
+                .Take(request.PageSize)
+                .Select(x => new CategoryResponseDto
+                {
+                    CategoryDtoId = x.CategoryId,
+                    Code = x.Code,
+                    Name = x.Name,
+                    NormalizedName = x.NormalizedName,
+                    Description = x.Description,
+                    CreatedAt = x.CreatedAt,
+                    CreatedBy = x.CreatedBy,
+                    CreatedByName = users.ContainsKey(x.CreatedBy)
+                                    ? users[x.CreatedBy].GetFullName()
+                                    : "",
+
+                    UpdatedAt = x.UpdatedAt,
+                    UpdatedBy = x.UpdatedBy,
+                    UpdatedByName = x.UpdatedBy.HasValue && users.ContainsKey(x.UpdatedBy.Value)
+                                    ? users[x.UpdatedBy.Value].GetFullName()
+                                    : ""
+                    
+                })
+                .ToListAsync();
+
+
+
+            return new ApiPaginationResponse<List<CategoryResponseDto>>(categoriesList, request.Page, request.PageSize, totalCategoriesCount);
         }
 
-        public Task<CategoryDto> GetCategoryById(int id)
+        public async Task<ApiResponse<CategoryResponseDto>> GetCategoryById(int categoryId)
         {
-            throw new NotImplementedException();
+            var categoryQuery = _unitOfWork.CategoryRepository
+                .FindByConditionAsync(x => x.CategoryId == categoryId);
+
+            var category = await categoryQuery.FirstOrDefaultAsync();
+            if (category.HasNoValue())
+            {
+                return new ApiResponse<CategoryResponseDto>(null, false, "Category not found.");
+            }
+
+            var userIds = new List<int> { category.CreatedBy };
+            if (category.UpdatedBy.HasValue)
+            {
+                userIds.Add(category.UpdatedBy.Value);
+            }
+
+            var users = await _unitOfWork.UserRepository
+                .FindByConditionAsync(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id);
+
+            var categoryResponse = await _unitOfWork.CategoryRepository
+                .FindByConditionAsync(c => c.CategoryId == categoryId)
+                .Select(x => new CategoryResponseDto
+                {
+                    CategoryDtoId = x.CategoryId,
+                    Code = x.Code,
+                    Name = x.Name,
+                    NormalizedName = x.NormalizedName,
+                    Description = x.Description,
+                    CreatedAt = x.CreatedAt,
+                    CreatedBy = x.CreatedBy,
+                    CreatedByName = users.ContainsKey(x.CreatedBy)
+                                    ? users[x.CreatedBy].GetFullName()
+                                    : "",
+                    UpdatedAt = x.UpdatedAt,
+                    UpdatedBy = x.UpdatedBy,
+                    UpdatedByName = x.UpdatedBy.HasValue && users.ContainsKey(x.UpdatedBy.Value)
+                                    ? users[x.UpdatedBy.Value].GetFullName()
+                                    : ""
+
+                })
+                .FirstOrDefaultAsync();
+
+            return new ApiResponse<CategoryResponseDto>(categoryResponse, true, "Category found.");
         }
 
         public async Task<ApiResponse<CreateCategoryResponseDto>> CreateCategory(CreateCategoryRequestDto request, int userId)
@@ -60,15 +150,18 @@ namespace MedicineShopApplication.BLL.Services
 
             var generatedCode = await GenerateUniqueCategoryCodeAsync(request.Name);
 
-            if (generatedCode == null)
+            if (generatedCode.HasNoValue())
             {
                 return new ApiResponse<CreateCategoryResponseDto>(null, false, $"Generated code is null for category name: {request.Name}");
             }
+
+            var normalizedCategoryName = GeneralUtils.NormalizeName(request.Name);
 
             var newCategory = new Category()
             {
                 Code = generatedCode,
                 Name = request.Name,
+                NormalizedName = normalizedCategoryName,
                 Description = request.Description,
                 CreatedBy = userId
             };
@@ -80,15 +173,13 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<CreateCategoryResponseDto>(null, false, "An error occurred while creating the category.");
             }
 
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            var createdByName = user != null
-                ? $"{(user.Title ?? "")} {(user.FirstName ?? "")} {(user.LastName ?? "")}".Trim()
-                : "Unknown User";
+            var createdByName = await _userManager.GetFullNameByIdAsync(userId);
 
             var createdCategoryDto = new CreateCategoryResponseDto()
             {
-                Name = newCategory.Name,
                 Code = newCategory.Code,
+                Name = newCategory.Name,
+                NormalizedName= newCategory.NormalizedName,
                 Description = newCategory.Description,
                 createdByName = createdByName
             };
@@ -115,11 +206,7 @@ namespace MedicineShopApplication.BLL.Services
                 return duplicateCheckResult;
             }
 
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            var createdByName = user != null
-                ? $"{(user.Title ?? "")} {(user.FirstName ?? "")} {(user.LastName ?? "")}".Trim()
-                : "Unknown User";
-
+            var createdByName = await _userManager.GetFullNameByIdAsync(userId);
 
             var newCategories = new List<Category>();
             var responseDtos = new List<CreateCategoryResponseDto>();
@@ -128,16 +215,24 @@ namespace MedicineShopApplication.BLL.Services
             foreach (var request in requests)
             {
                 var generatedCode = requestCodeMap[request.Name];
-
                 if (generatedCode == null)
                 {
-                    return new ApiResponse<List<CreateCategoryResponseDto>>(null, false, $"Generated code is null for category name: {request.Name}");
+                    new ApiResponse<List<CreateCategoryResponseDto>>(null, false, $"Generated code is null for category name: {request.Name}");
+                    continue;
+                }
+
+                var normalizedCategoryName = GeneralUtils.NormalizeName(request.Name);
+                if (normalizedCategoryName.HasNoValue())
+                {
+                    new ApiResponse<List<CreateCategoryResponseDto>>(null, false, "An error occurred while generating the categories normalized name.");
+                    continue;
                 }
 
                 var newCategory = new Category
                 {
                     Code = generatedCode,
                     Name = request.Name,
+                    NormalizedName = normalizedCategoryName,
                     Description = request.Description,
                     CreatedBy = userId
                 };
@@ -148,6 +243,7 @@ namespace MedicineShopApplication.BLL.Services
                 {
                     Code = newCategory.Code,
                     Name = newCategory.Name,
+                    NormalizedName = newCategory.NormalizedName,
                     Description = newCategory.Description,
                     createdByName = createdByName
                 });
@@ -163,7 +259,147 @@ namespace MedicineShopApplication.BLL.Services
             return new ApiResponse<List<CreateCategoryResponseDto>>(responseDtos, true, "Categories created successfully.");
         }
 
-        #region Helper Methods for Create Category
+        public async Task<ApiResponse<string>> UpdateCategory(UpdateCategoryRequestDto request, int categoryId, int userId)
+        {
+            var validator = new UpdateCategoryRequestDtoValidator();
+            var validationResult = await validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                return new ApiResponse<string>(validationResult.Errors);
+            }
+
+            var normalizedCategoryName = GeneralUtils.NormalizeName(request.Name);
+            var categories = await _unitOfWork.CategoryRepository
+                .FindByConditionAsync(x => x.CategoryId == categoryId || x.NormalizedName == normalizedCategoryName)
+                .ToListAsync();
+
+            var updatingCategory = categories.FirstOrDefault(x => x.CategoryId == categoryId);
+            if (updatingCategory.HasNoValue())
+            {
+                return new ApiResponse<string>(null, false, "Category not found.");
+            }
+
+            if (categories.Any(x => x.CategoryId != categoryId))
+            {
+                return new ApiResponse<string>(null, false, "A category with this name already exists.");
+            }
+
+            if (updatingCategory.NormalizedName != normalizedCategoryName)
+            {
+                var generatedCode = await GenerateUniqueCategoryCodeAsync(request.Name);
+                if (generatedCode.HasNoValue())
+                {
+                    return new ApiResponse<string>(null, false, $"Generated code is null for category name: {request.Name}");
+                }
+                updatingCategory.Code = generatedCode;
+            }
+
+            updatingCategory.Name = request.Name;
+            updatingCategory.NormalizedName = normalizedCategoryName;
+            updatingCategory.Description = request.Description;
+
+            updatingCategory.UpdatedBy = userId;
+            updatingCategory.UpdatedAt = DateTime.UtcNow;
+
+            _unitOfWork.CategoryRepository.Update(updatingCategory);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<string>(null, false, "An error occurred while updating the category.");
+            }
+
+            return new ApiResponse<string>(null, true, "Category updated successfully.");
+        }
+
+        public Task DeleteCategory(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ApiResponse<List<DropdownOptionDto>>> GetCategoryDropdownOptions()
+        {
+            var categories = await _unitOfWork.CategoryRepository
+                .FindAllAsync()
+                .Select(c => new DropdownOptionDto
+                {
+                    Id = c.CategoryId,
+                    IdString = c.Code,
+                    Value = c.Name,
+                }).ToListAsync();
+
+            if(categories == null || !categories.Any())
+            {
+                return new ApiResponse<List<DropdownOptionDto>>(null, false, "No categories were found.");
+            }
+
+            return new ApiResponse<List<DropdownOptionDto>>(categories, true, "Category dropdown options retrieved successfully.");
+        }
+
+        #region Helper Methods for Category
+        /// <summary>
+        /// Sorts the provided <see cref="IQueryable{Category}"/> based on the specified sorting criteria.
+        /// The sorting criteria are provided as a string in the format "property direction", 
+        /// where "direction" can be "asc" for ascending or "desc" for descending. 
+        /// Multiple criteria can be specified, separated by commas, e.g., "name desc, code asc".
+        /// If no valid criteria are specified, the default sorting is by CategoryId in descending order.
+        /// </summary>
+        /// <param name="categoriesQuery">The queryable collection of <see cref="Category"/> to be sorted.</param>
+        /// <param name="sortBy">A string containing sorting criteria, e.g., "name desc, code asc".</param>
+        /// <returns>An <see cref="IQueryable{Category}"/> sorted based on the specified criteria.</returns>
+        private IQueryable<Category> SortCategoriesQuery(IQueryable<Category> categoriesQuery, string sortBy)
+        {
+            if (string.IsNullOrWhiteSpace(sortBy))
+            {
+                // Default sorting
+                return categoriesQuery.OrderByDescending(x => x.CategoryId);
+            }
+
+            // Split multiple sort criteria (e.g., "name desc, code asc")
+            var sortParts = sortBy.Split(',');
+
+            foreach (var sortPart in sortParts)
+            {
+                var trimmedPart = sortPart.Trim();
+                var orderDescending = trimmedPart.EndsWith(" desc", StringComparison.OrdinalIgnoreCase);
+                var propertyName = orderDescending
+                    ? trimmedPart[0..^5]
+                    : trimmedPart.EndsWith(" asc", StringComparison.OrdinalIgnoreCase)
+                        ? trimmedPart[0..^4]
+                        : trimmedPart;
+
+
+                if (propertyName.ToLower() == "id")
+                {
+                    categoriesQuery = orderDescending
+                        ? categoriesQuery.OrderByDescending(x => x.CategoryId)
+                        : categoriesQuery.OrderBy(x => x.CategoryId);
+                }
+
+                if (propertyName.ToLower() == "code")
+                {
+                    categoriesQuery = orderDescending
+                        ? categoriesQuery.OrderByDescending(x => x.Code)
+                        : categoriesQuery.OrderBy(x => x.Code);
+                }
+
+                if (propertyName.ToLower() == "name")
+                {
+                    categoriesQuery = orderDescending
+                        ? categoriesQuery.OrderByDescending(x => x.Name)
+                        : categoriesQuery.OrderBy(x => x.Name);
+                }
+
+                if (propertyName.ToLower() == "description")
+                {
+                    categoriesQuery = orderDescending
+                        ? categoriesQuery.OrderByDescending(x => x.Description)
+                        : categoriesQuery.OrderBy(x => x.Description);
+                }
+            }
+
+            return categoriesQuery; ;
+        }
 
         /// <summary>
         /// Checks if a category with the given name already exists.
@@ -172,8 +408,9 @@ namespace MedicineShopApplication.BLL.Services
         /// <returns>Returns true if the category already exists, otherwise false.</returns>
         private async Task<bool> CategoryExistsByNameAsync(string categoryName)
         {
+            var normalizedName = GeneralUtils.NormalizeName(categoryName);
             return await _unitOfWork.CategoryRepository
-                .FindByConditionAsync(x => x.Name.ToLower() == categoryName.ToLower())
+                .FindByConditionAsync(x => x.NormalizedName == normalizedName)
                 .AnyAsync();
         }
 
@@ -186,10 +423,10 @@ namespace MedicineShopApplication.BLL.Services
         /// <returns>An ApiResponse containing a success message if no duplicates are found, or an error message if duplicates exist.</returns>
         private async Task<ApiResponse<List<CreateCategoryResponseDto>>> CheckForDuplicateCategoriesAsync(List<CreateCategoryRequestDto> requests)
         {
-            var requestNames = requests.Select(request => request.Name.ToLower()).ToHashSet();
+            var requestNames = requests.Select(request => GeneralUtils.NormalizeName(request.Name)).ToHashSet();
 
             var existingCategories = await _unitOfWork.CategoryRepository
-                .FindByConditionAsync(x => requestNames.Contains(x.Name.ToLower()))
+                .FindByConditionAsync(x => requestNames.Contains(x.NormalizedName))
                 .ToListAsync();
 
             if (existingCategories.Any())
@@ -198,7 +435,7 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<List<CreateCategoryResponseDto>>(
                     null,
                     false,
-                    $"Duplicate brands found: {string.Join(", ", duplicateNames)}"
+                    $"Duplicate categories found: {string.Join(", ", duplicateNames)}"
                 );
             }
 
@@ -347,36 +584,6 @@ namespace MedicineShopApplication.BLL.Services
 
             return prefix;
         }
-
         #endregion
-
-        public Task UpdateCategory(UpdateCategoryRequestDto request)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteCategory(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<ApiResponse<List<DropdownOptionDto>>> GetCategoryDropdownOptions()
-        {
-            var categories = await _unitOfWork.CategoryRepository
-                .FindAllAsync()
-                .Select(c => new DropdownOptionDto
-                {
-                    Id = c.CategoryId,
-                    IdString = c.Code,
-                    Value = c.Name,
-                }).ToListAsync();
-
-            if(categories == null || !categories.Any())
-            {
-                return new ApiResponse<List<DropdownOptionDto>>(null, false, "No categories were found.");
-            }
-
-            return new ApiResponse<List<DropdownOptionDto>>(categories, true, "Category dropdown options retrieved successfully.");
-        }
     }
 }

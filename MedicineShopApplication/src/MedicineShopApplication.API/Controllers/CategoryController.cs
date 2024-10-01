@@ -1,14 +1,15 @@
 ﻿using MedicineShopApplication.BLL.Dtos.Category;
 using MedicineShopApplication.BLL.Services;
-using Microsoft.AspNetCore.Authorization;
-using OpenIddict.Validation.AspNetCore;
+using MedicineShopApplication.API.Controllers.BasicControllers;
+using MedicineShopApplication.BLL.Dtos.Common;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using OpenIddict.Abstractions;
 
+
 namespace MedicineShopApplication.API.Controllers
 {
-    public class CategoryController : ApiBaseController
+    public class CategoryController : ApiAuthorizeBaseController
     {
         private readonly ICategoryService _categoryService;
 
@@ -17,7 +18,20 @@ namespace MedicineShopApplication.API.Controllers
             _categoryService = categoryService;
         }
 
-        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+        [HttpGet]
+        public async Task<IActionResult> GetAllCategories([FromQuery] PaginationRequest request)
+        {
+            var response = await _categoryService.GetAllCategories(request);
+            return ToActionResult(response);
+        }
+
+        [HttpGet("{categoryId}")]
+        public async Task<IActionResult> GetCategoryById(int categoryId)
+        {
+            var response = await _categoryService.GetCategoryById(categoryId);
+            return ToActionResult(response);
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> CreateCategory(CreateCategoryRequestDto request)
         {
@@ -28,7 +42,6 @@ namespace MedicineShopApplication.API.Controllers
             return ToActionResult(response);
         }
 
-        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
         [HttpPost("create-range")]
         public async Task<IActionResult> CreateCategories(List<CreateCategoryRequestDto> requests)
         {
@@ -39,7 +52,16 @@ namespace MedicineShopApplication.API.Controllers
             return ToActionResult(response);
         }
 
-        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+        [HttpPut("update/{categoryId}")]
+        public async Task<IActionResult> UpdateCategory(UpdateCategoryRequestDto request, int categoryId)
+        {
+            var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
+            int userId = Convert.ToInt32(userIdString);
+
+            var response = await _categoryService.UpdateCategory(request, categoryId, userId);
+            return ToActionResult(response);
+        }
+
         [HttpGet("dropdown-options")]
         public async Task<IActionResult> GetCategoryDropdownOptions()
         {

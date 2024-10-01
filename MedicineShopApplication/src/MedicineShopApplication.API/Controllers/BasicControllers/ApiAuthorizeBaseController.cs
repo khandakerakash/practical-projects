@@ -1,11 +1,14 @@
 ﻿using MedicineShopApplication.BLL.Dtos.Common;
+using Microsoft.AspNetCore.Authorization;
+using OpenIddict.Validation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MedicineShopApplication.API.Controllers
+namespace MedicineShopApplication.API.Controllers.BasicControllers
 {
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
-    public class ApiBaseController : ControllerBase
+    public class ApiAuthorizeBaseController : ControllerBase
     {
         public IActionResult ToActionResult<T>(ApiResponse<T> result)
         {

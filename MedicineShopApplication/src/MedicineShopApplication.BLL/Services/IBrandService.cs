@@ -7,6 +7,7 @@ using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MedicineShopApplication.BLL.Extension;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -63,10 +64,7 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<CreateBrandResponseDto>(null, false, "An error occurred while creating the brand.");
             }
 
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            var createdByName = user != null
-                ? $"{(user.Title ?? "")} {(user.FirstName ?? "")} {(user.LastName ?? "")}".Trim()
-                : "Unknown User";
+            var createdByName = await _userManager.GetFullNameByIdAsync(userId);
 
             var createdBrandDto = new CreateBrandResponseDto()
             {
@@ -97,10 +95,7 @@ namespace MedicineShopApplication.BLL.Services
                 return duplicateCheckResult;
             }
 
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-            var createdByName = user != null
-                ? $"{(user.Title ?? "")} {(user.FirstName ?? "")} {(user.LastName ?? "")}".Trim()
-                : "Unknown User";
+            var createdByName = await _userManager.GetFullNameByIdAsync(userId);
 
             var newBrands = new List<Brand>();
             var createdBrandDtos = new List<CreateBrandResponseDto>();
@@ -138,15 +133,6 @@ namespace MedicineShopApplication.BLL.Services
 
         public async Task<ApiResponse<string>> UpdateBrand(UpdateBrandRequestDto request, int brandId, int userId)
         {
-            var brand = await _unitOfWork.BrandRepository
-                .FindByConditionAsync(x => x.BrandId == brandId)
-                .FirstOrDefaultAsync();
-
-            if (brand.HasNoValue())
-            {
-                return new ApiResponse<string>(null, false, "Brand not found.");
-            }
-
             var validator = new UpdateBrandRequestDtoValidator();
             var validationResult = await validator.ValidateAsync(request);
 
@@ -156,22 +142,29 @@ namespace MedicineShopApplication.BLL.Services
             }
 
             var normalizedBrandName = GeneralUtils.NormalizeName(request.Name);
-            var existingBrandWithSameName = await _unitOfWork.BrandRepository
-                .FindByConditionAsync(x => x.NormalizedName == normalizedBrandName && x.BrandId != brandId)
-                .AnyAsync();
+            var brands = await _unitOfWork.BrandRepository
+                .FindByConditionAsync(x => x.BrandId == brandId || x.NormalizedName == normalizedBrandName)
+                .ToListAsync();
 
-            if (existingBrandWithSameName)
+            var updatingBrand = brands.FirstOrDefault(x => x.BrandId == brandId);
+
+            if (updatingBrand.HasNoValue())
+            {
+                return new ApiResponse<string>(null, false, "Brand not found.");
+            }
+
+            if (brands.Any(x => x.BrandId != brandId))
             {
                 return new ApiResponse<string>(null, false, "A brand with this name already exists.");
             }
 
-            brand.Code = request.Code;
-            brand.Name = request.Name;
-            brand.NormalizedName = normalizedBrandName;
-            brand.UpdatedBy = userId;
-            brand.UpdatedAt = DateTime.UtcNow;
+            updatingBrand.Code = request.Code;
+            updatingBrand.Name = request.Name;
+            updatingBrand.NormalizedName = normalizedBrandName;
+            updatingBrand.UpdatedBy = userId;
+            updatingBrand.UpdatedAt = DateTime.UtcNow;
 
-            _unitOfWork.BrandRepository.Update(brand);
+            _unitOfWork.BrandRepository.Update(updatingBrand);
 
             if (!await _unitOfWork.CommitAsync())
             {
@@ -199,7 +192,6 @@ namespace MedicineShopApplication.BLL.Services
 
             return new ApiResponse<List<DropdownOptionDto>>(brands, true, "Brand dropdown options retrieved successfully.");
         }
-
         
         #region Brand Helper Methods START
         /// <summary>
@@ -241,7 +233,6 @@ namespace MedicineShopApplication.BLL.Services
                 );
             }
 
-            // If no duplicates are found, return a success response
             return new ApiResponse<List<CreateBrandResponseDto>>(null, true, "No duplicate brand found.");
         }
 

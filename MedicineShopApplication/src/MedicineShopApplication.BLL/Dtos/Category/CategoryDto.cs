@@ -10,6 +10,6 @@ namespace MedicineShopApplication.BLL.Dtos.Category
         public string Name { get; set; }
         public string NormalizedName { get; set; }
         public string Description { get; set; }
-        public ICollection<ProductDto> ProductDtos { get; set; } = new List<ProductDto>(); 
+        public ICollection<ProductDto> ProductDtos { get; set; } = new List<ProductDto>();
     }
 }

@@ -4,7 +4,7 @@ using MedicineShopApplication.DLL.Models.Interfaces;
 
 namespace MedicineShopApplication.DLL.Models.Users
 {
-    public class ApplicationUser : IdentityUser<int>, IAuditableEntity
+    public class ApplicationUser : IdentityUser<int>, IAuditableEntity, ISoftDeletable
     {
         public string Title { get; set; }
         public string FirstName { get; set; }
@@ -21,5 +21,8 @@ namespace MedicineShopApplication.DLL.Models.Users
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int? UpdatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
+
+        public bool IsDeleted { get; set; }
+        public DateTime? DeletedAt { get; set; }
     }
 }

@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
 using System.Security.Claims;
 using MedicineShopApplication.API.Controllers.BasicControllers;
+using MedicineShopApplication.BLL.Dtos.Common;
 
 namespace MedicineShopApplication.API.Controllers
 {
-    public class BrandController : ApiBaseController
+    public class BrandController : ApiAuthorizeBaseController
     {
         private readonly IBrandService _brandService;
 
@@ -18,7 +19,20 @@ namespace MedicineShopApplication.API.Controllers
             _brandService = brandService;
         }
 
-        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+        [HttpGet]
+        public async Task<IActionResult> GetAllBrands([FromQuery] PaginationRequest request)
+        {
+            var response = await _brandService.GetAllBrands(request);
+            return ToActionResult(response);
+        }
+
+        [HttpGet("{brandId}")]
+        public async Task<IActionResult> GetBrandById(int brandId)
+        {
+            var response = await _brandService.GetBrandById(brandId);
+            return ToActionResult(response);
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> CreateBrand(CreateBrandRequestDto request)
         {
@@ -29,7 +43,6 @@ namespace MedicineShopApplication.API.Controllers
             return ToActionResult(response);
         }
 
-        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
         [HttpPost("create-range")]
         public async Task<IActionResult> CreateBrands(List<CreateBrandRequestDto> requests)
         {
@@ -40,7 +53,6 @@ namespace MedicineShopApplication.API.Controllers
             return ToActionResult(response);
         }
 
-        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
         [HttpPut("update/{brandId}")]
         public async Task<IActionResult> UpdateBrand(UpdateBrandRequestDto request, int brandId)
         {
@@ -51,7 +63,26 @@ namespace MedicineShopApplication.API.Controllers
             return ToActionResult(response);
         }
 
-        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+        [HttpPost("delete/{brandId}")]
+        public async Task<IActionResult> DeleteBrand(int brandId)
+        {
+            var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
+            int userId = Convert.ToInt32(userIdString);
+
+            var response = await _brandService.DeleteBrand(brandId, userId);
+            return ToActionResult(response);
+        }
+
+        [HttpPost("undo/{brandId}")]
+        public async Task<IActionResult> UndoDeletedCategory(int brandId)
+        {
+            var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
+            int userId = Convert.ToInt32(userIdString);
+
+            var response = await _brandService.UndoDeletedBrand(brandId, userId);
+            return ToActionResult(response);
+        }
+
         [HttpGet("dropdown-options")]
         public async Task<IActionResult> GetBrandDropdownOptions()
         {

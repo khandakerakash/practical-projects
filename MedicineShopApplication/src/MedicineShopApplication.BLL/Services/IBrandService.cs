@@ -8,14 +8,19 @@ using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MedicineShopApplication.BLL.Dtos.Category;
 
 namespace MedicineShopApplication.BLL.Services
 {
     public interface IBrandService
     {
+        Task<ApiResponse<List<BrandResponseDto>>> GetAllBrands(PaginationRequest request);
+        Task<ApiResponse<BrandResponseDto>> GetBrandById(int brandId);
         Task<ApiResponse<CreateBrandResponseDto>> CreateBrand(CreateBrandRequestDto request, int userId);
         Task<ApiResponse<List<CreateBrandResponseDto>>> CreateBrands(List<CreateBrandRequestDto> requests, int userId);
         Task<ApiResponse<string>> UpdateBrand(UpdateBrandRequestDto request, int brandId, int userId);
+        Task<ApiResponse<string>> DeleteBrand(int brandId, int userId);
+        Task<ApiResponse<string>> UndoDeletedBrand(int brandId, int userId);
         Task<ApiResponse<List<DropdownOptionDto>>> GetBrandDropdownOptions();
     }
 
@@ -30,6 +35,97 @@ namespace MedicineShopApplication.BLL.Services
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
+        }
+
+        public async Task<ApiResponse<List<BrandResponseDto>>> GetAllBrands(PaginationRequest request)
+        {
+            var skipValue = PaginationUtils.SkipValue(request.Page, request.PageSize);
+
+            var brandsQuery = _unitOfWork.BrandRepository.FindAllAsync();
+
+            brandsQuery = SortBrandsQuery(brandsQuery, request.SortBy);
+
+            var totalBrandsCount = await brandsQuery.CountAsync();
+
+            var userIds = brandsQuery.Select(x => x.CreatedBy)
+                .Union(brandsQuery.Where(x => x.UpdatedBy.HasValue).Select(x => x.UpdatedBy.Value))
+                .Distinct();
+
+            var users = await _unitOfWork.UserRepository
+                .FindByConditionAsync(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id);
+
+            var brandsList = await brandsQuery
+                .Skip(skipValue)
+                .Take(request.PageSize)
+                .Select(x => new BrandResponseDto
+                {
+                    BrandDtoId = x.BrandId,
+                    Code = x.Code,
+                    Name = x.Name,
+                    NormalizedName = x.NormalizedName,
+                    CreatedAt = x.CreatedAt,
+                    CreatedBy = x.CreatedBy,
+                    CreatedByName = users.ContainsKey(x.CreatedBy)
+                                    ? users[x.CreatedBy].GetFullName()
+                                    : "",
+
+                    UpdatedAt = x.UpdatedAt,
+                    UpdatedBy = x.UpdatedBy,
+                    UpdatedByName = x.UpdatedBy.HasValue && users.ContainsKey(x.UpdatedBy.Value)
+                                    ? users[x.UpdatedBy.Value].GetFullName()
+                                    : ""
+
+                })
+                .ToListAsync();
+
+            return new ApiPaginationResponse<List<BrandResponseDto>>(brandsList, request.Page, request.PageSize, totalBrandsCount);
+        }
+
+        public async Task<ApiResponse<BrandResponseDto>> GetBrandById(int brandId)
+        {
+            var brandQuery = _unitOfWork.BrandRepository
+                .FindByConditionAsync(x => x.BrandId == brandId);
+
+            var brand = await brandQuery.FirstOrDefaultAsync();
+            if (brand.HasNoValue())
+            {
+                return new ApiResponse<BrandResponseDto>(null, false, "Brand not found.");
+            }
+
+            var userIds = new List<int> { brand.CreatedBy };
+            if (brand.UpdatedBy.HasValue)
+            {
+                userIds.Add(brand.UpdatedBy.Value);
+            }
+
+            var users = await _unitOfWork.UserRepository
+                .FindByConditionAsync(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id);
+
+            var brandResponse = await _unitOfWork.BrandRepository
+                .FindByConditionAsync(c => c.BrandId == brandId)
+                .Select(x => new BrandResponseDto
+                {
+                    BrandDtoId = x.BrandId,
+                    Code = x.Code,
+                    Name = x.Name,
+                    NormalizedName = x.NormalizedName,
+                    CreatedAt = x.CreatedAt,
+                    CreatedBy = x.CreatedBy,
+                    CreatedByName = users.ContainsKey(x.CreatedBy)
+                                    ? users[x.CreatedBy].GetFullName()
+                                    : "",
+                    UpdatedAt = x.UpdatedAt,
+                    UpdatedBy = x.UpdatedBy,
+                    UpdatedByName = x.UpdatedBy.HasValue && users.ContainsKey(x.UpdatedBy.Value)
+                                    ? users[x.UpdatedBy.Value].GetFullName()
+                                    : ""
+
+                })
+                .FirstOrDefaultAsync();
+
+            return new ApiResponse<BrandResponseDto>(brandResponse, true, "Brand found.");
         }
 
         public async Task<ApiResponse<CreateBrandResponseDto>> CreateBrand(CreateBrandRequestDto request, int userId)
@@ -192,8 +288,111 @@ namespace MedicineShopApplication.BLL.Services
 
             return new ApiResponse<List<DropdownOptionDto>>(brands, true, "Brand dropdown options retrieved successfully.");
         }
-        
+
+        public async Task<ApiResponse<string>> DeleteBrand(int brandId, int userId)
+        {
+            var brand = await _unitOfWork.BrandRepository
+                .FindByConditionWithTrackingAsync(x => x.BrandId == brandId)
+                .FirstOrDefaultAsync();
+
+            if (brand.HasNoValue())
+            {
+                return new ApiResponse<string>(null, false, "Brand not found.");
+            }
+
+            brand.UpdatedBy = userId;
+            brand.UpdatedAt = DateTime.Now;
+            _unitOfWork.BrandRepository.SoftDelete(brand);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<string>(null, false, "An error occurred while deleting the brand.");
+            }
+
+            return new ApiResponse<string>(null, true, "Brand deleted successfully.");
+        }
+
+        public async Task<ApiResponse<string>> UndoDeletedBrand(int brandId, int userId)
+        {
+            var brand = await _unitOfWork.BrandRepository
+                .FindByConditionWithTrackingAsync(x => x.BrandId == brandId && x.IsDeleted, includeDeleted: true)
+                .FirstOrDefaultAsync();
+
+            if (brand.HasNoValue())
+            {
+                return new ApiResponse<string>(null, false, "Brand not found.");
+            }
+
+            brand.UpdatedBy = userId;
+            brand.UpdatedAt = DateTime.Now;
+            _unitOfWork.BrandRepository.UndoSoftDelete(brand);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<string>(null, false, "An error occurred while undoing the brand.");
+            }
+
+            return new ApiResponse<string>(null, true, "Brand undoed successfully.");
+        }
+
         #region Brand Helper Methods START
+        /// <summary>
+        /// Sorts the provided <see cref="IQueryable{Brand}"/> based on the specified sorting criteria.
+        /// The sorting criteria are provided as a string in the format "property direction", 
+        /// where "direction" can be "asc" for ascending or "desc" for descending. 
+        /// Multiple criteria can be specified, separated by commas, e.g., "name desc, code asc".
+        /// If no valid criteria are specified, the default sorting is by BrandId in descending order.
+        /// </summary>
+        /// <param name="brandsQuery">The queryable collection of <see cref="Brand"/> to be sorted.</param>
+        /// <param name="sortBy">A string containing sorting criteria, e.g., "name desc, code asc".</param>
+        /// <returns>An <see cref="IQueryable{Category}"/> sorted based on the specified criteria.</returns>
+        private IQueryable<Brand> SortBrandsQuery(IQueryable<Brand> brandsQuery, string sortBy)
+        {
+            if (string.IsNullOrWhiteSpace(sortBy))
+            {
+                // Default sorting
+                return brandsQuery.OrderByDescending(x => x.BrandId);
+            }
+
+            // Split multiple sort criteria (e.g., "name desc, code asc")
+            var sortParts = sortBy.Split(',');
+
+            foreach (var sortPart in sortParts)
+            {
+                var trimmedPart = sortPart.Trim();
+                var orderDescending = trimmedPart.EndsWith(" desc", StringComparison.OrdinalIgnoreCase);
+                var propertyName = orderDescending
+                    ? trimmedPart[0..^5]
+                    : trimmedPart.EndsWith(" asc", StringComparison.OrdinalIgnoreCase)
+                        ? trimmedPart[0..^4]
+                        : trimmedPart;
+
+
+                if (propertyName.ToLower() == "id")
+                {
+                    brandsQuery = orderDescending
+                        ? brandsQuery.OrderByDescending(x => x.BrandId)
+                        : brandsQuery.OrderBy(x => x.BrandId);
+                }
+
+                if (propertyName.ToLower() == "code")
+                {
+                    brandsQuery = orderDescending
+                        ? brandsQuery.OrderByDescending(x => x.Code)
+                        : brandsQuery.OrderBy(x => x.Code);
+                }
+
+                if (propertyName.ToLower() == "name")
+                {
+                    brandsQuery = orderDescending
+                        ? brandsQuery.OrderByDescending(x => x.Name)
+                        : brandsQuery.OrderBy(x => x.Name);
+                }
+            }
+
+            return brandsQuery; ;
+        }
+
         /// <summary>
         /// Checks if a brand with the specified name already exists in the repository by normalizing the name for consistent comparison.
         /// </summary>
@@ -235,7 +434,6 @@ namespace MedicineShopApplication.BLL.Services
 
             return new ApiResponse<List<CreateBrandResponseDto>>(null, true, "No duplicate brand found.");
         }
-
         #endregion
     }
 }

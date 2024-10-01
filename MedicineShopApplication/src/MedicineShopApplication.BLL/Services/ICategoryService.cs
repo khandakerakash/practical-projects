@@ -355,7 +355,7 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<string>(null, false, "An error occurred while undoing the category.");
             }
 
-            return new ApiResponse<string>(null, false, "Category deleted successfully.");
+            return new ApiResponse<string>(null, true, "Category undoed successfully.");
         }
 
         public async Task<ApiResponse<List<DropdownOptionDto>>> GetCategoryDropdownOptions()

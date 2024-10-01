@@ -8,7 +8,6 @@ using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Dtos.Category;
 using MedicineShopApplication.DLL.Models.General;
-using Azure.Core;
 
 
 namespace MedicineShopApplication.BLL.Services
@@ -20,7 +19,8 @@ namespace MedicineShopApplication.BLL.Services
         Task<ApiResponse<CreateCategoryResponseDto>> CreateCategory(CreateCategoryRequestDto request, int userId);
         Task<ApiResponse<List<CreateCategoryResponseDto>>> CreateCategories(List<CreateCategoryRequestDto> requests, int userId);
         Task<ApiResponse<string>> UpdateCategory(UpdateCategoryRequestDto request, int categoryId, int userId);
-        Task DeleteCategory(int id);
+        Task<ApiResponse<string>> DeleteCategory(int categoryId);
+        Task<ApiResponse<string>> UndoDeletedCategory(int categoryId);
         Task<ApiResponse<List<DropdownOptionDto>>>  GetCategoryDropdownOptions();
     }
 
@@ -271,7 +271,7 @@ namespace MedicineShopApplication.BLL.Services
 
             var normalizedCategoryName = GeneralUtils.NormalizeName(request.Name);
             var categories = await _unitOfWork.CategoryRepository
-                .FindByConditionAsync(x => x.CategoryId == categoryId || x.NormalizedName == normalizedCategoryName)
+                .FindByConditionWithTrackingAsync(x => x.CategoryId == categoryId || x.NormalizedName == normalizedCategoryName)
                 .ToListAsync();
 
             var updatingCategory = categories.FirstOrDefault(x => x.CategoryId == categoryId);
@@ -312,9 +312,47 @@ namespace MedicineShopApplication.BLL.Services
             return new ApiResponse<string>(null, true, "Category updated successfully.");
         }
 
-        public Task DeleteCategory(int id)
+        public async Task<ApiResponse<string>> DeleteCategory(int categoryId)
         {
-            throw new NotImplementedException();
+            var category = await _unitOfWork.CategoryRepository
+                .FindByConditionWithTrackingAsync(x => x.CategoryId == categoryId)
+                .FirstOrDefaultAsync();
+
+            if (category.HasNoValue())
+            {
+                return new ApiResponse<string>(null, false, "Category not found.");
+            }
+
+            //_unitOfWork.CategoryRepository.SoftDelete(category);
+            _unitOfWork.CategoryRepository.Delete(category);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<string>(null, false, "An error occurred while deleting the category.");
+            }
+
+            return new ApiResponse<string>(null, false, "Category deleted successfully.");
+        }
+
+        public async Task<ApiResponse<string>> UndoDeletedCategory(int categoryId)
+        {
+            var category = await _unitOfWork.CategoryRepository
+                .FindByConditionWithTrackingAsync(x => x.CategoryId == categoryId && x.IsDeleted)
+                .FirstOrDefaultAsync();
+
+            if (category.HasNoValue())
+            {
+                return new ApiResponse<string>(null, false, "Category not found.");
+            }
+
+            _unitOfWork.CategoryRepository.UndoSoftDelete(category);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<string>(null, false, "An error occurred while undoing the category.");
+            }
+
+            return new ApiResponse<string>(null, false, "Category deleted successfully.");
         }
 
         public async Task<ApiResponse<List<DropdownOptionDto>>> GetCategoryDropdownOptions()
@@ -410,7 +448,7 @@ namespace MedicineShopApplication.BLL.Services
         {
             var normalizedName = GeneralUtils.NormalizeName(categoryName);
             return await _unitOfWork.CategoryRepository
-                .FindByConditionAsync(x => x.NormalizedName == normalizedName)
+                .FindByConditionWithTrackingAsync(x => x.NormalizedName == normalizedName)
                 .AnyAsync();
         }
 
@@ -426,7 +464,7 @@ namespace MedicineShopApplication.BLL.Services
             var requestNames = requests.Select(request => GeneralUtils.NormalizeName(request.Name)).ToHashSet();
 
             var existingCategories = await _unitOfWork.CategoryRepository
-                .FindByConditionAsync(x => requestNames.Contains(x.NormalizedName))
+                .FindByConditionWithTrackingAsync(x => requestNames.Contains(x.NormalizedName))
                 .ToListAsync();
 
             if (existingCategories.Any())
@@ -458,7 +496,7 @@ namespace MedicineShopApplication.BLL.Services
             string prefix = GeneratePrefixFromCategoryName(categoryName);
 
             var latestCategory = await _unitOfWork.CategoryRepository
-                .FindByConditionAsync(c => c.Code.StartsWith(prefix))
+                .FindByConditionWithTrackingAsync(c => c.Code.StartsWith(prefix))
                 .OrderByDescending(c => c.Code)
                 .FirstOrDefaultAsync();
 
@@ -502,7 +540,7 @@ namespace MedicineShopApplication.BLL.Services
                 if (!prefixGroups.ContainsKey(prefix))
                 {
                     var latestCategory = await _unitOfWork.CategoryRepository
-                        .FindByConditionAsync(c => c.Code.StartsWith(prefix))
+                        .FindByConditionWithTrackingAsync(c => c.Code.StartsWith(prefix))
                         .OrderByDescending(c => c.Code)
                         .FirstOrDefaultAsync();
 

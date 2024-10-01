@@ -1,4 +1,6 @@
-﻿using MedicineShopApplication.DLL.DbContextInit;
+﻿
+using MedicineShopApplication.DLL.Models.Interfaces;
+using MedicineShopApplication.DLL.DbContextInit;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -8,12 +10,15 @@ namespace MedicineShopApplication.DLL.Repositories
     {
         IQueryable<T> FindAllAsync(params Expression<Func<T, object>>[] includes);
         IQueryable<T> FindByConditionAsync(Expression<Func<T, bool>> condition);
+        IQueryable<T> FindByConditionWithTrackingAsync(Expression<Func<T, bool>> condition);
         Task CreateAsync(T entity);
         Task CreateRangeAsync(List<T> entities);
         void Update(T entity);
         void UpdateRange(List<T> entities);
         void Delete(T entity);
         void DeleteRange(List<T> entities);
+        void SoftDelete(T entity);
+        void UndoSoftDelete(T entity);
     }
 
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class 
@@ -31,7 +36,6 @@ namespace MedicineShopApplication.DLL.Repositories
         {
             IQueryable<T> query = _dbSet.AsNoTracking();
 
-            // Apply each Include() specified in the parameters
             foreach (var include in includes)
             {
                 query = query.Include(include);
@@ -43,6 +47,11 @@ namespace MedicineShopApplication.DLL.Repositories
         public IQueryable<T> FindByConditionAsync(Expression<Func<T, bool>> condition)
         {
             return _dbSet.Where(condition).AsNoTracking();
+        }
+
+        public IQueryable<T> FindByConditionWithTrackingAsync(Expression<Func<T, bool>> condition)
+        {
+            return _dbSet.Where(condition);
         }
 
         public async Task CreateAsync(T entity)
@@ -73,6 +82,26 @@ namespace MedicineShopApplication.DLL.Repositories
         public void DeleteRange(List<T> entities)
         {
             _dbSet.RemoveRange(entities);
+        }
+
+        public void SoftDelete(T entity)
+        {
+            if (entity is ISoftDeletable deletableEntity)
+            {
+                deletableEntity.IsDeleted = true;
+                deletableEntity.DeletedAt = DateTime.Now;
+                Update(entity);
+            }
+        }
+
+        public void UndoSoftDelete(T entity)
+        {
+            if (entity is ISoftDeletable deletableEntity)
+            {
+                deletableEntity.IsDeleted = false;
+                deletableEntity.DeletedAt = null;
+                Update(entity);
+            }
         }
     }
 }

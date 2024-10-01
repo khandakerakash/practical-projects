@@ -1,8 +1,9 @@
 ﻿using MedicineShopApplication.DLL.Models.Common;
+using MedicineShopApplication.DLL.Models.Interfaces;
 
 namespace MedicineShopApplication.DLL.Models.General
 {
-    public class Category : AuditableEntity
+    public class Category : AuditableEntity, ISoftDeletable
     {
         public int CategoryId { get; set; }
         public string Code { get; set; }
@@ -10,5 +11,8 @@ namespace MedicineShopApplication.DLL.Models.General
         public string NormalizedName { get; set; }
         public string Description { get; set; }
         public ICollection<Product> Products { get; set; } = new List<Product>();
+
+        public bool IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
     }
 }

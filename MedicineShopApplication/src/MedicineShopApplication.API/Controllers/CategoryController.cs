@@ -1,10 +1,10 @@
-﻿using MedicineShopApplication.BLL.Dtos.Category;
-using MedicineShopApplication.BLL.Services;
-using MedicineShopApplication.API.Controllers.BasicControllers;
+﻿using MedicineShopApplication.API.Controllers.BasicControllers;
+using MedicineShopApplication.BLL.Dtos.Category;
 using MedicineShopApplication.BLL.Dtos.Common;
+using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using OpenIddict.Abstractions;
+using System.Security.Claims;
 
 
 namespace MedicineShopApplication.API.Controllers
@@ -59,6 +59,26 @@ namespace MedicineShopApplication.API.Controllers
             int userId = Convert.ToInt32(userIdString);
 
             var response = await _categoryService.UpdateCategory(request, categoryId, userId);
+            return ToActionResult(response);
+        }
+
+        [HttpPost("delete/{categoryId}")]
+        public async Task<IActionResult> DeleteCategory(int categoryId)
+        {
+            var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
+            int userId = Convert.ToInt32(userIdString);
+
+            var response = await _categoryService.DeleteCategory(userId);
+            return ToActionResult(response);
+        }
+
+        [HttpPost("undo/{categoryId}")]
+        public async Task<IActionResult> UndoDeletedCategory(int categoryId)
+        {
+            var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
+            int userId = Convert.ToInt32(userIdString);
+
+            var response = await _categoryService.UndoDeletedCategory(userId);
             return ToActionResult(response);
         }
 

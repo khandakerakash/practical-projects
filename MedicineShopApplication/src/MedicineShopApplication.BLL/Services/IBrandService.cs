@@ -3,11 +3,11 @@ using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.BLL.Dtos.Brand;
+using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MedicineShopApplication.BLL.Extension;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -143,7 +143,7 @@ namespace MedicineShopApplication.BLL.Services
 
             var normalizedBrandName = GeneralUtils.NormalizeName(request.Name);
             var brands = await _unitOfWork.BrandRepository
-                .FindByConditionAsync(x => x.BrandId == brandId || x.NormalizedName == normalizedBrandName)
+                .FindByConditionWithTrackingAsync(x => x.BrandId == brandId || x.NormalizedName == normalizedBrandName)
                 .ToListAsync();
 
             var updatingBrand = brands.FirstOrDefault(x => x.BrandId == brandId);
@@ -204,7 +204,7 @@ namespace MedicineShopApplication.BLL.Services
             var normalizedBrandName = GeneralUtils.NormalizeName(name);
 
             return await _unitOfWork.BrandRepository
-                .FindByConditionAsync(x => x.NormalizedName == normalizedBrandName)
+                .FindByConditionWithTrackingAsync(x => x.NormalizedName == normalizedBrandName)
                 .AnyAsync();
         }
 
@@ -220,7 +220,7 @@ namespace MedicineShopApplication.BLL.Services
             var requestNames = requests.Select(request => GeneralUtils.NormalizeName(request.Name)).ToHashSet();
 
             var existingBrands = await _unitOfWork.BrandRepository
-                .FindByConditionAsync(x => requestNames.Contains(x.NormalizedName))
+                .FindByConditionWithTrackingAsync(x => requestNames.Contains(x.NormalizedName))
                 .ToListAsync();
 
             if (existingBrands.Any())

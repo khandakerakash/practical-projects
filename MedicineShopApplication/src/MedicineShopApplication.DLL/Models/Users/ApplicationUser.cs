@@ -17,9 +17,9 @@ namespace MedicineShopApplication.DLL.Models.Users
         public ICollection<Order> Orders { get; set; } = new List<Order>();
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
-        public int? CreatedBy { get; set; }
-        public int? LastUpdatedBy { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? LastModifiedAt { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public int? UpdatedBy { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

@@ -19,8 +19,8 @@ namespace MedicineShopApplication.BLL.Services
         Task<ApiResponse<CreateCategoryResponseDto>> CreateCategory(CreateCategoryRequestDto request, int userId);
         Task<ApiResponse<List<CreateCategoryResponseDto>>> CreateCategories(List<CreateCategoryRequestDto> requests, int userId);
         Task<ApiResponse<string>> UpdateCategory(UpdateCategoryRequestDto request, int categoryId, int userId);
-        Task<ApiResponse<string>> DeleteCategory(int categoryId);
-        Task<ApiResponse<string>> UndoDeletedCategory(int categoryId);
+        Task<ApiResponse<string>> DeleteCategory(int categoryId, int userId);
+        Task<ApiResponse<string>> UndoDeletedCategory(int categoryId, int userId);
         Task<ApiResponse<List<DropdownOptionDto>>>  GetCategoryDropdownOptions();
     }
 
@@ -312,7 +312,7 @@ namespace MedicineShopApplication.BLL.Services
             return new ApiResponse<string>(null, true, "Category updated successfully.");
         }
 
-        public async Task<ApiResponse<string>> DeleteCategory(int categoryId)
+        public async Task<ApiResponse<string>> DeleteCategory(int categoryId, int userId)
         {
             var category = await _unitOfWork.CategoryRepository
                 .FindByConditionWithTrackingAsync(x => x.CategoryId == categoryId)
@@ -323,21 +323,22 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<string>(null, false, "Category not found.");
             }
 
-            //_unitOfWork.CategoryRepository.SoftDelete(category);
-            _unitOfWork.CategoryRepository.Delete(category);
+            category.UpdatedBy = userId;
+            category.UpdatedAt = DateTime.Now;
+            _unitOfWork.CategoryRepository.SoftDelete(category);
 
             if (!await _unitOfWork.CommitAsync())
             {
                 return new ApiResponse<string>(null, false, "An error occurred while deleting the category.");
             }
 
-            return new ApiResponse<string>(null, false, "Category deleted successfully.");
+            return new ApiResponse<string>(null, true, "Category deleted successfully.");
         }
 
-        public async Task<ApiResponse<string>> UndoDeletedCategory(int categoryId)
+        public async Task<ApiResponse<string>> UndoDeletedCategory(int categoryId, int userId)
         {
             var category = await _unitOfWork.CategoryRepository
-                .FindByConditionWithTrackingAsync(x => x.CategoryId == categoryId && x.IsDeleted)
+                .FindByConditionWithTrackingAsync(x => x.CategoryId == categoryId && x.IsDeleted, includeDeleted: true)
                 .FirstOrDefaultAsync();
 
             if (category.HasNoValue())
@@ -345,6 +346,8 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<string>(null, false, "Category not found.");
             }
 
+            category.UpdatedBy = userId;
+            category.UpdatedAt = DateTime.Now;
             _unitOfWork.CategoryRepository.UndoSoftDelete(category);
 
             if (!await _unitOfWork.CommitAsync())

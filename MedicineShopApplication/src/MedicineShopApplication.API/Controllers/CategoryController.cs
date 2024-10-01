@@ -68,7 +68,7 @@ namespace MedicineShopApplication.API.Controllers
             var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
             int userId = Convert.ToInt32(userIdString);
 
-            var response = await _categoryService.DeleteCategory(userId);
+            var response = await _categoryService.DeleteCategory(categoryId, userId);
             return ToActionResult(response);
         }
 
@@ -78,7 +78,7 @@ namespace MedicineShopApplication.API.Controllers
             var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
             int userId = Convert.ToInt32(userIdString);
 
-            var response = await _categoryService.UndoDeletedCategory(userId);
+            var response = await _categoryService.UndoDeletedCategory(categoryId, userId);
             return ToActionResult(response);
         }
 

@@ -8,9 +8,9 @@ namespace MedicineShopApplication.DLL.Repositories
 {
     public interface IRepositoryBase<T> where T : class
     {
-        IQueryable<T> FindAllAsync(params Expression<Func<T, object>>[] includes);
-        IQueryable<T> FindByConditionAsync(Expression<Func<T, bool>> condition);
-        IQueryable<T> FindByConditionWithTrackingAsync(Expression<Func<T, bool>> condition);
+        IQueryable<T> FindAllAsync(bool includeDeleted = false, params Expression<Func<T, object>>[] includes);
+        IQueryable<T> FindByConditionAsync(Expression<Func<T, bool>> condition, bool includeDeleted = false);
+        IQueryable<T> FindByConditionWithTrackingAsync(Expression<Func<T, bool>> condition, bool includeDeleted = false);
         Task CreateAsync(T entity);
         Task CreateRangeAsync(List<T> entities);
         void Update(T entity);
@@ -21,7 +21,7 @@ namespace MedicineShopApplication.DLL.Repositories
         void UndoSoftDelete(T entity);
     }
 
-    public class RepositoryBase<T> : IRepositoryBase<T> where T : class 
+    public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
         private readonly ApplicationDbContext _context;
         private readonly DbSet<T> _dbSet;
@@ -32,26 +32,47 @@ namespace MedicineShopApplication.DLL.Repositories
             _dbSet = context.Set<T>();
         }
 
-        public IQueryable<T> FindAllAsync(params Expression<Func<T, object>>[] includes)
+        public IQueryable<T> FindAllAsync(bool includeDeleted = false, params Expression<Func<T, object>>[] includes)
         {
-            IQueryable<T> query = _dbSet.AsNoTracking();
+            IQueryable<T> query = _dbSet;
+
+            if (typeof(ISoftDeletable).IsAssignableFrom(typeof(T)) && !includeDeleted)
+            {
+                query = query.Where(e => !EF.Property<bool>(e, "IsDeleted"));
+            }
 
             foreach (var include in includes)
             {
                 query = query.Include(include);
             }
 
+            return query.AsNoTracking();
+        }
+
+        public IQueryable<T> FindByConditionAsync(Expression<Func<T, bool>> condition, bool includeDeleted = false)
+        {
+            IQueryable<T> query = _dbSet;
+
+            query = query.Where(condition);
+
+            if (typeof(ISoftDeletable).IsAssignableFrom(typeof(T)) && !includeDeleted)
+            {
+                query = query.Where(e => !EF.Property<bool>(e, "IsDeleted"));
+            }
+
+            return query.AsNoTracking();
+        }
+
+        public IQueryable<T> FindByConditionWithTrackingAsync(Expression<Func<T, bool>> condition, bool includeDeleted = false)
+        {
+            IQueryable<T> query = _dbSet.Where(condition);
+
+            if (typeof(ISoftDeletable).IsAssignableFrom(typeof(T)) && !includeDeleted)
+            {
+                query = query.Where(e => !EF.Property<bool>(e, "IsDeleted"));
+            }
+
             return query;
-        }
-
-        public IQueryable<T> FindByConditionAsync(Expression<Func<T, bool>> condition)
-        {
-            return _dbSet.Where(condition).AsNoTracking();
-        }
-
-        public IQueryable<T> FindByConditionWithTrackingAsync(Expression<Func<T, bool>> condition)
-        {
-            return _dbSet.Where(condition);
         }
 
         public async Task CreateAsync(T entity)

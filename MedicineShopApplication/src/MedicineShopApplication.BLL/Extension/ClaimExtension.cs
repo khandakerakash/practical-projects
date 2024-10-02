@@ -25,5 +25,14 @@ namespace MedicineShopApplication.BLL.Extension
                 .Select(c => c.Value)
                 .FirstOrDefault();
         }
+
+        public static int GetUserIdInt(this ClaimsPrincipal principal)
+        {
+            var userId = principal.Claims.Where(c => c.Type == Claims.Subject)
+                .Select(c => c.Value)
+                .FirstOrDefault();
+
+            return Convert.ToInt32(userId);
+        }
     }
 }

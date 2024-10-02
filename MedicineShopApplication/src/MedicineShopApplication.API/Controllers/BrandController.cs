@@ -1,10 +1,10 @@
 ﻿using MedicineShopApplication.API.Controllers.BasicControllers;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Dtos.Brand;
+using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
-using OpenIddict.Abstractions;
-using System.Security.Claims;
+
 
 
 namespace MedicineShopApplication.API.Controllers
@@ -35,8 +35,7 @@ namespace MedicineShopApplication.API.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateBrand(CreateBrandRequestDto request)
         {
-            var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
-            int userId = Convert.ToInt32(userIdString);
+            var userId = User.GetUserIdInt();
 
             var response = await _brandService.CreateBrand(request, userId);
             return ToActionResult(response);
@@ -45,8 +44,7 @@ namespace MedicineShopApplication.API.Controllers
         [HttpPost("create-range")]
         public async Task<IActionResult> CreateBrands(List<CreateBrandRequestDto> requests)
         {
-            var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
-            int userId = Convert.ToInt32(userIdString);
+            var userId = User.GetUserIdInt();
 
             var response = await _brandService.CreateBrands(requests, userId);
             return ToActionResult(response);
@@ -55,8 +53,7 @@ namespace MedicineShopApplication.API.Controllers
         [HttpPut("update/{brandId}")]
         public async Task<IActionResult> UpdateBrand(UpdateBrandRequestDto request, int brandId)
         {
-            var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
-            int userId = Convert.ToInt32(userIdString);
+            var userId = User.GetUserIdInt();
 
             var response = await _brandService.UpdateBrand(request, brandId, userId);
             return ToActionResult(response);
@@ -65,8 +62,7 @@ namespace MedicineShopApplication.API.Controllers
         [HttpPost("delete/{brandId}")]
         public async Task<IActionResult> DeleteBrand(int brandId)
         {
-            var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
-            int userId = Convert.ToInt32(userIdString);
+            var userId = User.GetUserIdInt();
 
             var response = await _brandService.DeleteBrand(brandId, userId);
             return ToActionResult(response);
@@ -75,8 +71,7 @@ namespace MedicineShopApplication.API.Controllers
         [HttpPost("undo/{brandId}")]
         public async Task<IActionResult> UndoDeletedCategory(int brandId)
         {
-            var userIdString = User.FindFirstValue(OpenIddictConstants.Claims.Subject);
-            int userId = Convert.ToInt32(userIdString);
+            var userId = User.GetUserIdInt();
 
             var response = await _brandService.UndoDeletedBrand(brandId, userId);
             return ToActionResult(response);

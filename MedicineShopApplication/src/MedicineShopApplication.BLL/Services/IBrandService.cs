@@ -8,7 +8,6 @@ using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MedicineShopApplication.BLL.Dtos.Category;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -164,6 +163,7 @@ namespace MedicineShopApplication.BLL.Services
 
             var createdBrandDto = new CreateBrandResponseDto()
             {
+                Code = brand.Code,
                 Name = brand.Name,
                 NormalizedName = brand.NormalizedName,
                 CreatedByName = createdByName

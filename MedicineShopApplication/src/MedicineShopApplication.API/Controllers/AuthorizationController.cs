@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication;
 using MedicineShopApplication.DLL.Models.Users;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using MedicineShopApplication.API.Controllers.BasicControllers;
+using Microsoft.Extensions.Caching.Distributed;
 
 
 namespace MedicineShopApplication.API.Controllers
@@ -17,13 +18,16 @@ namespace MedicineShopApplication.API.Controllers
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IDistributedCache _cache;
 
         public AuthorizationController(
             SignInManager<ApplicationUser> signInManager,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IDistributedCache cache)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _cache = cache;
         }
 
         [HttpPost("~/connect/token"), IgnoreAntiforgeryToken, Produces("application/json")]
@@ -66,12 +70,10 @@ namespace MedicineShopApplication.API.Controllers
                     roleType: Claims.Role);
 
                 // Add the claims that will be persisted in the tokens.
-                identity.SetClaim(Claims.Subject, user.Id)
-                        .SetClaim(Claims.Subject, await _userManager.GetUserIdAsync(user))
-                        .SetClaim(Claims.Email, await _userManager.GetEmailAsync(user))
-                        .SetClaim(Claims.Name, await _userManager.GetUserNameAsync(user))
-                        .SetClaim(Claims.PreferredUsername, await _userManager.GetUserNameAsync(user))
-                        .SetClaim("my-name", "akash")
+                identity.SetClaim(Claims.Subject, user.Id.ToString())
+                        .SetClaim(Claims.Email, user.Email)
+                        .SetClaim(Claims.Name, user.UserName)
+                        .SetClaim("my-token-cache-value", await TokenGenerateValue(user.UserName))
                         .SetClaims(Claims.Role, [.. (await _userManager.GetRolesAsync(user))]);
 
                 // Set the list of scopes granted to the client application.
@@ -126,11 +128,11 @@ namespace MedicineShopApplication.API.Controllers
                 roleType: OpenIddictConstants.Claims.Role);
 
                 // Override the user claims present in the principal in case they changed since the refresh token was issued.
-                identity.SetClaim(OpenIddictConstants.Claims.Subject, await _userManager.GetUserIdAsync(user))
-                        .SetClaim(OpenIddictConstants.Claims.Email, await _userManager.GetEmailAsync(user))
-                        .SetClaim(OpenIddictConstants.Claims.Name, await _userManager.GetUserNameAsync(user))
-                        .SetClaim(OpenIddictConstants.Claims.PreferredUsername, await _userManager.GetUserNameAsync(user))
-                        .SetClaims(OpenIddictConstants.Claims.Role, [.. (await _userManager.GetRolesAsync(user))]);
+                identity.SetClaim(Claims.Subject, user.Id.ToString())
+                        .SetClaim(Claims.Email, user.Email)
+                        .SetClaim(Claims.Name, user.UserName)
+                        .SetClaim("my-token-cache-value", await TokenGenerateValue(user.UserName))
+                        .SetClaims(Claims.Role, [.. (await _userManager.GetRolesAsync(user))]);
 
                 identity.SetDestinations(GetDestinations);
 
@@ -140,6 +142,18 @@ namespace MedicineShopApplication.API.Controllers
             throw new NotImplementedException("The specified grant type is not implemented.");
         }
 
+        private async Task<string> TokenGenerateValue(string username)
+        {
+            var key = $"{username}-access-key";
+            var value = Guid.NewGuid().ToString();
+
+            var options = new DistributedCacheEntryOptions()
+                .SetSlidingExpiration(TimeSpan.FromMinutes(10));
+
+            await _cache.SetStringAsync(key, value, options);
+
+            return value;
+        }
 
         private static IEnumerable<string> GetDestinations(Claim claim)
         {

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MedicineShopApplication.API.Controllers.BasicControllers
 {
-    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, Policy = "TokenPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class ApiAuthorizeBaseController : ControllerBase

@@ -1,4 +1,5 @@
-﻿using MedicineShopApplication.DLL.DbContextInit;
+﻿using MedicineShopApplication.API.Policy;
+using MedicineShopApplication.DLL.DbContextInit;
 using OpenIddict.Client;
 
 namespace MedicineShopApplication.API.StartupExtension
@@ -7,6 +8,15 @@ namespace MedicineShopApplication.API.StartupExtension
     {
         public static IServiceCollection AddOauth2ExtensionHelper(this IServiceCollection services)
         {
+            // Add Token Authorization Policy
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("TokenPolicy", x =>
+                {
+                    x.Requirements.Add(new TokenAuthorizationRequirementPolicy());
+                });
+            });
+            
             services.AddOpenIddict()
 
                 // Register the OpenIddict core components.

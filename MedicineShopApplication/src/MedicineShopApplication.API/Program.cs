@@ -14,6 +14,9 @@ builder.Services.AddIdentityCustomExtensionHelper();
 // Register the OpenIddict
 builder.Services.AddOauth2ExtensionHelper();
 
+// Register the Redis Caching
+builder.Services.AddRedisExtensionHelper(builder.Configuration);
+
 // Register the Global Exception Handler
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();

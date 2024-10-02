@@ -1,5 +1,6 @@
 ﻿using MedicineShopApplication.API.Policy;
 using MedicineShopApplication.DLL.DbContextInit;
+using Microsoft.AspNetCore.Authorization;
 using OpenIddict.Client;
 
 namespace MedicineShopApplication.API.StartupExtension
@@ -9,11 +10,13 @@ namespace MedicineShopApplication.API.StartupExtension
         public static IServiceCollection AddOauth2ExtensionHelper(this IServiceCollection services)
         {
             // Add Token Authorization Policy
+            services.AddSingleton<IAuthorizationHandler, TokenAuthorizationHandler>();
+
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("TokenPolicy", x =>
+                options.AddPolicy("TokenPolicy", policy =>
                 {
-                    x.Requirements.Add(new TokenAuthorizationRequirementPolicy());
+                    policy.Requirements.Add(new TokenAuthorizationRequirementPolicy());
                 });
             });
             

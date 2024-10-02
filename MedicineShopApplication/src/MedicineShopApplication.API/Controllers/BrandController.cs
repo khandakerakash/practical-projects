@@ -1,12 +1,11 @@
-﻿using MedicineShopApplication.BLL.Dtos.Brand;
+﻿using MedicineShopApplication.API.Controllers.BasicControllers;
+using MedicineShopApplication.BLL.Dtos.Common;
+using MedicineShopApplication.BLL.Dtos.Brand;
 using MedicineShopApplication.BLL.Services;
-using Microsoft.AspNetCore.Authorization;
-using OpenIddict.Validation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
 using System.Security.Claims;
-using MedicineShopApplication.API.Controllers.BasicControllers;
-using MedicineShopApplication.BLL.Dtos.Common;
+
 
 namespace MedicineShopApplication.API.Controllers
 {

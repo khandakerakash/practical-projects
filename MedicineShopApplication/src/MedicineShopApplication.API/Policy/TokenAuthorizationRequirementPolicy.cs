@@ -1,5 +1,6 @@
 ﻿using MedicineShopApplication.BLL.Utils;
 using Microsoft.AspNetCore.Authorization;
+using MedicineShopApplication.BLL.Extension;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace MedicineShopApplication.API.Policy
@@ -21,17 +22,17 @@ namespace MedicineShopApplication.API.Policy
         {
             if (context.User.Identity.HasValue() && context.User.Identity.IsAuthenticated)
             {
-                var username = context.User.FindFirst(x => x.Type == "name")?.Value;
+                var username = context.User.GetUserName();
                 var key = $"{username}-access-key";
                 var redisTokenValue = _cache.GetString(key);
 
                 if (redisTokenValue.HasValue())
                 {
-                    var getMyTokenValue = context.User.FindFirst(x => x.Type == "my-token-cache-value")?.Value;
+                    var getMyTokenValue = context.User.GetTokenValue();
 
-                    if (getMyTokenValue.HasValue() && getMyTokenValue == redisTokenValue) 
+                    if (getMyTokenValue.HasValue() && getMyTokenValue == redisTokenValue)
                     {
-                        context.Succeed(requirement); 
+                        context.Succeed(requirement);
                     }
                 }
             }

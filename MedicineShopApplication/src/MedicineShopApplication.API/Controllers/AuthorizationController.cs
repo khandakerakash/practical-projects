@@ -6,10 +6,13 @@ using OpenIddict.Server.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication;
+using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.DLL.Models.Users;
+using Microsoft.Extensions.Caching.Distributed;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using MedicineShopApplication.API.Controllers.BasicControllers;
-using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.AspNetCore.Authorization;
+using OpenIddict.Validation.AspNetCore;
 
 
 namespace MedicineShopApplication.API.Controllers
@@ -69,6 +72,7 @@ namespace MedicineShopApplication.API.Controllers
                     nameType: Claims.Name,
                     roleType: Claims.Role);
 
+
                 // Add the claims that will be persisted in the tokens.
                 identity.SetClaim(Claims.Subject, user.Id.ToString())
                         .SetClaim(Claims.Email, user.Email)
@@ -76,17 +80,15 @@ namespace MedicineShopApplication.API.Controllers
                         .SetClaim("my-token-cache-value", await TokenGenerateValue(user.UserName))
                         .SetClaims(Claims.Role, [.. (await _userManager.GetRolesAsync(user))]);
 
+
                 // Set the list of scopes granted to the client application.
                 identity.SetScopes(new[]
                 {
                     Scopes.OpenId,
                     Scopes.Email,
                     Scopes.Profile,
-                    Scopes.Roles,
-                    Scopes.OfflineAccess
+                    Scopes.Roles
                 }.Intersect(request.GetScopes()));
-
-                //identity.SetScopes(request.GetScopes());
 
                 identity.SetDestinations(GetDestinations);
 
@@ -123,9 +125,9 @@ namespace MedicineShopApplication.API.Controllers
                 }
 
                 var identity = new ClaimsIdentity(result.Principal.Claims,
-                authenticationType: TokenValidationParameters.DefaultAuthenticationType,
-                nameType: OpenIddictConstants.Claims.Name,
-                roleType: OpenIddictConstants.Claims.Role);
+                    authenticationType: TokenValidationParameters.DefaultAuthenticationType,
+                    nameType: Claims.Name,
+                    roleType: Claims.Role);
 
                 // Override the user claims present in the principal in case they changed since the refresh token was issued.
                 identity.SetClaim(Claims.Subject, user.Id.ToString())
@@ -134,12 +136,33 @@ namespace MedicineShopApplication.API.Controllers
                         .SetClaim("my-token-cache-value", await TokenGenerateValue(user.UserName))
                         .SetClaims(Claims.Role, [.. (await _userManager.GetRolesAsync(user))]);
 
+
+                identity.SetScopes(new[]
+                {
+                    Scopes.OpenId,
+                    Permissions.Scopes.Email,
+                    Permissions.Scopes.Profile,
+                    Permissions.Scopes.Roles,
+                    Scopes.OfflineAccess
+                }.Intersect(request.GetScopes()));
+
                 identity.SetDestinations(GetDestinations);
 
                 return SignIn(new ClaimsPrincipal(identity), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
             }
 
             throw new NotImplementedException("The specified grant type is not implemented.");
+        }
+
+        [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, Policy = "TokenPolicy")]
+        [HttpPost("~/connect/logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var username = User.GetUserName();
+            var key = $"{username}-access-key";
+
+            await _cache.RemoveAsync(key);
+            return Ok("Logout successfully.");
         }
 
         private async Task<string> TokenGenerateValue(string username)

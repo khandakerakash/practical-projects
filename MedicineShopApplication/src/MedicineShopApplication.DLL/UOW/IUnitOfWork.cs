@@ -16,6 +16,7 @@ namespace MedicineShopApplication.DLL.UOW
         IPaymentRepository PaymentRepository { get; }
         IInvoiceRepository InvoiceRepository { get; }
         IInventoryRepository InventoryRepository { get; }
+        IUnitOfMeasureRepository UnitOfMeasureRepository { get; }
 
         Task<bool> CommitAsync();
     }
@@ -40,6 +41,7 @@ namespace MedicineShopApplication.DLL.UOW
         private IPaymentRepository _paymentRepository;
         private IInvoiceRepository _invoiceRepository;
         private IInventoryRepository _inventoryRepository;
+        private IUnitOfMeasureRepository _unitOfMeasureRepository;
 
         public IUserRepository UserRepository => _userRepository ??= new UserRepository(_context);
 
@@ -62,6 +64,8 @@ namespace MedicineShopApplication.DLL.UOW
         public IInvoiceRepository InvoiceRepository => _invoiceRepository ??= new InvoiceRepository(_context);
 
         public IInventoryRepository InventoryRepository => _inventoryRepository ??= new InventoryRepository(_context);
+
+        public IUnitOfMeasureRepository UnitOfMeasureRepository => _unitOfMeasureRepository ??= new UnitOfMeasureRepository(_context);
 
         public async Task<bool> CommitAsync()
         {

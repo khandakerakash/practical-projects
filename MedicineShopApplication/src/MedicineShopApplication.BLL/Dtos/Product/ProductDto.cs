@@ -1,7 +1,7 @@
 ﻿using MedicineShopApplication.BLL.Dtos.Base;
 using MedicineShopApplication.BLL.Dtos.CartItem;
-using MedicineShopApplication.BLL.Dtos.CategoryProduct;
 using MedicineShopApplication.BLL.Dtos.OrderItem;
+using MedicineShopApplication.BLL.Dtos.CategoryProduct;
 
 namespace MedicineShopApplication.BLL.Dtos.Product
 {

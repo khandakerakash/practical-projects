@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MedicineShopApplication.API.Controllers
 {
-    public class ProductController : ApiBaseController
+    public class ProductController : ApiAuthorizeBaseController
     {
         public ProductController()
         {

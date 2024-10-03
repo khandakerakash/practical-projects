@@ -137,12 +137,11 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<CreateBrandResponseDto>(validationResult.Errors);
             }
 
-            if (await BrandExistsByNameAsync(request.Name))
+            var normalizedBrandName = GeneralUtils.NormalizeName(request.Name);
+            if (await BrandExistsByNameAsync(normalizedBrandName))
             {
                 return new ApiResponse<CreateBrandResponseDto>(null, false, "A brand with this name already exists.");
             }
-
-            var normalizedBrandName = GeneralUtils.NormalizeName(request.Name);
 
             var brand = new Brand
             {
@@ -400,10 +399,8 @@ namespace MedicineShopApplication.BLL.Services
         /// <returns>A task that represents the asynchronous operation. The task result contains true if the brand exists; otherwise, false.</returns>
         private async Task<bool> BrandExistsByNameAsync(string name)
         {
-            var normalizedBrandName = GeneralUtils.NormalizeName(name);
-
             return await _unitOfWork.BrandRepository
-                .FindByConditionWithTrackingAsync(x => x.NormalizedName == normalizedBrandName)
+                .FindByConditionWithTrackingAsync(x => x.NormalizedName == name)
                 .AnyAsync();
         }
 

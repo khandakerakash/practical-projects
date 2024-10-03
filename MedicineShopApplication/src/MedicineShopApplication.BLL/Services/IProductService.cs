@@ -1,14 +1,13 @@
-﻿using MedicineShopApplication.DLL.UOW;
-using MedicineShopApplication.BLL.Dtos.Product;
-using MedicineShopApplication.BLL.Validations;
-using FluentValidation;
-using MedicineShopApplication.BLL.Dtos.Common;
+﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using MedicineShopApplication.DLL.Models.General;
-using static Azure.Core.HttpHeader;
-using MedicineShopApplication.BLL.Dtos.Category;
-using MedicineShopApplication.DLL.Models.Users;
 using Microsoft.AspNetCore.Identity;
+using MedicineShopApplication.DLL.UOW;
+using MedicineShopApplication.BLL.Dtos.Common;
+using MedicineShopApplication.BLL.Validations;
+using MedicineShopApplication.DLL.Models.Users;
+using MedicineShopApplication.BLL.Dtos.Product;
+using MedicineShopApplication.DLL.Models.General;
+
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -40,20 +39,14 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<CreateProductResponseDto>(validationResult.Errors);
             }
 
-            var generatedCode = await GenerateUniqueProductCodeAsync(request.Name);
-
-            if (generatedCode == null)
-            {
-                return new ApiResponse<CreateProductResponseDto>(null, false, $"Generated code is null for category name: {request.Name}");
-            }
 
             var product = new Product() 
             { 
-                Code = generatedCode,
+                Code = request.Code,
                 Name = request.Name,
                 GenericName = request.GenericName,
                 Description = request.Description,
-                //Brand = request.Brand,
+                BrandId = request.BrandDtoId,
                 CostPrice = request.CostPrice,
                 SellingPrice = request.SellingPrice,
                 //UnitOfMeasure = request.UnitOfMeasure,

@@ -1,9 +1,10 @@
-﻿using MedicineShopApplication.BLL.Dtos.Product;
-using MedicineShopApplication.DLL.Models.Common;
+﻿using MedicineShopApplication.BLL.Dtos.Base;
+using MedicineShopApplication.BLL.Dtos.Product;
+
 
 namespace MedicineShopApplication.BLL.Dtos.Brand
 {
-    public class BrandDto : AuditableEntity
+    public class BrandDto : AuditableEntityDto
     {
         public int BrandDtoId { get; set; }
         public string Code { get; set; }

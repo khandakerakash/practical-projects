@@ -10,14 +10,14 @@ namespace MedicineShopApplication.BLL.Dtos.Product
         public string NormalizedName { get; set; }
         public string GenericName { get; set; }
         public string Description { get; set; }
-        public string Brand { get; set; }
         public decimal CostPrice { get; set; }
         public decimal SellingPrice { get; set; }
-        public string UnitOfMeasure { get; set; }
         public string Status { get; set; }
         public string ImageUrl { get; set; }
         public string Notes { get; set; }
 
-        public List<CategoryDto> CategoryDto { get; set; } = new List<CategoryDto>();
+        public int BrandDtoId { get; set; }
+        public int CategoryDtoId { get; set; }
+        public int UnitOfMeasureDtoId { get; set; }
     }
 }

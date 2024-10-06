@@ -47,5 +47,14 @@ namespace MedicineShopApplication.API.Controllers
             var response = await _productService.UpdateProduct(request, productId, userId);
             return ToActionResult(response);
         }
+
+        [HttpPost("delete/{productId}")]
+        public async Task<IActionResult> DeleteProduct(int productId)
+        {
+            var userId = User.GetUserIdInt();
+
+            var response = await _productService.DeleteProduct(productId, userId);
+            return ToActionResult(response);
+        }
     }
 }

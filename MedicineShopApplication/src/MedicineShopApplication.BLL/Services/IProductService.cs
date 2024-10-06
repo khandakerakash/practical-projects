@@ -10,6 +10,7 @@ using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Dtos.Product;
 using MedicineShopApplication.DLL.Models.Enums;
 using MedicineShopApplication.DLL.Models.General;
+using Bogus.DataSets;
 
 
 
@@ -21,6 +22,7 @@ namespace MedicineShopApplication.BLL.Services
         Task<ApiResponse<ProductResponseDto>> GetAProduct(int productId);
         Task<ApiResponse<CreateProductResponseDto>> CreateProduct(CreateProductRequestDto request, int userId);
         Task<ApiResponse<string>> UpdateProduct(UpdateProductRequestDto request, int productId, int userId);
+        Task<ApiResponse<string>> DeleteProduct(int productId, int userId);
     }
 
     public class ProductService : IProductService
@@ -325,6 +327,29 @@ namespace MedicineShopApplication.BLL.Services
             }
 
             return new ApiResponse<string>(null, true, "The product updated successfully.");
+        }
+
+        public async Task<ApiResponse<string>> DeleteProduct(int productId, int userId)
+        {
+            var product = await _unitOfWork.ProductRepository
+                .FindByConditionWithTrackingAsync(x => x.ProductId == productId)
+                .FirstOrDefaultAsync();
+
+            if (product.HasNoValue())
+            {
+                return new ApiResponse<string>(null, false, "Product not found.");
+            }
+
+            product.UpdatedBy = userId;
+            product.UpdatedAt = DateTime.Now;
+            _unitOfWork.ProductRepository.SoftDelete(product);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<string>(null, false, "An error occurred while deleting the product.");
+            }
+
+            return new ApiResponse<string>(null, true, "Product deleted successfully.");
         }
 
         #region Helper methods for Create Product

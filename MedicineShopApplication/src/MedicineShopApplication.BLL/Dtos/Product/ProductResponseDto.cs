@@ -1,7 +1,11 @@
-﻿namespace MedicineShopApplication.BLL.Dtos.Product
+﻿using MedicineShopApplication.BLL.Dtos.Base;
+using MedicineShopApplication.DLL.Models.Enums;
+
+namespace MedicineShopApplication.BLL.Dtos.Product
 {
-    public class CreateProductResponseDto
+    public class ProductResponseDto : AuditableEntityDto
     {
+        public int ProductId { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
         public string NormalizedName { get; set; }
@@ -20,5 +24,10 @@
         public int UnitOfMeasureId { get; set; }
         public string UnitOfMeasureName { get; set; }
         public string CreatedByName { get; set; }
+        public string UpdatedByName { get; set; }
+
+        //public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+        //public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+        //public ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
     }
 }

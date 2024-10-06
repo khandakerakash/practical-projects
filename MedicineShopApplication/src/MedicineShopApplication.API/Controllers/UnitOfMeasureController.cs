@@ -26,5 +26,21 @@ namespace MedicineShopApplication.API.Controllers
             var response = await _unitOfMeasureService.CreateUnitOfMeasure(request, userId);
             return ToActionResult(response);
         }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateUnitOfMeasure(UpdateUnitOfMeasureRequestDto request, int unitOfMeasureId)
+        {
+            var userId = User.GetUserIdInt();
+
+            var response = await _unitOfMeasureService.UpdateUnitOfMeasure(request, unitOfMeasureId, userId);
+            return ToActionResult(response);
+        }
+
+        [HttpGet("dropdown-options")]
+        public async Task<IActionResult> GetUnitOfMeasureDropdownOptions()
+        {
+            var response = await _unitOfMeasureService.GetUnitOfMeasureDropdownOptions();
+            return ToActionResult(response);
+        }
     }
 }

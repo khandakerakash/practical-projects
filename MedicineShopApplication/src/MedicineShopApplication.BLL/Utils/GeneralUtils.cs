@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace MedicineShopApplication.BLL.Utils
 {
@@ -56,5 +57,28 @@ namespace MedicineShopApplication.BLL.Utils
 
             return name;
         }
+
+        /// <summary>
+        /// Generates a random alphanumeric string of the specified length using a cryptographically secure random number generator.
+        /// </summary>
+        /// <param name="length">The length of the random string to be generated.</param>
+        /// <returns>A string containing a random combination of uppercase letters and digits.</returns>
+        private static string GenerateRandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var randomString = new char[length];
+            var rng = RandomNumberGenerator.Create();
+
+            var byteArray = new byte[length];
+            rng.GetBytes(byteArray);
+
+            for (int i = 0; i < length; i++)
+            {
+                randomString[i] = chars[byteArray[i] % chars.Length];
+            }
+
+            return new string(randomString);
+        }
+
     }
 }

@@ -87,9 +87,48 @@ namespace MedicineShopApplication.BLL.Services
             return new ApiResponse<CreateUnitOfMeasureResponseDto>(createdUnitOfMeasure, true, "Unit of measure created successfully.");
         }
 
-        public Task<ApiResponse<string>> UpdateUnitOfMeasure(UpdateUnitOfMeasureRequestDto request, int unitOfMeasureId, int userId)
+        public async Task<ApiResponse<string>> UpdateUnitOfMeasure(UpdateUnitOfMeasureRequestDto request, int unitOfMeasureId, int userId)
         {
-            throw new NotImplementedException();
+            var validator = new UpdateUnitOfMeasureRequestDtoValidator();
+            var validationResult = await validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                return new ApiResponse<string>(validationResult.Errors);
+            }
+
+            var normalizedName = GeneralUtils.NormalizeName(request.Name);
+            var unitOfMeasures = await _unitOfWork.UnitOfMeasureRepository
+                .FindByConditionWithTrackingAsync(x => x.UnitOfMeasureId == unitOfMeasureId || x.NormalizedName == normalizedName)
+                .ToListAsync();
+
+            var updatingUnitOfMeasure = unitOfMeasures.FirstOrDefault(x => x.UnitOfMeasureId == unitOfMeasureId);
+            if (updatingUnitOfMeasure.HasNoValue())
+            {
+                return new ApiResponse<string>(null, false, "Unit of measure not found.");
+            }
+
+            var isNameExisting = unitOfMeasures.Any(x => x.UnitOfMeasureId != unitOfMeasureId && x.NormalizedName == normalizedName);
+
+            if (isNameExisting)
+            {
+                return new ApiResponse<string>(null, false, "A Unit of measure with this name already exists.");
+            }
+
+            updatingUnitOfMeasure.Name = request.Name;
+            updatingUnitOfMeasure.NormalizedName = normalizedName;
+            updatingUnitOfMeasure.Description = request.Description;
+            updatingUnitOfMeasure.UpdatedBy = userId;
+            updatingUnitOfMeasure.UpdatedAt = DateTime.UtcNow;
+
+            _unitOfWork.UnitOfMeasureRepository.Update(updatingUnitOfMeasure);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<string>(null, false, "An error occurred while updating the Unit of measure.");
+            }
+
+            return new ApiResponse<string>(null, true, "The Unit of measure updated successfully.");
         }
 
         public Task<ApiResponse<string>> DeleteUnitOfMeasure(int unitOfMeasureId, int userId)
@@ -97,9 +136,22 @@ namespace MedicineShopApplication.BLL.Services
             throw new NotImplementedException();
         }
 
-        public Task<ApiResponse<List<DropdownOptionDto>>> GetUnitOfMeasureDropdownOptions()
+        public async Task<ApiResponse<List<DropdownOptionDto>>> GetUnitOfMeasureDropdownOptions()
         {
-            throw new NotImplementedException();
+            var unitOfMeasures = await _unitOfWork.UnitOfMeasureRepository
+                .FindAllAsync()
+                .Select(x => new DropdownOptionDto
+                {
+                    Id = x.UnitOfMeasureId,
+                    Value = x.Name,
+                }).ToListAsync();
+
+            if (!unitOfMeasures.Any())
+            {
+                return new ApiResponse<List<DropdownOptionDto>>(null, true, "No Unit of measure were found.");
+            }
+
+            return new ApiResponse<List<DropdownOptionDto>>(unitOfMeasures, true, "Unit of measure dropdown options retrieved successfully.");
         }
 
         #region Helper Methods of UnitOfMeasure

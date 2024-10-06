@@ -4,15 +4,15 @@ using MedicineShopApplication.DLL.Models.Enums;
 
 namespace MedicineShopApplication.BLL.Validations
 {
-    public class CreateProductRequestDtoValidator : AbstractValidator<CreateProductRequestDto>
+    public class UpdateProductRequestDtoValidator : AbstractValidator<UpdateProductRequestDto>
     {
-        public CreateProductRequestDtoValidator() 
+        public UpdateProductRequestDtoValidator() 
         {
             RuleFor(x => x.Name)
-               .NotNull()
-               .NotEmpty()
-               .MinimumLength(2)
-               .MaximumLength(255);
+                .NotNull()
+                .NotEmpty()
+                .MinimumLength(2)
+                .MaximumLength(255);
 
             RuleFor(x => x.GenericName)
                 .NotNull()
@@ -40,7 +40,6 @@ namespace MedicineShopApplication.BLL.Validations
             RuleFor(x => x.Status)
                 .IsEnumName(typeof(ProductStatus), caseSensitive: true)
                 .WithMessage("Invalid product status value. Allowed values are: Available, OutOfStock, Discontinued.");
-
         }
 
         private bool HaveValidDecimalPlaces(decimal price)

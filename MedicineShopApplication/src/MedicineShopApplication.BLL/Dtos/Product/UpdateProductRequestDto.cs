@@ -1,6 +1,6 @@
 ﻿namespace MedicineShopApplication.BLL.Dtos.Product
 {
-    public class CreateProductRequestDto
+    public class UpdateProductRequestDto
     {
         public string Name { get; set; }
         public string GenericName { get; set; }

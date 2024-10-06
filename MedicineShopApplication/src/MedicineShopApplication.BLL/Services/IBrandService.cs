@@ -63,6 +63,7 @@ namespace MedicineShopApplication.BLL.Services
                     Code = x.Code,
                     Name = x.Name,
                     NormalizedName = x.NormalizedName,
+
                     CreatedAt = x.CreatedAt,
                     CreatedBy = x.CreatedBy,
                     CreatedByName = users.ContainsKey(x.CreatedBy)
@@ -102,8 +103,7 @@ namespace MedicineShopApplication.BLL.Services
                 .FindByConditionAsync(u => userIds.Contains(u.Id))
                 .ToDictionaryAsync(u => u.Id);
 
-            var brandResponse = await _unitOfWork.BrandRepository
-                .FindByConditionAsync(c => c.BrandId == brandId)
+            var brandResponse = await brandQuery
                 .Select(x => new BrandResponseDto
                 {
                     BrandDtoId = x.BrandId,
@@ -248,7 +248,9 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<string>(null, false, "Brand not found.");
             }
 
-            if (brands.Any(x => x.BrandId != brandId))
+            var isNameExisting = brands.Any(x => x.BrandId != brandId && x.NormalizedName == normalizedBrandName);
+
+            if (isNameExisting)
             {
                 return new ApiResponse<string>(null, false, "A brand with this name already exists.");
             }
@@ -280,9 +282,9 @@ namespace MedicineShopApplication.BLL.Services
                     Value = x.Name,
                 }).ToListAsync();
 
-            if (brands == null || !brands.Any())
+            if (!brands.Any())
             {
-                return new ApiResponse<List<DropdownOptionDto>>(null, false, "No brands were found.");
+                return new ApiResponse<List<DropdownOptionDto>>(null, true, "No brands were found.");
             }
 
             return new ApiResponse<List<DropdownOptionDto>>(brands, true, "Brand dropdown options retrieved successfully.");
@@ -344,7 +346,7 @@ namespace MedicineShopApplication.BLL.Services
         /// </summary>
         /// <param name="brandsQuery">The queryable collection of <see cref="Brand"/> to be sorted.</param>
         /// <param name="sortBy">A string containing sorting criteria, e.g., "name desc, code asc".</param>
-        /// <returns>An <see cref="IQueryable{Category}"/> sorted based on the specified criteria.</returns>
+        /// <returns>An <see cref="IQueryable{Brand}"/> sorted based on the specified criteria.</returns>
         private IQueryable<Brand> SortBrandsQuery(IQueryable<Brand> brandsQuery, string sortBy)
         {
             if (string.IsNullOrWhiteSpace(sortBy))

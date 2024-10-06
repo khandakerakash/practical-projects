@@ -36,6 +36,7 @@ namespace MedicineShopApplication.BLL
             services.AddScoped<IValidator<CreateBrandRequestDto>, CreateBrandRequestDtoValidator>();
             services.AddScoped<IValidator<UpdateBrandRequestDto>, UpdateBrandRequestDtoValidator>();
             services.AddScoped<IValidator<CreateUnitOfMeasureRequestDto>, CreateUnitOfMeasureRequestDtoValidator>();
+            services.AddScoped<IValidator<UpdateUnitOfMeasureRequestDto>, UpdateUnitOfMeasureRequestDtoValidator>();
         }
     }
 }

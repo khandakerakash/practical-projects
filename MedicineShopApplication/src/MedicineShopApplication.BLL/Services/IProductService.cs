@@ -92,7 +92,6 @@ namespace MedicineShopApplication.BLL.Services
                     UpdatedByName = x.UpdatedBy.HasValue && users.ContainsKey(x.UpdatedBy.Value)
                                     ? users[x.UpdatedBy.Value].GetFullName()
                                     : ""
-
                 })
                 .ToListAsync();
 
@@ -351,7 +350,7 @@ namespace MedicineShopApplication.BLL.Services
             return new ApiResponse<string>(null, true, "Product deleted successfully.");
         }
 
-        #region Helper methods for Create Product
+        #region Helper methods for Product
 
         /// <summary>
         /// Sorts the provided <see cref="IQueryable{Product}"/> based on the specified sorting criteria.
@@ -477,7 +476,7 @@ namespace MedicineShopApplication.BLL.Services
                 }
             }
 
-            return productsQuery; ;
+            return productsQuery;
         }
 
         /// <summary>

@@ -15,6 +15,7 @@ namespace MedicineShopApplication.BLL
         public static IServiceCollection AddBLLDependency(this IServiceCollection services)
         {
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IAdminUserService, AdminUserService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();

@@ -5,7 +5,7 @@ namespace MedicineShopApplication.BLL.Dtos.CategoryProduct
 {
     public class CategoryProductDto
     {
-        public int CategoryDtoId { get; set; }
+        public int CategoryId { get; set; }
         public CategoryDto CategoryDto { get; set; }
         public int ProductDtoId { get; set; }
         public ProductDto ProductDto { get; set; }

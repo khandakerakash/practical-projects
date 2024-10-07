@@ -6,7 +6,7 @@ namespace MedicineShopApplication.BLL.Dtos.Payment
 {
     public class PaymentDto : AuditableEntityDto
     {
-        public int PaymentDtoId { get; set; }
+        public int PaymentId { get; set; }
         public string TransactionId { get; set; }
         public string PaymentMethod { get; set; }
         public decimal PaymentAmount { get; set; }

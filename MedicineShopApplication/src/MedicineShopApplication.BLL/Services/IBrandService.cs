@@ -59,7 +59,7 @@ namespace MedicineShopApplication.BLL.Services
                 .Take(request.PageSize)
                 .Select(x => new BrandResponseDto
                 {
-                    BrandDtoId = x.BrandId,
+                    BrandId = x.BrandId,
                     Code = x.Code,
                     Name = x.Name,
                     NormalizedName = x.NormalizedName,
@@ -106,7 +106,7 @@ namespace MedicineShopApplication.BLL.Services
             var brandResponse = await brandQuery
                 .Select(x => new BrandResponseDto
                 {
-                    BrandDtoId = x.BrandId,
+                    BrandId = x.BrandId,
                     Code = x.Code,
                     Name = x.Name,
                     NormalizedName = x.NormalizedName,

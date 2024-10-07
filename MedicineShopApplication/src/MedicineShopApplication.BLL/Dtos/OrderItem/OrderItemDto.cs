@@ -6,7 +6,7 @@ namespace MedicineShopApplication.BLL.Dtos.OrderItem
 {
     public class OrderItemDto : AuditableEntityDto
     {
-        public int OrderItemDtoId { get; set; }
+        public int OrderItemId { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }
 

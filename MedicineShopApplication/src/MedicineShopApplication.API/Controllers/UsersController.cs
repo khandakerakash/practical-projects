@@ -36,16 +36,12 @@ namespace MedicineShopApplication.API.Controllers
         public async Task<IActionResult> AddUser(CreateUserRequestDto userInsertDto)
         {
             var user = await _userService.AddUser(userInsertDto);
-            return CreatedAtAction(nameof(GetUserById), new { id = user.UserDtoId }, user);
+            return null;
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, UpdateUserRequestDto userUpdateDto)
         {
-            if(id != userUpdateDto.UserDtoId)
-            {
-                return BadRequest("Data mismatch");
-            }
             await _userService.UpdateUser(userUpdateDto);
             return NoContent();
         }

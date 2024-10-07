@@ -6,7 +6,7 @@ namespace MedicineShopApplication.BLL.Dtos.CartItem
 {
     public class CartItemDto : AuditableEntityDto
     {
-        public int CartItemDtoId { get; set; }
+        public int CartItemId { get; set; }
         public int Quantity { get; set; }
 
         public int CartDtoId { get; set; }

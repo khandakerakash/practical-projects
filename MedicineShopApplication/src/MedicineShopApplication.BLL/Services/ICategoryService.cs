@@ -61,7 +61,7 @@ namespace MedicineShopApplication.BLL.Services
                 .Take(request.PageSize)
                 .Select(x => new CategoryResponseDto
                 {
-                    CategoryDtoId = x.CategoryId,
+                    CategoryId = x.CategoryId,
                     Code = x.Code,
                     Name = x.Name,
                     NormalizedName = x.NormalizedName,
@@ -110,7 +110,7 @@ namespace MedicineShopApplication.BLL.Services
             var categoryResponse = await categoryQuery
                 .Select(x => new CategoryResponseDto
                 {
-                    CategoryDtoId = x.CategoryId,
+                    CategoryId = x.CategoryId,
                     Code = x.Code,
                     Name = x.Name,
                     NormalizedName = x.NormalizedName,

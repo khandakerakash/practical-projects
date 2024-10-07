@@ -8,7 +8,7 @@ namespace MedicineShopApplication.BLL.Dtos.Order
 {
     public class OrderDto : AuditableEntityDto
     {
-        public int OrderDtoId { get; set; }
+        public int OrderId { get; set; }
         public decimal TotalAmount { get; set; }
         public string PaymentStatus { get; set; }
         public string DeliveryAddress { get; set; }

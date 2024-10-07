@@ -8,6 +8,10 @@ using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Bogus.DataSets;
+using MedicineShopApplication.BLL.Dtos.Brand;
+using MedicineShopApplication.BLL.Dtos.Product;
+using MedicineShopApplication.BLL.Dtos.Inventory;
 
 
 namespace MedicineShopApplication.BLL.Services
@@ -15,7 +19,7 @@ namespace MedicineShopApplication.BLL.Services
     public interface IUnitOfMeasureService
     {
         Task<ApiResponse<List<UnitOfMeasureResponseDto>>> GetAllUnitOfMeasure();
-        Task<ApiResponse<UnitOfMeasureResponseDto>> GetAUnitOfMeasure(int unitOfMeasureId);
+        Task<ApiResponse<UnitOfMeasureResponseDto>> GetUnitOfMeasureById(int unitOfMeasureId);
         Task<ApiResponse<CreateUnitOfMeasureResponseDto>> CreateUnitOfMeasure(CreateUnitOfMeasureRequestDto request, int userId);
         Task<ApiResponse<string>> UpdateUnitOfMeasure(UpdateUnitOfMeasureRequestDto request, int unitOfMeasureId, int userId);
         Task<ApiResponse<string>> DeleteUnitOfMeasure(int unitOfMeasureId, int userId);
@@ -40,9 +44,71 @@ namespace MedicineShopApplication.BLL.Services
             throw new NotImplementedException();
         }
 
-        public Task<ApiResponse<UnitOfMeasureResponseDto>> GetAUnitOfMeasure(int unitOfMeasureId)
+        public async Task<ApiResponse<UnitOfMeasureResponseDto>> GetUnitOfMeasureById(int unitOfMeasureId)
         {
-            throw new NotImplementedException();
+            var unitQuery = _unitOfWork.UnitOfMeasureRepository
+                .FindByConditionAsync(x => x.UnitOfMeasureId == unitOfMeasureId);
+
+            var unit = await unitQuery.FirstOrDefaultAsync();
+            if (unit.HasNoValue())
+            {
+                return new ApiResponse<UnitOfMeasureResponseDto>(null, false, "Unit of measure not found.");
+            }
+
+            var userIds = new List<int> { unit.CreatedBy };
+            if (unit.UpdatedBy.HasValue)
+            {
+                userIds.Add(unit.UpdatedBy.Value);
+            }
+
+            var users = await _unitOfWork.UserRepository
+                .FindByConditionAsync(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id);
+
+            var unitResponse = await unitQuery
+                .Select(x => new UnitOfMeasureResponseDto
+                {
+                    UnitOfMeasureId = x.UnitOfMeasureId,
+                    Name = x.Name,
+                    NormalizedName = x.NormalizedName,
+                    Description = x.Description,
+
+                    ProductDtos = x.Products.Select(p => new ProductDto
+                    {
+                        ProductId = p.ProductId,
+                        Code = p.Code,
+                        Name = p.Name,
+                        NormalizedName = p.NormalizedName,
+                        GenericName = p.GenericName,
+                        Description = p.Description,
+                        CostPrice = p.CostPrice,
+                        SellingPrice = p.SellingPrice,
+                        Status = ProductStatusUtils.GetProductStatusDisplayName(p.Status),
+                    }).ToList(),
+
+                    InventoryDtos = x.Inventories.Select(i => new InventoryDto
+                    {
+                        InventoryId = i.InventoryId,
+                        QuantityInStock = i.QuantityInStock,
+                        ReorderLevel = i.ReorderLevel,
+                        Status = i.Status,
+                    }).ToList(),
+
+                    CreatedAt = x.CreatedAt,
+                    CreatedBy = x.CreatedBy,
+                    CreatedByName = users.ContainsKey(x.CreatedBy)
+                                    ? users[x.CreatedBy].GetFullName()
+                                    : "",
+
+                    UpdatedAt = x.UpdatedAt,
+                    UpdatedBy = x.UpdatedBy,
+                    UpdatedByName = x.UpdatedBy.HasValue && users.ContainsKey(x.UpdatedBy.Value)
+                                    ? users[x.UpdatedBy.Value].GetFullName()
+                                    : ""
+                })
+                .FirstOrDefaultAsync();
+
+            return new ApiResponse<UnitOfMeasureResponseDto>(unitResponse, true, "Unit of measure found.");
         }
 
         public async Task<ApiResponse<CreateUnitOfMeasureResponseDto>> CreateUnitOfMeasure(CreateUnitOfMeasureRequestDto request, int userId)

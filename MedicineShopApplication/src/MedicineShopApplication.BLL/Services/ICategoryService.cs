@@ -107,8 +107,7 @@ namespace MedicineShopApplication.BLL.Services
                 .FindByConditionAsync(u => userIds.Contains(u.Id))
                 .ToDictionaryAsync(u => u.Id);
 
-            var categoryResponse = await _unitOfWork.CategoryRepository
-                .FindByConditionAsync(c => c.CategoryId == categoryId)
+            var categoryResponse = await categoryQuery
                 .Select(x => new CategoryResponseDto
                 {
                     CategoryDtoId = x.CategoryId,

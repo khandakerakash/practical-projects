@@ -120,7 +120,6 @@ namespace MedicineShopApplication.BLL.Services
                     UpdatedByName = x.UpdatedBy.HasValue && users.ContainsKey(x.UpdatedBy.Value)
                                     ? users[x.UpdatedBy.Value].GetFullName()
                                     : ""
-
                 })
                 .FirstOrDefaultAsync();
 

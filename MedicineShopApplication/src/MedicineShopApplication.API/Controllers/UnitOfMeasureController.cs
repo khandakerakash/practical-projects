@@ -16,7 +16,12 @@ namespace MedicineShopApplication.API.Controllers
         }
 
 
-
+        [HttpGet("{unitOfMeasureId}")]
+        public async Task<IActionResult> GetUnitOfMeasureById(int unitOfMeasureId)
+        {
+            var response = await _unitOfMeasureService.GetUnitOfMeasureById(unitOfMeasureId);
+            return ToActionResult(response);
+        }
 
         [HttpPost("create")]
         public async Task<IActionResult> CreateUnitOfMeasure(CreateUnitOfMeasureRequestDto request)

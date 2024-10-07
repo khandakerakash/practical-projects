@@ -7,7 +7,7 @@ namespace MedicineShopApplication.BLL.Dtos.Inventory
 {
     public class InventoryDto : AuditableEntityDto
     {
-        public int InventoryDtoId { get; set; }
+        public int InventoryId { get; set; }
         public int QuantityInStock { get; set; }
         public int ReorderLevel { get; set; }
         public InventoryStatus Status { get; set; }

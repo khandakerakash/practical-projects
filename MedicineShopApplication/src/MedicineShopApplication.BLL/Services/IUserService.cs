@@ -1,11 +1,5 @@
-﻿using MedicineShopApplication.BLL.Dtos.Cart;
-using MedicineShopApplication.BLL.Dtos.Order;
-using MedicineShopApplication.BLL.Dtos.Payment;
-using MedicineShopApplication.BLL.Dtos.User;
-using MedicineShopApplication.DLL.Models;
+﻿using MedicineShopApplication.BLL.Dtos.User;
 using MedicineShopApplication.DLL.UOW;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace MedicineShopApplication.BLL.Services
 {

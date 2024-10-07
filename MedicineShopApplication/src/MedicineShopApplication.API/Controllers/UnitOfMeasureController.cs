@@ -1,5 +1,6 @@
 ﻿using MedicineShopApplication.API.Controllers.BasicControllers;
 using MedicineShopApplication.BLL.Dtos.UnitOfMeasure;
+using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,12 @@ namespace MedicineShopApplication.API.Controllers
             _unitOfMeasureService = unitOfMeasureService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllUnitOfMeasure([FromQuery] PaginationRequest request)
+        {
+            var response = await _unitOfMeasureService.GetAllUnitOfMeasure(request);
+            return ToActionResult(response);
+        }
 
         [HttpGet("{unitOfMeasureId}")]
         public async Task<IActionResult> GetUnitOfMeasureById(int unitOfMeasureId)
@@ -38,6 +45,15 @@ namespace MedicineShopApplication.API.Controllers
             var userId = User.GetUserIdInt();
 
             var response = await _unitOfMeasureService.UpdateUnitOfMeasure(request, unitOfMeasureId, userId);
+            return ToActionResult(response);
+        }
+
+        [HttpDelete("delete/{unitOfMeasureId}")]
+        public async Task<IActionResult> DeleteUnitOfMeasure(int unitOfMeasureId)
+        {
+            var userId = User.GetUserIdInt();
+
+            var response = await _unitOfMeasureService.DeleteUnitOfMeasure(unitOfMeasureId, userId);
             return ToActionResult(response);
         }
 

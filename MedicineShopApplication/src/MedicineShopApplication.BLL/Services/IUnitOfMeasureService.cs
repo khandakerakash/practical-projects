@@ -18,7 +18,7 @@ namespace MedicineShopApplication.BLL.Services
 {
     public interface IUnitOfMeasureService
     {
-        Task<ApiResponse<List<UnitOfMeasureResponseDto>>> GetAllUnitOfMeasure();
+        Task<ApiResponse<List<UnitOfMeasureResponseDto>>> GetAllUnitOfMeasure(PaginationRequest request);
         Task<ApiResponse<UnitOfMeasureResponseDto>> GetUnitOfMeasureById(int unitOfMeasureId);
         Task<ApiResponse<CreateUnitOfMeasureResponseDto>> CreateUnitOfMeasure(CreateUnitOfMeasureRequestDto request, int userId);
         Task<ApiResponse<string>> UpdateUnitOfMeasure(UpdateUnitOfMeasureRequestDto request, int unitOfMeasureId, int userId);
@@ -39,9 +39,70 @@ namespace MedicineShopApplication.BLL.Services
             _userManager = userManager;
         }
 
-        public Task<ApiResponse<List<UnitOfMeasureResponseDto>>> GetAllUnitOfMeasure()
+        public async Task<ApiResponse<List<UnitOfMeasureResponseDto>>> GetAllUnitOfMeasure(PaginationRequest request)
         {
-            throw new NotImplementedException();
+            var skipValue = PaginationUtils.SkipValue(request.Page, request.PageSize);
+
+            var unitsQuery = _unitOfWork.UnitOfMeasureRepository.FindAllAsync();
+
+            unitsQuery = SortUnitsQuery(unitsQuery, request.SortBy);
+
+            var totalUnitCount = await unitsQuery.CountAsync();
+
+            var userIds = unitsQuery.Select(x => x.CreatedBy)
+                .Union(unitsQuery.Where(x => x.UpdatedBy.HasValue).Select(x => x.UpdatedBy.Value))
+                .Distinct();
+
+            var users = await _unitOfWork.UserRepository
+                .FindByConditionAsync(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id);
+
+            var unitList = await unitsQuery
+                .Skip(skipValue)
+                .Take(request.PageSize)
+                .Select(x => new UnitOfMeasureResponseDto
+                {
+                    UnitOfMeasureId = x.UnitOfMeasureId,
+                    Name = x.Name,
+                    NormalizedName = x.NormalizedName,
+                    Description = x.Description,
+
+                    ProductDtos = x.Products.Select(p => new ProductDto
+                    {
+                        ProductId = p.ProductId,
+                        Code = p.Code,
+                        Name = p.Name,
+                        NormalizedName = p.NormalizedName,
+                        GenericName = p.GenericName,
+                        Description = p.Description,
+                        CostPrice = p.CostPrice,
+                        SellingPrice = p.SellingPrice,
+                        Status = ProductStatusUtils.GetProductStatusDisplayName(p.Status),
+                    }).ToList(),
+
+                    InventoryDtos = x.Inventories.Select(i => new InventoryDto
+                    {
+                        InventoryId = i.InventoryId,
+                        QuantityInStock = i.QuantityInStock,
+                        ReorderLevel = i.ReorderLevel,
+                        Status = i.Status,
+                    }).ToList(),
+
+                    CreatedAt = x.CreatedAt,
+                    CreatedBy = x.CreatedBy,
+                    CreatedByName = users.ContainsKey(x.CreatedBy)
+                                    ? users[x.CreatedBy].GetFullName()
+                                    : "",
+
+                    UpdatedAt = x.UpdatedAt,
+                    UpdatedBy = x.UpdatedBy,
+                    UpdatedByName = x.UpdatedBy.HasValue && users.ContainsKey(x.UpdatedBy.Value)
+                                    ? users[x.UpdatedBy.Value].GetFullName()
+                                    : ""
+                })
+                .ToListAsync();
+
+            return new ApiPaginationResponse<List<UnitOfMeasureResponseDto>>(unitList, request.Page, request.PageSize, totalUnitCount);
         }
 
         public async Task<ApiResponse<UnitOfMeasureResponseDto>> GetUnitOfMeasureById(int unitOfMeasureId)
@@ -197,9 +258,25 @@ namespace MedicineShopApplication.BLL.Services
             return new ApiResponse<string>(null, true, "The Unit of measure updated successfully.");
         }
 
-        public Task<ApiResponse<string>> DeleteUnitOfMeasure(int unitOfMeasureId, int userId)
+        public async Task<ApiResponse<string>> DeleteUnitOfMeasure(int unitOfMeasureId, int userId)
         {
-            throw new NotImplementedException();
+            var unit = await _unitOfWork.UnitOfMeasureRepository
+                .FindByConditionWithTrackingAsync(x => x.UnitOfMeasureId == unitOfMeasureId)
+                .FirstOrDefaultAsync();
+
+            if (unit.HasNoValue())
+            {
+                return new ApiResponse<string>(null, false, "Unit of measure not found.");
+            }
+
+            _unitOfWork.UnitOfMeasureRepository.Delete(unit);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<string>(null, false, "An error occurred while deleting the unit of measure.");
+            }
+
+            return new ApiResponse<string>(null, true, "Unit of measure deleted successfully.");
         }
 
         public async Task<ApiResponse<List<DropdownOptionDto>>> GetUnitOfMeasureDropdownOptions()
@@ -221,6 +298,64 @@ namespace MedicineShopApplication.BLL.Services
         }
 
         #region Helper Methods of UnitOfMeasure
+
+        /// <summary>
+        /// Sorts the provided <see cref="IQueryable{UnitOfMeasure}"/> based on the specified sorting criteria.
+        /// The sorting criteria are provided as a string in the format "property direction", 
+        /// where "direction" can be "asc" for ascending or "desc" for descending. 
+        /// Multiple criteria can be specified, separated by commas, e.g., "name desc, code asc".
+        /// If no valid criteria are specified, the default sorting is by BrandId in descending order.
+        /// </summary>
+        /// <param name="unitsQuery">The queryable collection of <see cref="UnitOfMeasure"/> to be sorted.</param>
+        /// <param name="sortBy">A string containing sorting criteria, e.g., "name desc, code asc".</param>
+        /// <returns>An <see cref="IQueryable{UnitOfMeasure}"/> sorted based on the specified criteria.</returns>
+        private IQueryable<UnitOfMeasure> SortUnitsQuery(IQueryable<UnitOfMeasure> unitsQuery, string sortBy)
+        {
+            if (string.IsNullOrWhiteSpace(sortBy))
+            {
+                // Default sorting
+                return unitsQuery.OrderByDescending(x => x.UnitOfMeasureId);
+            }
+
+            // Split multiple sort criteria (e.g., "name desc, code asc")
+            var sortParts = sortBy.Split(',');
+
+            foreach (var sortPart in sortParts)
+            {
+                var trimmedPart = sortPart.Trim();
+                var orderDescending = trimmedPart.EndsWith(" desc", StringComparison.OrdinalIgnoreCase);
+                var propertyName = orderDescending
+                    ? trimmedPart[0..^5]
+                    : trimmedPart.EndsWith(" asc", StringComparison.OrdinalIgnoreCase)
+                        ? trimmedPart[0..^4]
+                        : trimmedPart;
+
+
+                if (propertyName.ToLower() == "id")
+                {
+                    unitsQuery = orderDescending
+                        ? unitsQuery.OrderByDescending(x => x.UnitOfMeasureId)
+                        : unitsQuery.OrderBy(x => x.UnitOfMeasureId);
+                }
+
+                if (propertyName.ToLower() == "name")
+                {
+                    unitsQuery = orderDescending
+                        ? unitsQuery.OrderByDescending(x => x.Name)
+                        : unitsQuery.OrderBy(x => x.Name);
+                }
+
+                if (propertyName.ToLower() == "Description")
+                {
+                    unitsQuery = orderDescending
+                        ? unitsQuery.OrderByDescending(x => x.Description)
+                        : unitsQuery.OrderBy(x => x.Description);
+                }
+            }
+
+            return unitsQuery; ;
+        }
+
         /// <summary>
         /// Checks if a unitOfMeasure with the specified name already exists in the repository by normalizing the name for consistent comparison.
         /// </summary>

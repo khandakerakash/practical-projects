@@ -1,9 +1,9 @@
-﻿using MedicineShopApplication.BLL.Dtos.Common;
-using MedicineShopApplication.BLL.Dtos.Product;
+﻿using MedicineShopApplication.DLL.Models.Users;
+using MedicineShopApplication.BLL.Dtos.Common;
+using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.BLL.Dtos.User;
 using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Utils;
-using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,8 +13,8 @@ namespace MedicineShopApplication.BLL.Services
     {
         Task<ApiResponse<List<AdminUserResponseDto>>> GetAllAdminUsers(PaginationRequest request);
         Task<ApiResponse<AdminUserResponseDto>> GetAdminUserById(int userId);
-        Task<ApiResponse<string>> UpdateAdminUser(UpdateAdminUserRequestDto request, int userId);
-        Task<ApiResponse<string>> DeleteAdminUser(int userId);
+        Task<ApiResponse<string>> UpdateAdminUser(UpdateAdminUserRequestDto request, int adminId, int userId);
+        Task<ApiResponse<string>> DeleteAdminUser(int adminId, int userId);
     }
 
     public class AdminUserService : IAdminUserService
@@ -74,19 +74,126 @@ namespace MedicineShopApplication.BLL.Services
             return new ApiPaginationResponse<List<AdminUserResponseDto>>(userList, request.Page, request.PageSize, totalAdminUserCount);
         }
 
-        public Task<ApiResponse<AdminUserResponseDto>> GetAdminUserById(int userId)
+        public async Task<ApiResponse<AdminUserResponseDto>> GetAdminUserById(int userId)
         {
-            throw new NotImplementedException();
+            var userQuery = _unitOfWork.UserRepository
+                .FindByConditionAsync(x => x.Id == userId);
+
+            var user = await userQuery.FirstOrDefaultAsync();
+            if (user.HasNoValue())
+            {
+                return new ApiResponse<AdminUserResponseDto>(null, false, "Admin user not found.");
+            }
+
+            var userIds = new List<int> { user.CreatedBy };
+            if (user.UpdatedBy.HasValue)
+            {
+                userIds.Add(user.UpdatedBy.Value);
+            }
+
+            var users = await _unitOfWork.UserRepository
+                .FindByConditionAsync(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id);
+
+            var userResponse = await userQuery
+                .Select(x => new AdminUserResponseDto
+                {
+                    UserId = x.Id,
+                    UserName = x.UserName,
+                    Title = x.Title,
+                    FirstName = x.FirstName,
+                    LastName = x.LastName,
+                    Email = x.Email,
+                    PhoneNumber = x.PhoneNumber,
+                    Address = x.Address,
+
+                    CreatedAt = x.CreatedAt,
+                    CreatedBy = x.CreatedBy,
+                    CreatedByName = users.ContainsKey(x.CreatedBy)
+                                    ? users[x.CreatedBy].GetFullName()
+                                    : "",
+
+                    UpdatedAt = x.UpdatedAt,
+                    UpdatedBy = x.UpdatedBy,
+                    UpdatedByName = x.UpdatedBy.HasValue && users.ContainsKey(x.UpdatedBy.Value)
+                                    ? users[x.UpdatedBy.Value].GetFullName()
+                                    : ""
+                })
+                .FirstOrDefaultAsync();
+
+            return new ApiResponse<AdminUserResponseDto>(userResponse, true, "Admin user found.");
         }
 
-        public Task<ApiResponse<string>> UpdateAdminUser(UpdateAdminUserRequestDto request, int userId)
+        public async Task<ApiResponse<string>> UpdateAdminUser(UpdateAdminUserRequestDto request, int adminId, int userId)
         {
-            throw new NotImplementedException();
+            var validator = new UpdateAdminUserRequestDtoValidator();
+            var validationResult = await validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                return new ApiResponse<string>(validationResult.Errors);
+            }
+
+            var users = await _unitOfWork.UserRepository
+                .FindByConditionWithTrackingAsync(x => x.Id == adminId || x.Email == request.Email)
+                .ToListAsync();
+
+            var user = users.FirstOrDefault(x => x.Id == adminId);
+            if (user.HasNoValue())
+            {
+                return new ApiResponse<string>(null, false, "Admin user not found.");
+            }
+
+            var isEmailExiting = users.Any(x => x.Id != adminId && x.Email == request.Email); 
+            if (isEmailExiting)
+            {
+                return new ApiResponse<string>(null, false, "Admin with this email already exists.");
+            }
+
+            user.Title = request.Title;
+            user.FirstName = request.FirstName;
+            user.LastName = request.LastName;
+            user.Email = request.Email;
+            user.Address = request.Address;
+            user.UpdatedBy = userId;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            _unitOfWork.UserRepository.Update(user);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<string>(null, false, "An error occurred while updating the admin user.");
+            }
+
+            return new ApiResponse<string>(null, true, "The admin user updated successfully.");
         }
 
-        public Task<ApiResponse<string>> DeleteAdminUser(int userId)
+        public async Task<ApiResponse<string>> DeleteAdminUser(int adminId, int userId)
         {
-            throw new NotImplementedException();
+            var user = await _unitOfWork.UserRepository
+                .FindByConditionWithTrackingAsync(x => x.Id == adminId)
+                .FirstOrDefaultAsync();
+
+            if (user.HasNoValue())
+            {
+                return new ApiResponse<string>(null, false, "Admin user not found.");
+            }
+
+            if (user.Id == userId) 
+            {
+                return new ApiResponse<string>(null, false, "You can't delete yourself.");
+            }
+
+            user.UpdatedBy = userId;
+            user.UpdatedAt = DateTime.Now;
+            _unitOfWork.UserRepository.SoftDelete(user);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<string>(null, false, "An error occurred while deleting the admin user.");
+            }
+
+            return new ApiResponse<string>(null, true, "Admin user deleted successfully.");
         }
 
         #region Helper Methods for Admin User

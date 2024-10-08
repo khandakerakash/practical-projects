@@ -1,4 +1,4 @@
-﻿using MedicineShopApplication.API.Controllers.BasicControllers;
+﻿using MedicineShopApplication.API.Controllers.Base;
 using MedicineShopApplication.BLL.Dtos.Category;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Extension;
@@ -6,9 +6,9 @@ using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace MedicineShopApplication.API.Controllers
+namespace MedicineShopApplication.API.Controllers.General
 {
-    public class CategoryController : ApiAuthorizeBaseController
+    public class CategoryController : ApiAuthorizeController
     {
         private readonly ICategoryService _categoryService;
 
@@ -36,7 +36,7 @@ namespace MedicineShopApplication.API.Controllers
         {
             var userId = User.GetUserIdInt();
 
-            var response = await _categoryService.CreateCategory(request,  userId);
+            var response = await _categoryService.CreateCategory(request, userId);
             return ToActionResult(response);
         }
 

@@ -1,15 +1,15 @@
-﻿using MedicineShopApplication.API.Controllers.BasicControllers;
-using MedicineShopApplication.BLL.Dtos.Common;
-using MedicineShopApplication.BLL.Dtos.Brand;
-using MedicineShopApplication.BLL.Extension;
+﻿using Microsoft.AspNetCore.Mvc;
 using MedicineShopApplication.BLL.Services;
-using Microsoft.AspNetCore.Mvc;
+using MedicineShopApplication.BLL.Extension;
+using MedicineShopApplication.BLL.Dtos.Brand;
+using MedicineShopApplication.BLL.Dtos.Common;
+using MedicineShopApplication.API.Controllers.Base;
 
 
 
-namespace MedicineShopApplication.API.Controllers
+namespace MedicineShopApplication.API.Controllers.General
 {
-    public class BrandController : ApiAuthorizeBaseController
+    public class BrandController : ApiAuthorizeController
     {
         private readonly IBrandService _brandService;
 

@@ -1,9 +1,9 @@
-﻿using MedicineShopApplication.API.Controllers.BasicControllers;
+﻿using MedicineShopApplication.API.Controllers.Base;
 using MedicineShopApplication.BLL.Dtos.User;
 using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MedicineShopApplication.API.Controllers
+namespace MedicineShopApplication.API.Controllers.General
 {
     public class UsersController : ApiBaseController
     {

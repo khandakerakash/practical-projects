@@ -1,13 +1,14 @@
-﻿using MedicineShopApplication.API.Controllers.BasicControllers;
-using MedicineShopApplication.BLL.Dtos.UnitOfMeasure;
+﻿using MedicineShopApplication.BLL.Dtos.UnitOfMeasure;
+using MedicineShopApplication.API.Controllers.Base;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MedicineShopApplication.API.Controllers
+
+namespace MedicineShopApplication.API.Controllers.General
 {
-    public class UnitOfMeasureController : ApiAuthorizeBaseController
+    public class UnitOfMeasureController : ApiAuthorizeController
     {
         private readonly IUnitOfMeasureService _unitOfMeasureService;
 

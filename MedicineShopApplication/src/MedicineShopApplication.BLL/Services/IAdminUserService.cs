@@ -6,6 +6,9 @@ using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using MedicineShopApplication.BLL.Enums;
+using MedicineShopApplication.DLL.Models.Enums;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -13,6 +16,7 @@ namespace MedicineShopApplication.BLL.Services
     {
         Task<ApiResponse<List<AdminUserResponseDto>>> GetAllAdminUsers(PaginationRequest request);
         Task<ApiResponse<AdminUserResponseDto>> GetAdminUserById(int userId);
+        Task<ApiResponse<AdminUserResponseDto>> CreateAdminUser(AdminUserRegistrationRequestDto request, int requestMaker, string userRoleName);
         Task<ApiResponse<string>> UpdateAdminUser(UpdateAdminUserRequestDto request, int adminId, int userId);
         Task<ApiResponse<string>> DeleteAdminUser(int adminId, int userId);
     }
@@ -20,10 +24,14 @@ namespace MedicineShopApplication.BLL.Services
     public class AdminUserService : IAdminUserService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AdminUserService(IUnitOfWork unitOfWork)
+        public AdminUserService(
+            IUnitOfWork unitOfWork,
+            UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
 
 
@@ -122,6 +130,70 @@ namespace MedicineShopApplication.BLL.Services
                 .FirstOrDefaultAsync();
 
             return new ApiResponse<AdminUserResponseDto>(userResponse, true, "Admin user found.");
+        }
+
+        public async Task<ApiResponse<AdminUserResponseDto>> CreateAdminUser(AdminUserRegistrationRequestDto request, int requestMaker, string userRoleName)
+        {
+            if (userRoleName != UserRoleUtils.GetUserRole(UserRole.developer) && userRoleName != UserRoleUtils.GetUserRole(UserRole.superAdmin))
+            {
+                return new ApiResponse<AdminUserResponseDto>(null, false, "Only Developer or Super Admin can create admin users.");
+            }
+
+            var validator = new AdminUserRegistrationRequestDtoValidator();
+            var validationResult = await validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid) 
+            {
+                return new ApiResponse<AdminUserResponseDto>(validationResult.Errors);
+            }
+
+            var isPhoneNumberOrUserExisting = await _unitOfWork.UserRepository
+                .FindByConditionWithTrackingAsync(x => x.PhoneNumber == request.PhoneNumber)
+                .FirstOrDefaultAsync();
+
+            if (isPhoneNumberOrUserExisting.HasValue())
+            {
+                return new ApiResponse<AdminUserResponseDto>(null, false, "Admin with this Phone number already exists in our system.");
+            }
+
+            var isEmailExiting = await _unitOfWork.UserRepository
+                .FindByConditionWithTrackingAsync(x => x.Email == request.Email)
+                .FirstOrDefaultAsync();
+
+            if (isEmailExiting.HasValue())
+            {
+                return new ApiResponse<AdminUserResponseDto>(null, false, "Admin with this email already exists in our system.");
+            }
+
+            var user = new ApplicationUser()
+            {
+                PhoneNumber = request.PhoneNumber,
+                UserName = request.PhoneNumber,
+                PhoneNumberConfirmed = true,
+                Email = request.Email,
+                Title = request.Title,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                CreatedBy = requestMaker
+            };
+
+            var userCreationResponse = await _userManager.CreateAsync(user, request.Password);
+
+            if (!userCreationResponse.Succeeded)
+            {
+                return new ApiResponse<AdminUserResponseDto>(userCreationResponse.Errors);
+            }
+
+            var userRole  = Enum.Parse<UserRole>(request.UserRoleName, true);
+
+            var roleAssignmentResponse = await _userManager.AddToRoleAsync(user, userRole.ToString());
+
+            if (!roleAssignmentResponse.Succeeded)
+            {
+                return new ApiResponse<AdminUserResponseDto>(roleAssignmentResponse.Errors);
+            }
+
+            return new ApiResponse<AdminUserResponseDto>(null, true, "Welcome to our system.");
         }
 
         public async Task<ApiResponse<string>> UpdateAdminUser(UpdateAdminUserRequestDto request, int adminId, int userId)

@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MedicineShopApplication.BLL.Services;
 using MedicineShopApplication.BLL.Dtos.Account;
-using MedicineShopApplication.API.Controllers.BasicControllers;
+using MedicineShopApplication.API.Controllers.Base;
 
-namespace MedicineShopApplication.API.Controllers
+namespace MedicineShopApplication.API.Controllers.General
 {
     public class AccountController : ApiBaseController
     {

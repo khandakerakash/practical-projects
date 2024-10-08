@@ -1,7 +1,7 @@
 ﻿using MedicineShopApplication.BLL.Dtos.Common;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MedicineShopApplication.API.Controllers.BasicControllers
+namespace MedicineShopApplication.API.Controllers.Base
 {
     [Route("api/[controller]")]
     [ApiController]

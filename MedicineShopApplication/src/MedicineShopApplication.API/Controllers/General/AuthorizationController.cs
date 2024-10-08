@@ -5,17 +5,17 @@ using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Server.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using OpenIddict.Validation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.DLL.Models.Users;
 using Microsoft.Extensions.Caching.Distributed;
+using MedicineShopApplication.API.Controllers.Base;
 using static OpenIddict.Abstractions.OpenIddictConstants;
-using MedicineShopApplication.API.Controllers.BasicControllers;
-using Microsoft.AspNetCore.Authorization;
-using OpenIddict.Validation.AspNetCore;
 
 
-namespace MedicineShopApplication.API.Controllers
+namespace MedicineShopApplication.API.Controllers.General
 {
     public class AuthorizationController : ApiBaseController
     {
@@ -100,12 +100,12 @@ namespace MedicineShopApplication.API.Controllers
                 var result = await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
                 // Retrieve the user profile corresponding to the refresh token.
-                var user = await _userManager.FindByIdAsync(result.Principal.GetClaim(OpenIddictConstants.Claims.Subject));
+                var user = await _userManager.FindByIdAsync(result.Principal.GetClaim(Claims.Subject));
                 if (user == null)
                 {
                     var properties = new AuthenticationProperties(new Dictionary<string, string>
                     {
-                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = OpenIddictConstants.Errors.InvalidGrant,
+                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
                         [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "The refresh token is no longer valid."
                     });
 
@@ -117,7 +117,7 @@ namespace MedicineShopApplication.API.Controllers
                 {
                     var properties = new AuthenticationProperties(new Dictionary<string, string>
                     {
-                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = OpenIddictConstants.Errors.InvalidGrant,
+                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
                         [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "The user is no longer allowed to sign in."
                     });
 

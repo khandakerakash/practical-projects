@@ -34,5 +34,12 @@ namespace MedicineShopApplication.BLL.Extension
 
             return Convert.ToInt32(userId);
         }
+
+        public static string GetUserRole(this ClaimsPrincipal principal)
+        {
+            return principal.Claims.Where(c => c.Type == Claims.Role)
+                .Select(c => c.Value)
+                .FirstOrDefault();
+        }
     }
 }

@@ -1,13 +1,13 @@
-﻿using MedicineShopApplication.API.Controllers.BasicControllers;
+﻿using MedicineShopApplication.API.Controllers.Base;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Dtos.User;
 using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MedicineShopApplication.API.Controllers
+namespace MedicineShopApplication.API.Controllers.General
 {
-    public class AdminUserController : ApiAuthorizeBaseController
+    public class AdminUserController : ApiAuthorizeController
     {
         private readonly IAdminUserService _adminUserService;
 
@@ -27,6 +27,16 @@ namespace MedicineShopApplication.API.Controllers
         public async Task<IActionResult> GetAdminUserById(int userId)
         {
             var response = await _adminUserService.GetAdminUserById(userId);
+            return ToActionResult(response);
+        }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateAdminUser(AdminUserRegistrationRequestDto request)
+        {
+            var requestMaker = User.GetUserIdInt();
+            var userRoleName = User.GetUserRole();
+
+            var response = await _adminUserService.CreateAdminUser(request, requestMaker, userRoleName);
             return ToActionResult(response);
         }
 

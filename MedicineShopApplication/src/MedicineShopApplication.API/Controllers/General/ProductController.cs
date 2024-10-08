@@ -1,13 +1,13 @@
-﻿using MedicineShopApplication.API.Controllers.BasicControllers;
-using MedicineShopApplication.BLL.Dtos.Common;
+﻿using MedicineShopApplication.API.Controllers.Base;
 using MedicineShopApplication.BLL.Dtos.Product;
+using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MedicineShopApplication.API.Controllers
+namespace MedicineShopApplication.API.Controllers.General
 {
-    public class ProductController : ApiAuthorizeBaseController
+    public class ProductController : ApiAuthorizeController
     {
         private readonly IProductService _productService;
 

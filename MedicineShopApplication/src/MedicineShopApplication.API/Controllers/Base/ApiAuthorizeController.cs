@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using OpenIddict.Validation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MedicineShopApplication.API.Controllers.BasicControllers
+namespace MedicineShopApplication.API.Controllers.Base
 {
     [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, Policy = "TokenPolicy")]
     [Route("api/[controller]")]
     [ApiController]
-    public class ApiAuthorizeBaseController : ControllerBase
+    public class ApiAuthorizeController : ControllerBase
     {
         public IActionResult ToActionResult<T>(ApiResponse<T> result)
         {

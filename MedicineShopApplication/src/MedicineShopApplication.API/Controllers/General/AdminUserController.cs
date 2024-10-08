@@ -57,5 +57,7 @@ namespace MedicineShopApplication.API.Controllers.General
             var response = await _adminUserService.DeleteAdminUser(adminId, userId);
             return ToActionResult(response);
         }
+
+
     }
 }

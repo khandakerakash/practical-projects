@@ -50,20 +50,31 @@ namespace MedicineShopApplication.DLL.BogusData
 
         public static void GenerateRoles(IServiceProvider serviceProvider)
         {
-            string[] roles = { "Developer", "SuperAdmin", "Admin", "Manager", "Moderator", "Salesman", "Customer" };
+            var rolesWithTypes = new Dictionary<string, string>
+            {
+                { "Developer", "Admin" },
+                { "SuperAdmin", "Admin" },
+                { "Admin", "Admin" },
+                { "Manager", "Admin" },
+                { "Moderator", "Admin" },
+                { "Salesman", "Admin" },
+                { "Customer", "Customer" }
+            };
 
             var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
-            foreach (var role in roles)
+            foreach (var role in rolesWithTypes)
             {
-                var lowerValue = role.ToLower();
-                var isRoleExists = roleManager.RoleExistsAsync(lowerValue).Result;
+                var key = role.Key.ToLower();
+                var value = role.Value.ToLower();
+                var isRoleExists = roleManager.RoleExistsAsync(key).Result;
 
-                if(!isRoleExists)
+                if (!isRoleExists)
                 {
                     var response = roleManager.CreateAsync(new ApplicationRole()
                     {
-                        Name = lowerValue,
+                        Name = key,
+                        RoleType = value
                     }).Result;
                 }
             }

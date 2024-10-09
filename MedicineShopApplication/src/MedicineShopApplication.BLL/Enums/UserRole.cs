@@ -10,4 +10,10 @@
         salesman,
         customer
     }
+
+    public enum RoleType
+    {
+        admin,
+        customer
+    }
 }

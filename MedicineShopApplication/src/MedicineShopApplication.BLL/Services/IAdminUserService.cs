@@ -54,32 +54,43 @@ namespace MedicineShopApplication.BLL.Services
                 .ToDictionaryAsync(u => u.Id);
 
             var userList = await usersQuery
-                .Select(x => new AdminUserResponseDto
-                {
-                    UserId = x.Id,
-                    UserName = x.UserName,
-                    Title = x.Title,
-                    FirstName = x.FirstName,
-                    LastName = x.LastName,
-                    Email = x.Email,
-                    PhoneNumber = x.PhoneNumber,
-                    Address = x.Address,
-
-                    CreatedAt = x.CreatedAt,
-                    CreatedBy = x.CreatedBy,
-                    CreatedByName = users.ContainsKey(x.CreatedBy)
-                                    ? users[x.CreatedBy].GetFullName()
-                                    : "",
-
-                    UpdatedAt = x.UpdatedAt,
-                    UpdatedBy = x.UpdatedBy,
-                    UpdatedByName = x.UpdatedBy.HasValue && users.ContainsKey(x.UpdatedBy.Value)
-                                    ? users[x.UpdatedBy.Value].GetFullName()
-                                    : ""
-                })
+                .Skip(skipValue)
+                .Take(request.PageSize)
                 .ToListAsync();
 
-            return new ApiPaginationResponse<List<AdminUserResponseDto>>(userList, request.Page, request.PageSize, totalAdminUserCount);
+            var userListData = new List<AdminUserResponseDto>();
+
+            foreach (var user in userList)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                var userRoleName = roles.FirstOrDefault(); 
+
+                userListData.Add(new AdminUserResponseDto
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    UserRoleName = userRoleName,
+                    Title = user.Title,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    Address = user.Address,
+
+                    CreatedAt = user.CreatedAt,
+                    CreatedBy = user.CreatedBy,
+                    CreatedByName = users.ContainsKey(user.CreatedBy)
+                                    ? users[user.CreatedBy].GetFullName()
+                                    : "",
+                    UpdatedAt = user.UpdatedAt,
+                    UpdatedBy = user.UpdatedBy,
+                    UpdatedByName = user.UpdatedBy.HasValue && users.ContainsKey(user.UpdatedBy.Value)
+                                    ? users[user.UpdatedBy.Value].GetFullName()
+                                    : ""
+                });
+            }
+
+            return new ApiPaginationResponse<List<AdminUserResponseDto>>(userListData, request.Page, request.PageSize, totalAdminUserCount);
         }
 
         public async Task<ApiResponse<AdminUserResponseDto>> GetAdminUserById(int userId)

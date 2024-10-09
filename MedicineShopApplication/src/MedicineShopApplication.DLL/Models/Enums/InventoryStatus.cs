@@ -2,8 +2,8 @@
 {
     public enum InventoryStatus
     {
-        Available,
-        OutOfStock,
-        Reordered
+        Available = 1,
+        OutOfStock = 2,
+        Reordered = 3,
     }
 }

@@ -4,6 +4,16 @@ namespace MedicineShopApplication.BLL.Utils
 {
     public static class UserRoleUtils
     {
+        public static string GetRoleType(RoleType roleType)
+        {
+            return roleType switch
+            {
+                RoleType.admin => "admin",
+                RoleType.customer => "customer",
+                _ => roleType.ToString()
+            };
+        }
+
         public static string GetUserRole(UserRole userRole)
         {
             return userRole switch

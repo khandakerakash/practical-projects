@@ -52,7 +52,7 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<string>(userCreationResponse.Errors);
             }
 
-            var roleAssignmentResponse = await _userManager.AddToRoleAsync(user, UserRole.superadmin.ToString());
+            var roleAssignmentResponse = await _userManager.AddToRoleAsync(user, UserRole.developer.ToString());
 
             if(!roleAssignmentResponse.Succeeded)
             {

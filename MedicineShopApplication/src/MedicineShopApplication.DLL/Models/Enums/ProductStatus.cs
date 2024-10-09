@@ -2,8 +2,8 @@
 {
     public enum ProductStatus
     {
-        Available,
-        OutOfStock,
-        Discontinued
+        Available = 1,
+        OutOfStock = 2,
+        Discontinued = 3,
     }
 }

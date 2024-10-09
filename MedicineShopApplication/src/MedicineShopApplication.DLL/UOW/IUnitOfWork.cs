@@ -6,6 +6,7 @@ namespace MedicineShopApplication.DLL.UOW
     public interface IUnitOfWork : IDisposable
     {
         IUserRepository UserRepository { get; }
+        IRoleRepository RoleRepository { get; }
         ICategoryRepository CategoryRepository { get; }
         IProductRepository ProductRepository { get; }
         IBrandRepository BrandRepository { get; }
@@ -31,6 +32,7 @@ namespace MedicineShopApplication.DLL.UOW
         }
 
         private IUserRepository _userRepository;
+        private IRoleRepository _roleRepository;
         private ICategoryRepository _categoryRepository;
         private IProductRepository _productRepository;
         private IBrandRepository _brandRepository;
@@ -44,6 +46,8 @@ namespace MedicineShopApplication.DLL.UOW
         private IUnitOfMeasureRepository _unitOfMeasureRepository;
 
         public IUserRepository UserRepository => _userRepository ??= new UserRepository(_context);
+
+        public IRoleRepository RoleRepository => _roleRepository ??= new RoleRepository(_context);
 
         public ICategoryRepository CategoryRepository => _categoryRepository ??= new CategoryRepository(_context);
 
@@ -66,6 +70,7 @@ namespace MedicineShopApplication.DLL.UOW
         public IInventoryRepository InventoryRepository => _inventoryRepository ??= new InventoryRepository(_context);
 
         public IUnitOfMeasureRepository UnitOfMeasureRepository => _unitOfMeasureRepository ??= new UnitOfMeasureRepository(_context);
+
 
         public async Task<bool> CommitAsync()
         {

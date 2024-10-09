@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MedicineShopApplication.DLL.Models.General;
 using MedicineShopApplication.DLL.Models.Interfaces;
+using MedicineShopApplication.DLL.Models.Enums;
 
 namespace MedicineShopApplication.DLL.Models.Users
 {
@@ -9,6 +10,7 @@ namespace MedicineShopApplication.DLL.Models.Users
         public string Title { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public Gender Gender { get; set; }
         public string DateOfBirth { get; set; }
         public string NationalIdentityCard { get; set; }
         public string PostalCode { get; set; }
@@ -16,7 +18,7 @@ namespace MedicineShopApplication.DLL.Models.Users
         public string District { get; set; }
         public string Division { get; set; }
         public string Address { get; set; }
-        public bool IsActive { get; set; }
+        public UserStatus Status { get; set; }
 
         public Cart Cart { get; set; }
         public ICollection<Order> Orders { get; set; } = new List<Order>();

@@ -5,5 +5,6 @@ namespace MedicineShopApplication.DLL.Models.Users
     public class ApplicationRole : IdentityRole<int>
     {
         // Add addition properties if needed
+        public string RoleType { get; set; }
     }
 }

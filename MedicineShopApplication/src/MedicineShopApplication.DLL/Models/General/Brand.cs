@@ -9,6 +9,7 @@ namespace MedicineShopApplication.DLL.Models.General
         public string Code { get; set; }
         public string Name { get; set; }
         public string NormalizedName { get; set; }
+        public string Description { get; set; }
         public ICollection<Product> Products { get; set; } = new List<Product>();
 
         public bool IsDeleted { get; set; }

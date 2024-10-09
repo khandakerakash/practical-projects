@@ -3,7 +3,7 @@
     public enum UserRole
     {
         developer,
-        superAdmin,
+        superadmin,
         admin,
         manager,
         moderator,

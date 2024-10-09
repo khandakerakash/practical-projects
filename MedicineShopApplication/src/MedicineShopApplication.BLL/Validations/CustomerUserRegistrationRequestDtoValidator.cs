@@ -1,13 +1,13 @@
 ﻿using FluentValidation;
-using MedicineShopApplication.BLL.Dtos.Admin;
+using MedicineShopApplication.BLL.Dtos.Customer;
 using MedicineShopApplication.BLL.Enums;
 using MedicineShopApplication.BLL.Utils;
 
 namespace MedicineShopApplication.BLL.Validations
 {
-    public class AdminUserRegistrationRequestDtoValidator : AbstractValidator<AdminUserRegistrationRequestDto>
+    public class CustomerUserRegistrationRequestDtoValidator : AbstractValidator<CustomerUserRegistrationRequestDto>
     {
-        public AdminUserRegistrationRequestDtoValidator()
+        public CustomerUserRegistrationRequestDtoValidator()
         {
             RuleFor(x => x.Title)
                 .NotNull()
@@ -52,19 +52,13 @@ namespace MedicineShopApplication.BLL.Validations
                 .NotNull()
                 .NotEmpty()
                 .Must(BeAValidRole).WithMessage("Invalid user role.")
-                .WithMessage("User role must be one of the following: developer, superAdmin, admin, manager, moderator, salesman etc.");
+                .WithMessage("User role must be 'customer' to create a customer user.");
         }
 
         private bool BeAValidRole(string roleName)
         {
             var validRoles = new List<string>
             {
-                UserRoleUtils.GetUserRole(UserRole.developer),
-                UserRoleUtils.GetUserRole(UserRole.superadmin),
-                UserRoleUtils.GetUserRole(UserRole.admin),
-                UserRoleUtils.GetUserRole(UserRole.manager),
-                UserRoleUtils.GetUserRole(UserRole.moderator),
-                UserRoleUtils.GetUserRole(UserRole.salesman),
                 UserRoleUtils.GetUserRole(UserRole.customer)
             };
 

@@ -9,7 +9,7 @@ namespace MedicineShopApplication.BLL.Utils
             return userRole switch
             {
                 UserRole.developer => "developer",
-                UserRole.superAdmin => "superAdmin",
+                UserRole.superadmin => "superadmin",
                 UserRole.admin => "admin",
                 UserRole.manager => "manager",
                 UserRole.moderator => "moderator",
@@ -24,7 +24,7 @@ namespace MedicineShopApplication.BLL.Utils
             return userRole switch
             {
                 UserRole.developer => "Developer",
-                UserRole.superAdmin => "Super Admin",
+                UserRole.superadmin => "Super Admin",
                 UserRole.admin => "Admin",
                 UserRole.manager => "Manager",
                 UserRole.moderator => "Moderator",

@@ -8,6 +8,7 @@ using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using MedicineShopApplication.BLL.Dtos.Customer;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -133,7 +134,13 @@ namespace MedicineShopApplication.BLL.Services
 
         public async Task<ApiResponse<AdminUserResponseDto>> CreateAdminUser(AdminUserRegistrationRequestDto request, int requestMaker, string userRoleName)
         {
-            if (userRoleName != UserRoleUtils.GetUserRole(UserRole.developer) && userRoleName != UserRoleUtils.GetUserRole(UserRole.superAdmin))
+            var allowedRoles = new[]
+            {
+                UserRoleUtils.GetUserRole(UserRole.developer),
+                UserRoleUtils.GetUserRole(UserRole.superadmin)
+            };
+
+            if (!allowedRoles.Contains(userRoleName))
             {
                 return new ApiResponse<AdminUserResponseDto>(null, false, "Only Developer or Super Admin can create admin users.");
             }
@@ -192,7 +199,7 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<AdminUserResponseDto>(roleAssignmentResponse.Errors);
             }
 
-            return new ApiResponse<AdminUserResponseDto>(null, true, "Welcome to our system.");
+            return new ApiResponse<AdminUserResponseDto>(null, true, "The Admin user has been created successfully.");
         }
 
         public async Task<ApiResponse<string>> UpdateAdminUser(AdminUserUpdateRequestDto request, int adminId, int userId)

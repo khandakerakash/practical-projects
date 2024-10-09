@@ -1,6 +1,6 @@
 ﻿using MedicineShopApplication.API.Controllers.Base;
+using MedicineShopApplication.BLL.Dtos.Admin;
 using MedicineShopApplication.BLL.Dtos.Common;
-using MedicineShopApplication.BLL.Dtos.User;
 using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +41,7 @@ namespace MedicineShopApplication.API.Controllers.General
         }
 
         [HttpPut("update/{adminId}")]
-        public async Task<IActionResult> UpdateAdminUser(UpdateAdminUserRequestDto request, int adminId)
+        public async Task<IActionResult> UpdateAdminUser(AdminUserUpdateRequestDto request, int adminId)
         {
             var userId = User.GetUserIdInt();
 

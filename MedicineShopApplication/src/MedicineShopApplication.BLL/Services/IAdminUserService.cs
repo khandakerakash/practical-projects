@@ -1,14 +1,13 @@
 ﻿using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Validations;
-using MedicineShopApplication.BLL.Dtos.User;
+using MedicineShopApplication.BLL.Dtos.Admin;
 using MedicineShopApplication.BLL.Extension;
+using MedicineShopApplication.BLL.Enums;
 using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using MedicineShopApplication.BLL.Enums;
-using MedicineShopApplication.DLL.Models.Enums;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -17,7 +16,7 @@ namespace MedicineShopApplication.BLL.Services
         Task<ApiResponse<List<AdminUserResponseDto>>> GetAllAdminUsers(PaginationRequest request);
         Task<ApiResponse<AdminUserResponseDto>> GetAdminUserById(int userId);
         Task<ApiResponse<AdminUserResponseDto>> CreateAdminUser(AdminUserRegistrationRequestDto request, int requestMaker, string userRoleName);
-        Task<ApiResponse<string>> UpdateAdminUser(UpdateAdminUserRequestDto request, int adminId, int userId);
+        Task<ApiResponse<string>> UpdateAdminUser(AdminUserUpdateRequestDto request, int adminId, int userId);
         Task<ApiResponse<string>> DeleteAdminUser(int adminId, int userId);
     }
 
@@ -196,7 +195,7 @@ namespace MedicineShopApplication.BLL.Services
             return new ApiResponse<AdminUserResponseDto>(null, true, "Welcome to our system.");
         }
 
-        public async Task<ApiResponse<string>> UpdateAdminUser(UpdateAdminUserRequestDto request, int adminId, int userId)
+        public async Task<ApiResponse<string>> UpdateAdminUser(AdminUserUpdateRequestDto request, int adminId, int userId)
         {
             var validator = new UpdateAdminUserRequestDtoValidator();
             var validationResult = await validator.ValidateAsync(request);

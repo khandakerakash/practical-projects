@@ -3,9 +3,9 @@ using MedicineShopApplication.BLL.Dtos.Cart;
 using MedicineShopApplication.BLL.Dtos.Order;
 using MedicineShopApplication.BLL.Dtos.Payment;
 
-namespace MedicineShopApplication.BLL.Dtos.User
+namespace MedicineShopApplication.BLL.Dtos.Customer
 {
-    public class UserDto : AuditableEntityDto
+    public class CustomerUserDto : AuditableEntityDto
     {
         public int UserId { get; set; }
         public string UserName { get; set; }

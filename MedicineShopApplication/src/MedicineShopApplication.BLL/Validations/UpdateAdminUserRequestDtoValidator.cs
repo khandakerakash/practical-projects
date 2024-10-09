@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using MedicineShopApplication.BLL.Dtos.User;
+using MedicineShopApplication.BLL.Dtos.Admin;
 
 namespace MedicineShopApplication.BLL.Validations
 {
-    public class UpdateAdminUserRequestDtoValidator : AbstractValidator<UpdateAdminUserRequestDto>
+    public class UpdateAdminUserRequestDtoValidator : AbstractValidator<AdminUserUpdateRequestDto>
     {
         public UpdateAdminUserRequestDtoValidator()
         {

@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using MedicineShopApplication.BLL.Dtos.User;
+using MedicineShopApplication.BLL.Dtos.Admin;
 using MedicineShopApplication.BLL.Enums;
 using MedicineShopApplication.BLL.Utils;
 

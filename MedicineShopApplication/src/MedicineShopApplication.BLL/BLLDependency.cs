@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
 using MedicineShopApplication.BLL.Services;
+using MedicineShopApplication.BLL.Dtos.Brand;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.BLL.Dtos.Product;
-using MedicineShopApplication.BLL.Dtos.Category;
 using MedicineShopApplication.BLL.Dtos.Account;
-using MedicineShopApplication.BLL.Dtos.Brand;
+using Microsoft.Extensions.DependencyInjection;
+using MedicineShopApplication.BLL.Dtos.Category;
 using MedicineShopApplication.BLL.Dtos.UnitOfMeasure;
 
 namespace MedicineShopApplication.BLL
@@ -16,7 +16,7 @@ namespace MedicineShopApplication.BLL
         {
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IAdminUserService, AdminUserService>();
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IBrandService, BrandService>();

@@ -1,6 +1,6 @@
-﻿using MedicineShopApplication.BLL.Dtos.Base;
+﻿using MedicineShopApplication.BLL.Dtos.Admin;
+using MedicineShopApplication.BLL.Dtos.Base;
 using MedicineShopApplication.BLL.Dtos.Order;
-using MedicineShopApplication.BLL.Dtos.User;
 
 namespace MedicineShopApplication.BLL.Dtos.Payment
 {
@@ -16,6 +16,6 @@ namespace MedicineShopApplication.BLL.Dtos.Payment
         public int OrderDtoId { get; set; }
         public OrderDto OrderDto { get; set; }
         public int UserDtoId { get; set; }
-        public UserDto UserDto { get; set; }
+        public AdminDto UserDto { get; set; }
     }
 }

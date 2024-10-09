@@ -1,8 +1,7 @@
-﻿namespace MedicineShopApplication.BLL.Dtos.User
+﻿namespace MedicineShopApplication.BLL.Dtos.Admin
 {
-    public class UpdateAdminUserRequestDto
+    public class AdminUserUpdateRequestDto
     {
-        public int UserId { get; set; }
         public string Title { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

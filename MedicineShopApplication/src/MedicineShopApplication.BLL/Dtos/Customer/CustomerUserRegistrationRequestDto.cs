@@ -1,8 +1,6 @@
-﻿using MedicineShopApplication.BLL.Enums;
-
-namespace MedicineShopApplication.BLL.Dtos.User
+﻿namespace MedicineShopApplication.BLL.Dtos.Customer
 {
-    public class AdminUserRegistrationRequestDto
+    public class CustomerUserRegistrationRequestDto
     {
         public string Title { get; set; }
         public string FirstName { get; set; }

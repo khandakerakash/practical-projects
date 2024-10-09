@@ -1,8 +1,8 @@
-﻿using MedicineShopApplication.BLL.Dtos.Base;
+﻿using MedicineShopApplication.BLL.Dtos.Admin;
+using MedicineShopApplication.BLL.Dtos.Base;
 using MedicineShopApplication.BLL.Dtos.Invoice;
 using MedicineShopApplication.BLL.Dtos.OrderItem;
 using MedicineShopApplication.BLL.Dtos.Payment;
-using MedicineShopApplication.BLL.Dtos.User;
 
 namespace MedicineShopApplication.BLL.Dtos.Order
 {
@@ -16,7 +16,7 @@ namespace MedicineShopApplication.BLL.Dtos.Order
 
         public List<OrderItemDto> OrderItemsDto { get; set; }
         public int UserDtoId { get; set; }
-        public UserDto UserDto { get; set; }
+        public AdminDto UserDto { get; set; }
         public PaymentDto PaymentDto { get; set; }
         public InvoiceDto InvoiceDto { get; set; }
     }

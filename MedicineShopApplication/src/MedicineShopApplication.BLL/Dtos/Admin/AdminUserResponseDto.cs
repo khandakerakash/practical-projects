@@ -1,6 +1,6 @@
 ﻿using MedicineShopApplication.BLL.Dtos.Base;
 
-namespace MedicineShopApplication.BLL.Dtos.User
+namespace MedicineShopApplication.BLL.Dtos.Admin
 {
     public class AdminUserResponseDto : AuditableEntityDto
     {

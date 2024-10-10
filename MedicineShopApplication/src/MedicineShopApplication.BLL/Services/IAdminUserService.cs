@@ -8,6 +8,7 @@ using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using MedicineShopApplication.DLL.Models.Enums;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -41,14 +42,15 @@ namespace MedicineShopApplication.BLL.Services
         {
             var skipValue = PaginationUtils.SkipValue(request.Page, request.PageSize);
 
-            var adminUserIds = await _roleManager.Roles
-                .Where(x => x.RoleType == UserRoleUtils.GetRoleType(RoleType.admin).ToString())
+            var roleType = UserRoleUtils.GetRoleType(RoleType.admin).ToString();
+            var adminUserRoleIds = await _roleManager.Roles
+                .Where(x => x.RoleType == roleType)
                 .Select(x => x.Id)
                 .Distinct()
                 .ToListAsync();
 
             var usersQuery = _unitOfWork.UserRepository.FindAllAsync();
-            usersQuery = usersQuery.Where(u => adminUserIds.Contains(u.Id));
+            usersQuery = usersQuery.Where(u => adminUserRoleIds.Contains(u.Id));
             usersQuery = SortUsersQuery(usersQuery, request.SortBy);
             var totalAdminUserCount = await usersQuery.CountAsync();
 
@@ -84,13 +86,16 @@ namespace MedicineShopApplication.BLL.Services
                         UserId = user.Id,
                         UserName = user.UserName,
                         UserRoleName = userRoleName,
-                        RoleTypeName = UserRoleUtils.GetRoleType(RoleType.admin).ToString(),
+                        RoleTypeName = roleType,
                         Title = user.Title,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         Email = user.Email,
                         PhoneNumber = user.PhoneNumber,
-                        Address = user.Address,
+                        Status = UserStatusUtils.GetUserStatus(user.Status),
+                        Gender = GenderUtils.GetGender(user.Gender),
+                        DateOfBirth = user.DateOfBirth,
+                        NationalIdentityCard = user.NationalIdentityCard,
 
                         CreatedAt = user.CreatedAt,
                         CreatedBy = user.CreatedBy,
@@ -113,16 +118,17 @@ namespace MedicineShopApplication.BLL.Services
 
         public async Task<ApiResponse<AdminUserResponseDto>> GetAdminUserById(int userId)
         {
-            var adminUserId = await _roleManager.Roles
-                .Where(x => x.RoleType == UserRoleUtils.GetRoleType(RoleType.admin).ToString())
-                .Select(x => x.Id)
+            var roleType = UserRoleUtils.GetRoleType(RoleType.admin).ToString();
+            var adminUserRoleIds = await _roleManager.Roles
+                .Where(x => x.RoleType == roleType)
+                .Select(r => r.Id)
                 .Distinct()
                 .ToListAsync();
 
             var userQuery = _unitOfWork.UserRepository
                 .FindByConditionAsync(x => x.Id == userId);
 
-            userQuery = userQuery.Where(u => adminUserId.Contains(u.Id));
+            userQuery = userQuery.Where(u => adminUserRoleIds.Contains(u.Id));
 
             var user = await userQuery.FirstOrDefaultAsync();
             if (user.HasNoValue())
@@ -140,16 +146,29 @@ namespace MedicineShopApplication.BLL.Services
                 .FindByConditionAsync(u => userIds.Contains(u.Id))
                 .ToDictionaryAsync(u => u.Id);
 
+            var userRole = await _userManager
+                .GetRolesAsync(user);
+
             var userResponse = await userQuery
                 .Select(x => new AdminUserResponseDto
                 {
                     UserId = x.Id,
                     UserName = x.UserName,
+                    UserRoleName = userRole.FirstOrDefault(),
+                    RoleTypeName = roleType,
                     Title = x.Title,
                     FirstName = x.FirstName,
                     LastName = x.LastName,
                     Email = x.Email,
                     PhoneNumber = x.PhoneNumber,
+                    Status = UserStatusUtils.GetUserStatus(x.Status),
+                    Gender = GenderUtils.GetGender(x.Gender),
+                    DateOfBirth = x.DateOfBirth,
+                    NationalIdentityCard = x.NationalIdentityCard,
+                    PostalCode = x.PostalCode,
+                    PoliceStation = x.PoliceStation,
+                    District = x.District,
+                    Division = x.Division,
                     Address = x.Address,
 
                     CreatedAt = x.CreatedAt,
@@ -265,10 +284,21 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<string>(null, false, "Admin with this email already exists.");
             }
 
+            var status = Enum.Parse<UserStatus>(request.Status, true);
+            var gender = Enum.Parse<Gender>(request.Status, true);
+
             user.Title = request.Title;
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
             user.Email = request.Email;
+            user.Status = status;
+            user.Gender = gender;
+            user.DateOfBirth = request.DateOfBirth;
+            user.NationalIdentityCard = request.NationalIdentityCard;
+            user.PostalCode = request.PostalCode;
+            user.PoliceStation = request.PoliceStation;
+            user.District = request.District;
+            user.Division = request.Division;
             user.Address = request.Address;
             user.UpdatedBy = userId;
             user.UpdatedAt = DateTime.UtcNow;

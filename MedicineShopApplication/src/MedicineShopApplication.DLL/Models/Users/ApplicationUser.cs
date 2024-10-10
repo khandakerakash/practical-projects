@@ -11,7 +11,7 @@ namespace MedicineShopApplication.DLL.Models.Users
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public Gender Gender { get; set; }
-        public string DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public string NationalIdentityCard { get; set; }
         public string PostalCode { get; set; }
         public string PoliceStation { get; set; }

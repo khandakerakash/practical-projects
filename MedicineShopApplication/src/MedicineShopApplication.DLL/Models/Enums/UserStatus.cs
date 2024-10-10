@@ -4,8 +4,8 @@
     {
         Active = 1,
         Inactive = 2,
-        Banned = 3,
-        Suspended = 4,
-        PendingActivation = 5,
+        Pending = 3,
+        Banned = 4,
+        Suspended = 5,
     }
 }

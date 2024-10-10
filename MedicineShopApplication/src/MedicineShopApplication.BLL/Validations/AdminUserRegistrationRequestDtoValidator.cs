@@ -51,11 +51,17 @@ namespace MedicineShopApplication.BLL.Validations
             RuleFor(x => x.UserRoleName)
                 .NotNull()
                 .NotEmpty()
-                .Must(BeAValidRole).WithMessage("Invalid user role.")
+                .Must(BeAvalidRole).WithMessage("Invalid user role.")
                 .WithMessage("User role must be one of the following: developer, superAdmin, admin, manager, moderator, salesman etc.");
+
+            RuleFor(x => x.DateOfBirth)
+                .NotNull()
+                .NotEmpty()
+                .Must(VaidateDateOfBirth)
+                .WithMessage("The Admin user must be a minimum of 18 years old.");
         }
 
-        private bool BeAValidRole(string roleName)
+        private bool BeAvalidRole(string roleName)
         {
             var validRoles = new List<string>
             {
@@ -69,6 +75,16 @@ namespace MedicineShopApplication.BLL.Validations
             };
 
             return validRoles.Contains(roleName);
+        }
+
+        private bool VaidateDateOfBirth(DateTime dateTime)
+        {
+            if (dateTime > DateTime.Now.AddYears(-18))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

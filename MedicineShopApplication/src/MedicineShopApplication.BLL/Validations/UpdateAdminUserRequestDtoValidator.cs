@@ -11,7 +11,7 @@ namespace MedicineShopApplication.BLL.Validations
                 .NotNull()
                 .NotEmpty()
                 .MinimumLength(1)
-                .MaximumLength(3);
+                .MaximumLength(5);
 
             RuleFor(x => x.FirstName)
                 .NotNull()

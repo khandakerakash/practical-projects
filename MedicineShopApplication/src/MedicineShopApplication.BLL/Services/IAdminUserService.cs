@@ -8,7 +8,6 @@ using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using MedicineShopApplication.BLL.Dtos.Customer;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -25,13 +24,16 @@ namespace MedicineShopApplication.BLL.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
         public AdminUserService(
             IUnitOfWork unitOfWork,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            RoleManager<ApplicationRole> roleManager)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
 
@@ -39,13 +41,24 @@ namespace MedicineShopApplication.BLL.Services
         {
             var skipValue = PaginationUtils.SkipValue(request.Page, request.PageSize);
 
+            var adminUserIds = await _roleManager.Roles
+                .Where(x => x.RoleType == UserRoleUtils.GetRoleType(RoleType.admin).ToString())
+                .Select(x => x.Id)
+                .Distinct()
+                .ToListAsync();
+
             var usersQuery = _unitOfWork.UserRepository.FindAllAsync();
-
+            usersQuery = usersQuery.Where(u => adminUserIds.Contains(u.Id));
             usersQuery = SortUsersQuery(usersQuery, request.SortBy);
-
             var totalAdminUserCount = await usersQuery.CountAsync();
 
-            var userIds = usersQuery.Select(x => x.CreatedBy)
+            var paginatedUsers = await usersQuery
+                .Skip(skipValue)
+                .Take(request.PageSize)
+                .ToListAsync();
+
+            var userIds = paginatedUsers
+                .Select(x => x.CreatedBy)
                 .Union(usersQuery.Where(x => x.UpdatedBy.HasValue).Select(x => x.UpdatedBy.Value))
                 .Distinct();
 
@@ -53,42 +66,47 @@ namespace MedicineShopApplication.BLL.Services
                 .FindByConditionAsync(u => userIds.Contains(u.Id))
                 .ToDictionaryAsync(u => u.Id);
 
-            var userList = await usersQuery
-                .Skip(skipValue)
-                .Take(request.PageSize)
-                .ToListAsync();
+            var userRoles = await _unitOfWork.RoleRepository
+                .GetRolesForUsersAsync(paginatedUsers.Select(u => u.Id));
 
-            var userListData = new List<AdminUserResponseDto>();
+            var rolesByUserId = userRoles
+                .GroupBy(r => r.UserId)
+                .ToDictionary(g => g.Key, g => g.Select(r => r.RoleName)
+                .FirstOrDefault());
 
-            foreach (var user in userList)
-            {
-                var roles = await _userManager.GetRolesAsync(user);
-                var userRoleName = roles.FirstOrDefault(); 
-
-                userListData.Add(new AdminUserResponseDto
+            var userListData = paginatedUsers
+                .Select(user =>
                 {
-                    UserId = user.Id,
-                    UserName = user.UserName,
-                    UserRoleName = userRoleName,
-                    Title = user.Title,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Email = user.Email,
-                    PhoneNumber = user.PhoneNumber,
-                    Address = user.Address,
+                    var userRoleName = rolesByUserId.ContainsKey(user.Id) ? rolesByUserId[user.Id] : "Unknown";
 
-                    CreatedAt = user.CreatedAt,
-                    CreatedBy = user.CreatedBy,
-                    CreatedByName = users.ContainsKey(user.CreatedBy)
-                                    ? users[user.CreatedBy].GetFullName()
-                                    : "",
-                    UpdatedAt = user.UpdatedAt,
-                    UpdatedBy = user.UpdatedBy,
-                    UpdatedByName = user.UpdatedBy.HasValue && users.ContainsKey(user.UpdatedBy.Value)
-                                    ? users[user.UpdatedBy.Value].GetFullName()
-                                    : ""
-                });
-            }
+                    return new AdminUserResponseDto
+                    {
+                        UserId = user.Id,
+                        UserName = user.UserName,
+                        UserRoleName = userRoleName,
+                        RoleTypeName = UserRoleUtils.GetRoleType(RoleType.admin).ToString(),
+                        Title = user.Title,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                        Address = user.Address,
+
+                        CreatedAt = user.CreatedAt,
+                        CreatedBy = user.CreatedBy,
+                        CreatedByName = users.ContainsKey(user.CreatedBy)
+                                        ? users[user.CreatedBy].GetFullName()
+                                        : "",
+
+                        UpdatedAt = user.UpdatedAt,
+                        UpdatedBy = user.UpdatedBy,
+                        UpdatedByName = user.UpdatedBy.HasValue && users.ContainsKey(user.UpdatedBy.Value)
+                                        ? users[user.UpdatedBy.Value].GetFullName()
+                                        : ""
+                    };
+                })
+                .ToList();
+
 
             return new ApiPaginationResponse<List<AdminUserResponseDto>>(userListData, request.Page, request.PageSize, totalAdminUserCount);
         }

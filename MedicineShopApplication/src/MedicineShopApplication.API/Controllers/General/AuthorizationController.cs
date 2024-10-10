@@ -40,6 +40,7 @@ namespace MedicineShopApplication.API.Controllers.General
             if (request.IsPasswordGrantType())
             {
                 var user = await _userManager.FindByNameAsync(request.Username);
+
                 if (user == null)
                 {
                     var properties = new AuthenticationProperties(new Dictionary<string, string>
@@ -47,6 +48,18 @@ namespace MedicineShopApplication.API.Controllers.General
                         [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
                         [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
                             "The username/password couple is invalid."
+                    });
+
+                    return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+                }
+
+                if (user.IsDeleted)
+                {
+                    var properties = new AuthenticationProperties(new Dictionary<string, string>
+                    {
+                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
+                            "User not found."
                     });
 
                     return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);

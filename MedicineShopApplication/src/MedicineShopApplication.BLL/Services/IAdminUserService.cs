@@ -113,8 +113,16 @@ namespace MedicineShopApplication.BLL.Services
 
         public async Task<ApiResponse<AdminUserResponseDto>> GetAdminUserById(int userId)
         {
+            var adminUserId = await _roleManager.Roles
+                .Where(x => x.RoleType == UserRoleUtils.GetRoleType(RoleType.admin).ToString())
+                .Select(x => x.Id)
+                .Distinct()
+                .ToListAsync();
+
             var userQuery = _unitOfWork.UserRepository
                 .FindByConditionAsync(x => x.Id == userId);
+
+            userQuery = userQuery.Where(u => adminUserId.Contains(u.Id));
 
             var user = await userQuery.FirstOrDefaultAsync();
             if (user.HasNoValue())

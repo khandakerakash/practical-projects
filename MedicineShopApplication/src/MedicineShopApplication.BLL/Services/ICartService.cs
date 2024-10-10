@@ -34,13 +34,17 @@ namespace MedicineShopApplication.BLL.Services
                 };
 
                 await _unitOfWork.CartRepository.CreateAsync(cart);
-                await _unitOfWork.CommitAsync();
+                
+                if (!await _unitOfWork.CommitAsync() )
+                {
+                    return new ApiResponse<string>(null, false, "An error occurred while adding the item(s) to the cart.");
+                }
             }
 
             var cartItem = cart.CartItems
                 .FirstOrDefault(x => x.ProductId == productId);
 
-            if (cartItem.HasNoValue()) 
+            if (cartItem.HasValue()) 
             {
                 cartItem.Quantity += quantity;
                 _unitOfWork.CartItemRepository.Update(cartItem);

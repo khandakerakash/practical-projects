@@ -49,8 +49,11 @@ namespace MedicineShopApplication.BLL.Services
                 .Distinct()
                 .ToListAsync();
 
+            var adminUserIds = await _unitOfWork.RoleRepository
+                .GetUserIdsByRoleIdsAsync(adminUserRoleIds);
+
             var usersQuery = _unitOfWork.UserRepository.FindAllAsync();
-            usersQuery = usersQuery.Where(u => adminUserRoleIds.Contains(u.Id));
+            usersQuery = usersQuery.Where(u => adminUserIds.Contains(u.Id));
             usersQuery = SortUsersQuery(usersQuery, request.SortBy);
             var totalAdminUserCount = await usersQuery.CountAsync();
 
@@ -236,6 +239,7 @@ namespace MedicineShopApplication.BLL.Services
                 Title = request.Title,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
+                DateOfBirth = request.DateOfBirth,
                 CreatedBy = requestMaker
             };
 
@@ -284,8 +288,16 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<string>(null, false, "Admin with this email already exists.");
             }
 
-            var status = Enum.Parse<UserStatus>(request.Status, true);
-            var gender = Enum.Parse<Gender>(request.Status, true);
+            if (!Enum.TryParse<UserStatus>(request.Status, true, out var status))
+            {
+                return new ApiResponse<string>(null, false, $"Requested status '{request.Status}' was not found.");
+            }
+
+            if (!Enum.TryParse<Gender>(request.Gender, true, out var gender))
+            {
+                return new ApiResponse<string>(null, false, $"Requested gender '{request.Gender}' was not found.");
+            }
+
 
             user.Title = request.Title;
             user.FirstName = request.FirstName;

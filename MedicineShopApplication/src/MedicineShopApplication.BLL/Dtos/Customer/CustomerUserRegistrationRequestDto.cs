@@ -9,5 +9,6 @@
         public string PhoneNumber { get; set; }
         public string Password { get; set; }
         public string UserRoleName { get; set; }
+        public DateTime DateOfBirth { get; set; }
     }
 }

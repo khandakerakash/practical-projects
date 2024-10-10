@@ -37,7 +37,7 @@ namespace MedicineShopApplication.DLL.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Gender = table.Column<int>(type: "int", nullable: false),
-                    DateOfBirth = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NationalIdentityCard = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PostalCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PoliceStation = table.Column<string>(type: "nvarchar(max)", nullable: true),

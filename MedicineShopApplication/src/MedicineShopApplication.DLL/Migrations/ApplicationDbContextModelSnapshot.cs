@@ -571,8 +571,8 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
-                    b.Property<string>("DateOfBirth")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");

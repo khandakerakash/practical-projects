@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using MedicineShopApplication.BLL.Dtos.Customer;
 using MedicineShopApplication.BLL.Enums;
 using MedicineShopApplication.BLL.Utils;
+using MedicineShopApplication.BLL.Dtos.Customer;
 
 namespace MedicineShopApplication.BLL.Validations
 {
@@ -51,11 +51,11 @@ namespace MedicineShopApplication.BLL.Validations
             RuleFor(x => x.UserRoleName)
                 .NotNull()
                 .NotEmpty()
-                .Must(BeAValidRole).WithMessage("Invalid user role.")
+                .Must(BeAvalidRole).WithMessage("Invalid user role.")
                 .WithMessage("User role must be 'customer' to create a customer user.");
         }
 
-        private bool BeAValidRole(string roleName)
+        private bool BeAvalidRole(string roleName)
         {
             var validRoles = new List<string>
             {

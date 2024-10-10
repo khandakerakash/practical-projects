@@ -8,6 +8,7 @@ namespace MedicineShopApplication.DLL.Repositories
     public interface IRoleRepository : IRepositoryBase<ApplicationRole>
     {
         Task<List<int>> GetUserIdsByRoleIdAsync(int roleId);
+        Task<List<int>> GetUserIdsByRoleIdsAsync(List<int> roleIds);
         Task<List<(int UserId, string RoleName)>> GetRolesForUsersAsync(IEnumerable<int> userIds);
     }
 
@@ -29,6 +30,15 @@ namespace MedicineShopApplication.DLL.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<int>> GetUserIdsByRoleIdsAsync(List<int> roleIds)
+        {
+            return await _context.UserRoles
+                .Where(userRole => roleIds.Contains(userRole.RoleId))
+                .Select(userRole => userRole.UserId)
+                .Distinct()
+                .ToListAsync();
+        }
+
         public async Task<List<(int UserId, string RoleName)>> GetRolesForUsersAsync(IEnumerable<int> userIds)
         {
             var result = await (from ur in _context.UserRoles
@@ -39,6 +49,5 @@ namespace MedicineShopApplication.DLL.Repositories
 
             return result.Select(x => (x.UserId, x.Name)).ToList();
         }
-
     }
 }

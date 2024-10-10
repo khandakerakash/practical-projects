@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedicineShopApplication.DLL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241009210134_ApplicationUserUpdated")]
+    [Migration("20241010142356_ApplicationUserUpdated")]
     partial class ApplicationUserUpdated
     {
         /// <inheritdoc />
@@ -574,8 +574,8 @@ namespace MedicineShopApplication.DLL.Migrations
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
 
-                    b.Property<string>("DateOfBirth")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");

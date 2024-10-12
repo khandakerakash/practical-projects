@@ -9,6 +9,7 @@ using MedicineShopApplication.BLL.Dtos.Category;
 using MedicineShopApplication.BLL.Dtos.UnitOfMeasure;
 using MedicineShopApplication.BLL.Dtos.Admin;
 using MedicineShopApplication.BLL.Dtos.Customer;
+using MedicineShopApplication.BLL.Dtos.Cart;
 
 namespace MedicineShopApplication.BLL
 {
@@ -24,6 +25,7 @@ namespace MedicineShopApplication.BLL
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IBrandService, BrandService>();
             services.AddScoped<IUnitOfMeasureService, UnitOfMeasureService>();
+            services.AddScoped<ICartService, CartService>();
 
 
             // Validation dependency
@@ -43,6 +45,8 @@ namespace MedicineShopApplication.BLL
             services.AddScoped<IValidator<UpdateBrandRequestDto>, UpdateBrandRequestDtoValidator>();
             services.AddScoped<IValidator<CreateUnitOfMeasureRequestDto>, CreateUnitOfMeasureRequestDtoValidator>();
             services.AddScoped<IValidator<UpdateUnitOfMeasureRequestDto>, UpdateUnitOfMeasureRequestDtoValidator>();
+            services.AddScoped<IValidator<AddToCartRequestDto>, AddToCartRequestDtoValidator>();
+            services.AddScoped<IValidator<UpdateToCartRequestDto>, UpdateToCartRequestDtoValidator>();
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿using MedicineShopApplication.BLL.Dtos.Admin;
-using MedicineShopApplication.BLL.Dtos.Base;
+﻿using MedicineShopApplication.BLL.Dtos.Base;
 using MedicineShopApplication.BLL.Dtos.CartItem;
+using MedicineShopApplication.BLL.Dtos.Customer;
 
 namespace MedicineShopApplication.BLL.Dtos.Cart
 {
@@ -8,8 +8,8 @@ namespace MedicineShopApplication.BLL.Dtos.Cart
     {
         public int CartId { get; set; }
 
-        public int UserDtoId { get; set; }
-        public AdminDto UserDto { get; set; }
-        public List<CartItemDto> CartItemsDto { get; set; }
+        public int UserId { get; set; }
+        public CustomerUserDto CustomerUserDtos { get; set; }
+        public List<CartItemDto> CartItemDtos { get; set; }
     }
 }

@@ -1,6 +1,4 @@
-﻿using Azure.Core;
-using FluentValidation;
-using MedicineShopApplication.BLL.Dtos.Cart;
+﻿using MedicineShopApplication.BLL.Dtos.Cart;
 using MedicineShopApplication.BLL.Dtos.CartItem;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Dtos.Customer;

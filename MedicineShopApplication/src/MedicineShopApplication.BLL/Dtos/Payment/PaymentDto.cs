@@ -13,9 +13,9 @@ namespace MedicineShopApplication.BLL.Dtos.Payment
         public string PaymentStatus { get; set; }
         public DateTime PaymentDate { get; set; } = DateTime.UtcNow;
 
-        public int OrderDtoId { get; set; }
+        public int OrderId { get; set; }
         public OrderDto OrderDto { get; set; }
-        public int UserDtoId { get; set; }
+        public int UserId { get; set; }
         public AdminDto UserDto { get; set; }
     }
 }

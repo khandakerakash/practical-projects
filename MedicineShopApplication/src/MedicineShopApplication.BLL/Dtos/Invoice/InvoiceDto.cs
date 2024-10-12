@@ -9,7 +9,7 @@ namespace MedicineShopApplication.BLL.Dtos.Invoice
         public decimal TotalAmount { get; set; }
         public DateTime InvoiceDate { get; set; } = DateTime.UtcNow;
 
-        public int OrderDtoId { get; set; }
+        public int OrderId { get; set; }
         public OrderDto OrderDto { get; set; }
     }
 }

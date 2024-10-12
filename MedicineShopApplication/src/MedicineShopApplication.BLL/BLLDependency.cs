@@ -26,6 +26,7 @@ namespace MedicineShopApplication.BLL
             services.AddScoped<IBrandService, BrandService>();
             services.AddScoped<IUnitOfMeasureService, UnitOfMeasureService>();
             services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IOrderService, OrderService>();
 
 
             // Validation dependency

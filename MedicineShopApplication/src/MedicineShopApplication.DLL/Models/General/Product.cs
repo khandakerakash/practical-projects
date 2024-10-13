@@ -24,11 +24,20 @@ namespace MedicineShopApplication.DLL.Models.General
         public Brand Brand { get; set; }
         public int UnitOfMeasureId { get; set; }
         public UnitOfMeasure UnitOfMeasure { get; set; }
+
+        public Strength Power { get; set; }
+
         public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
 
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
+    }
+
+    public class Strength
+    {
+        public decimal Amount { get; set; }
+        public string Unit { get; set; }
     }
 }

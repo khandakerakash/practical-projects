@@ -51,6 +51,10 @@ namespace MedicineShopApplication.DLL.Configs
                 .WithMany(u => u.Products)
                 .HasForeignKey(p => p.UnitOfMeasureId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // configure owned type
+            builder
+                .OwnsOne(p => p.Power);
         }
     }
 }

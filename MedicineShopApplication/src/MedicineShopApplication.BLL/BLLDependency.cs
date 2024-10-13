@@ -10,6 +10,8 @@ using MedicineShopApplication.BLL.Dtos.UnitOfMeasure;
 using MedicineShopApplication.BLL.Dtos.Admin;
 using MedicineShopApplication.BLL.Dtos.Customer;
 using MedicineShopApplication.BLL.Dtos.Cart;
+using MedicineShopApplication.BLL.Dtos.Inventory;
+using MedicineShopApplication.BLL.Dtos.Order;
 
 namespace MedicineShopApplication.BLL
 {
@@ -27,6 +29,8 @@ namespace MedicineShopApplication.BLL
             services.AddScoped<IUnitOfMeasureService, UnitOfMeasureService>();
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IInvoiceService, InvoiceService>();
+            services.AddScoped<IInventoryService, InventoryService>();
 
 
             // Validation dependency
@@ -39,15 +43,22 @@ namespace MedicineShopApplication.BLL
         {
             services.AddScoped<IValidator<RegisterUserRequestDto>, RegisterUserRequestDtoValidator>();
             services.AddScoped<IValidator<AdminUserRegistrationRequestDto>, AdminUserRegistrationRequestDtoValidator>();
+            services.AddScoped<IValidator<AdminUserUpdateRequestDto>, UpdateAdminUserRequestDtoValidator>();
             services.AddScoped<IValidator<CustomerUserRegistrationRequestDto>, CustomerUserRegistrationRequestDtoValidator>();
+            services.AddScoped<IValidator<CustomerUserUpdateRequestDto>, CustomerUserUpdateRequestDtoValidator>();
             services.AddScoped<IValidator<CreateCategoryRequestDto>, CreateCategoryRequestDtoValidator>();
+            services.AddScoped<IValidator<UpdateCategoryRequestDto>, UpdateCategoryRequestDtoValidator>();
             services.AddScoped<IValidator<CreateProductRequestDto>, CreateProductRequestDtoValidator>();
+            services.AddScoped<IValidator<UpdateProductRequestDto>, UpdateProductRequestDtoValidator>();
+            services.AddScoped<IValidator<CreateInventoryRequestDto>, CreateInventoryRequestDtoValidator>();
+            services.AddScoped<IValidator<UpdateInventoryRequestDto>, UpdateInventoryRequestDtoValidator>();
             services.AddScoped<IValidator<CreateBrandRequestDto>, CreateBrandRequestDtoValidator>();
             services.AddScoped<IValidator<UpdateBrandRequestDto>, UpdateBrandRequestDtoValidator>();
             services.AddScoped<IValidator<CreateUnitOfMeasureRequestDto>, CreateUnitOfMeasureRequestDtoValidator>();
             services.AddScoped<IValidator<UpdateUnitOfMeasureRequestDto>, UpdateUnitOfMeasureRequestDtoValidator>();
             services.AddScoped<IValidator<AddToCartRequestDto>, AddToCartRequestDtoValidator>();
             services.AddScoped<IValidator<UpdateToCartRequestDto>, UpdateToCartRequestDtoValidator>();
+            services.AddScoped<IValidator<CreateOrderRequestDto>, CreateOrderRequestDtoValidator>();
         }
     }
 }

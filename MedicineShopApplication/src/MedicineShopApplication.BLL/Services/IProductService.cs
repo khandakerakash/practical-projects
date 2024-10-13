@@ -189,6 +189,18 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<CreateProductResponseDto>(validationResult.Errors);
             }
 
+            var normalizedName = GeneralUtils.NormalizeName(request.Name);
+            var productCode = await GenerateProductCodeAsync(request.Name);
+
+            var existingProduct = await _unitOfWork.ProductRepository
+                .FindByConditionAsync(p => p.Code == productCode || (p.NormalizedName == normalizedName && p.BrandId == request.BrandId))
+                .AnyAsync();
+
+            if (existingProduct)
+            {
+                return new ApiResponse<CreateProductResponseDto>(null, false, "A product with the same code or name already exists.");
+            }
+
             if (!await IsValidBrand(request.BrandId))
             {
                 return new ApiResponse<CreateProductResponseDto>(null, false, "The specified brand does not exist.");
@@ -205,9 +217,6 @@ namespace MedicineShopApplication.BLL.Services
             }
 
             var status = Enum.Parse<ProductStatus>(request.Status, true);
-
-            var normalizedName = GeneralUtils.NormalizeName(request.Name);
-            var productCode = await GenerateProductCodeAsync(request.Name);
 
             var product = new Product 
             { 
@@ -328,6 +337,15 @@ namespace MedicineShopApplication.BLL.Services
                 var status = Enum.Parse<ProductStatus>(request.Status, true);
                 var normalizedName = GeneralUtils.NormalizeName(request.Name);
                 var productCode = await GenerateProductCodeAsync(request.Name);
+
+                var existingProduct = await _unitOfWork.ProductRepository
+                .FindByConditionAsync(p => p.Code == productCode || (p.NormalizedName == normalizedName && p.BrandId == request.BrandId))
+                .FirstOrDefaultAsync();
+
+                if (existingProduct.HasValue())
+                {
+                    return new ApiResponse<List<CreateProductResponseDto>>(null, false, $"Duplicate products found: {string.Join(", ", existingProduct.Name)}");
+                }
 
                 var product = new Product
                 {

@@ -4,6 +4,7 @@ using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
+using MedicineShopApplication.BLL.Dtos.Category;
 
 namespace MedicineShopApplication.API.Controllers.General
 {
@@ -36,6 +37,15 @@ namespace MedicineShopApplication.API.Controllers.General
             var userId = User.GetUserIdInt();
 
             var response = await _productService.CreateProduct(request, userId);
+            return ToActionResult(response);
+        }
+
+        [HttpPost("create-range")]
+        public async Task<IActionResult> CreateProducts(List<CreateProductRequestDto> requests)
+        {
+            var userId = User.GetUserIdInt();
+
+            var response = await _productService.CreateProducts(requests, userId);
             return ToActionResult(response);
         }
 

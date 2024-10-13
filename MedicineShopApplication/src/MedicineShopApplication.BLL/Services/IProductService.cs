@@ -10,6 +10,7 @@ using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Dtos.Product;
 using MedicineShopApplication.DLL.Models.Enums;
 using MedicineShopApplication.DLL.Models.General;
+using MedicineShopApplication.BLL.Dtos.Category;
 
 
 
@@ -20,6 +21,7 @@ namespace MedicineShopApplication.BLL.Services
         Task<ApiResponse<List<ProductResponseDto>>> GetAllProducts(PaginationRequest request);
         Task<ApiResponse<ProductResponseDto>> GetAProduct(int productId);
         Task<ApiResponse<CreateProductResponseDto>> CreateProduct(CreateProductRequestDto request, int userId);
+        Task<ApiResponse<List<CreateProductResponseDto>>> CreateProducts(List<CreateProductRequestDto> requests, int userId);
         Task<ApiResponse<string>> UpdateProduct(UpdateProductRequestDto request, int productId, int userId);
         Task<ApiResponse<string>> DeleteProduct(int productId, int userId);
     }
@@ -289,6 +291,110 @@ namespace MedicineShopApplication.BLL.Services
             };
 
             return new ApiResponse<CreateProductResponseDto>(createdProduct, true, "Product created successfully.");
+        }
+
+        public async Task<ApiResponse<List<CreateProductResponseDto>>> CreateProducts(List<CreateProductRequestDto> requests, int userId)
+        {
+            var newProduct = new List<Product>();
+            var createdProducts = new List<CreateProductResponseDto>();
+            var createdByName = await _userManager.GetFullNameByIdAsync(userId);
+
+            var validator = new CreateProductRequestDtoValidator();
+
+            foreach (var request in requests) 
+            { 
+                var validationResult = await validator.ValidateAsync(request);
+
+                if (!validationResult.IsValid)
+                {
+                    return new ApiResponse<List<CreateProductResponseDto>>(validationResult.Errors);
+                }
+
+                if (!await IsValidBrand(request.BrandId))
+                {
+                    return new ApiResponse<List<CreateProductResponseDto>>(null, false, "The specified brand does not exist.");
+                }
+
+                if (!await IsValidCategory(request.CategoryId))
+                {
+                    return new ApiResponse<List<CreateProductResponseDto>>(null, false, "The specified category does not exist.");
+                }
+
+                if (!await IsValidUnitOfMeasure(request.UnitOfMeasureId))
+                {
+                    return new ApiResponse<List<CreateProductResponseDto>>(null, false, "The specified unit of measure does not exist.");
+                }
+
+                var status = Enum.Parse<ProductStatus>(request.Status, true);
+                var normalizedName = GeneralUtils.NormalizeName(request.Name);
+                var productCode = await GenerateProductCodeAsync(request.Name);
+
+                var product = new Product
+                {
+                    Code = productCode,
+                    Name = request.Name,
+                    NormalizedName = normalizedName,
+                    GenericName = request.GenericName,
+                    Description = request.Description,
+                    CostPrice = request.CostPrice,
+                    SellingPrice = request.SellingPrice,
+                    Status = status,
+                    Notes = request.Notes,
+
+                    BrandId = request.BrandId,
+                    CategoryId = request.CategoryId,
+                    UnitOfMeasureId = request.UnitOfMeasureId,
+
+                    Power = request.Power != null && request.Power.HasValidProperties()
+                    ? new Strength
+                    {
+                        Amount = request.Power.Amount,
+                        Unit = request.Power.Unit,
+                    }
+                    : null,
+
+                    CreatedBy = userId
+                };
+
+                newProduct.Add(product);
+
+                createdProducts.Add(new CreateProductResponseDto
+                {
+                    Code = product.Code,
+                    Name = product.Name,
+                    NormalizedName = product.NormalizedName,
+                    GenericName = product.GenericName,
+                    Description = product.Description,
+                    CostPrice = product.CostPrice,
+                    SellingPrice = product.SellingPrice,
+                    Status = ProductStatusUtils.GetProductStatusDisplayName(product.Status),
+                    ImageUrl = product.ImageUrl,
+                    Notes = product.Notes,
+
+                    BrandId = product.BrandId,
+                    CategoryId = product.CategoryId,
+                    UnitOfMeasureId = product.UnitOfMeasureId,
+
+                    Power = product.Power != null
+                ? new StrengthDto
+                {
+                    Amount = product.Power.Amount ?? 0,
+                    Unit = product.Power.Unit
+                }
+                : null,
+
+                    CreatedByName = createdByName,
+                });
+            }
+
+            await _unitOfWork.ProductRepository.CreateRangeAsync(newProduct);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<List<CreateProductResponseDto>>(null, false, "An error occurred while creating the products.");
+            }
+
+            return new ApiResponse<List<CreateProductResponseDto>>(createdProducts, true, "Products created successfully.");
         }
 
         public async Task<ApiResponse<string>> UpdateProduct(UpdateProductRequestDto request, int productId, int userId)

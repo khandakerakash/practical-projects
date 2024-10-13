@@ -81,6 +81,12 @@ namespace MedicineShopApplication.BLL.Services
                     UnitOfMeasureId = x.UnitOfMeasureId,
                     UnitOfMeasureName = x.UnitOfMeasure != null ? x.UnitOfMeasure.Name : "",
 
+                    Power = new StrengthDto
+                    {
+                        Amount = x.Power.Amount,
+                        Unit = x.Power.Unit,
+                    },
+
                     CreatedAt = x.CreatedAt,
                     CreatedBy = x.CreatedBy,
                     CreatedByName = users.ContainsKey(x.CreatedBy)
@@ -144,6 +150,12 @@ namespace MedicineShopApplication.BLL.Services
                     UnitOfMeasureId = x.UnitOfMeasureId,
                     UnitOfMeasureName = x.UnitOfMeasure != null ? x.UnitOfMeasure.Name : "",
 
+                    Power = new StrengthDto
+                    {
+                        Amount = x.Power.Amount,
+                        Unit = x.Power.Unit,
+                    },
+
                     CreatedAt = x.CreatedAt,
                     CreatedBy = x.CreatedBy,
                     CreatedByName = users.ContainsKey(x.CreatedBy)
@@ -171,17 +183,17 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<CreateProductResponseDto>(validationResult.Errors);
             }
 
-            if (!await IsValidBrand(request.BrandDtoId))
+            if (!await IsValidBrand(request.BrandId))
             {
                 return new ApiResponse<CreateProductResponseDto>(null, false, "The specified brand does not exist.");
             }
 
-            if (!await IsValidCategory(request.CategoryDtoId))
+            if (!await IsValidCategory(request.CategoryId))
             {
                 return new ApiResponse<CreateProductResponseDto>(null, false, "The specified category does not exist.");
             }
 
-            if (!await IsValidUnitOfMeasure(request.UnitOfMeasureDtoId))
+            if (!await IsValidUnitOfMeasure(request.UnitOfMeasureId))
             {
                 return new ApiResponse<CreateProductResponseDto>(null, false, "The specified unit of measure does not exist.");
             }
@@ -203,11 +215,21 @@ namespace MedicineShopApplication.BLL.Services
                 Status = status,
                 Notes = request.Notes,
 
-                BrandId = request.BrandDtoId,
-                CategoryId = request.CategoryDtoId,
-                UnitOfMeasureId = request.UnitOfMeasureDtoId,
+                BrandId = request.BrandId,
+                CategoryId = request.CategoryId,
+                UnitOfMeasureId = request.UnitOfMeasureId,
+
                 CreatedBy = userId
             };
+
+            if (request.Power != null)
+            {
+                product.Power = new Strength
+                {
+                    Amount = request.Power.Amount,
+                    Unit = request.Power.Unit,
+                };
+            }
 
             await _unitOfWork.ProductRepository.CreateAsync(product);
             if (!await _unitOfWork.CommitAsync())
@@ -251,6 +273,13 @@ namespace MedicineShopApplication.BLL.Services
                 CategoryName = categoryName,
                 UnitOfMeasureId = product.UnitOfMeasureId,
                 UnitOfMeasureName = unitOfMeasureName,
+
+                Power = new StrengthDto
+                {
+                    Amount = product.Power.Amount,
+                    Unit = product.Power.Unit,
+                },
+
                 CreatedByName = createdByName,
             };
 
@@ -285,17 +314,17 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<string>(null, false, "Product with this name already exists.");
             }
 
-            if (!await IsValidBrand(request.BrandDtoId))
+            if (!await IsValidBrand(request.BrandId))
             {
                 return new ApiResponse<string>(null, false, "The specified brand does not exist.");
             }
 
-            if (!await IsValidCategory(request.CategoryDtoId))
+            if (!await IsValidCategory(request.CategoryId))
             {
                 return new ApiResponse<string>(null, false, "The specified category does not exist.");
             }
 
-            if (!await IsValidUnitOfMeasure(request.UnitOfMeasureDtoId))
+            if (!await IsValidUnitOfMeasure(request.UnitOfMeasureId))
             {
                 return new ApiResponse<string>(null, false, "The specified unit of measure does not exist.");
             }
@@ -311,9 +340,19 @@ namespace MedicineShopApplication.BLL.Services
             product.Status = status;
             product.Notes = request.Notes;
 
-            product.BrandId = request.BrandDtoId;
-            product.CategoryId = request.CategoryDtoId;
-            product.UnitOfMeasureId = request.UnitOfMeasureDtoId;
+            product.BrandId = request.BrandId;
+            product.CategoryId = request.CategoryId;
+            product.UnitOfMeasureId = request.UnitOfMeasureId;
+
+            if (request.Power.HasValue())
+            {
+                product.Power = new Strength
+                {
+                    Amount = request.Power.Amount,
+                    Unit = request.Power.Unit,
+                };
+            }
+
             product.UpdatedBy = userId;
             product.UpdatedAt = DateTime.UtcNow;
 

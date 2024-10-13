@@ -10,10 +10,10 @@
         public string Status { get; set; }
         public string Notes { get; set; }
 
-        public int BrandDtoId { get; set; }
-        public int CategoryDtoId { get; set; }
-        public int UnitOfMeasureDtoId { get; set; }
+        public int BrandId { get; set; }
+        public int CategoryId { get; set; }
+        public int UnitOfMeasureId { get; set; }
 
-        public StrengthDto PowerDto { get; set; }
+        public StrengthDto Power { get; set; }
     }
 }

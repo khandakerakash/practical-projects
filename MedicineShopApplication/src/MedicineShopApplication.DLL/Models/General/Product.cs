@@ -37,7 +37,7 @@ namespace MedicineShopApplication.DLL.Models.General
 
     public class Strength
     {
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; }
         public string Unit { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace MedicineShopApplication.BLL.Dtos.Product
         public string ImageUrl { get; set; }
         public string Notes { get; set; }
 
-        public StrengthDto PowerDto { get; set; }
+        public StrengthDto Power { get; set; }
 
         public List<CategoryProductDto> CategoryProductsDto { get; set; }
         public List<CartItemDto> CartItemsDto { get; set; }

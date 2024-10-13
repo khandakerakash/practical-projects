@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Reflection;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
 namespace MedicineShopApplication.BLL.Utils
@@ -37,6 +38,49 @@ namespace MedicineShopApplication.BLL.Utils
             if (item is DateTime d)
                 return d == default(DateTime);
             return item == null;
+        }
+
+        /// <summary>
+        /// Checks whether all public instance properties of the specified object are valid (i.e., non-null for reference types and not default or empty for strings).
+        /// </summary>
+        /// <typeparam name="T">The type of the object to check. Must be a reference type.</typeparam>
+        /// <param name="obj">The object whose properties are being validated.</param>
+        /// <returns>
+        /// Returns <c>true</c> if all public instance properties of the object are valid (i.e., non-null for reference types, not default or empty for strings, and not null for nullable value types).
+        /// Returns <c>false</c> if any property is null, an empty string, or an invalid value.
+        /// </returns>
+        /// <remarks>
+        /// This method uses reflection to inspect each public instance property of the object. It verifies that reference types are not null, 
+        /// strings are not empty, and nullable value types are not null.
+        /// </remarks>
+
+        public static bool HasValidProperties<T>(this T obj) where T : class
+        {
+            if (obj == null) return false;
+
+            var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (var property in properties)
+            {
+                var value = property.GetValue(obj);
+
+                if (value == null)
+                {
+                    return false;
+                }
+
+                if (property.PropertyType == typeof(string) && string.IsNullOrEmpty((string)value))
+                {
+                    return false;
+                }
+
+                if (Nullable.GetUnderlyingType(property.PropertyType) != null && value == null)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>

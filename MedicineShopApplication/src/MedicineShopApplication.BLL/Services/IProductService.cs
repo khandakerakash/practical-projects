@@ -81,11 +81,13 @@ namespace MedicineShopApplication.BLL.Services
                     UnitOfMeasureId = x.UnitOfMeasureId,
                     UnitOfMeasureName = x.UnitOfMeasure != null ? x.UnitOfMeasure.Name : "",
 
-                    Power = new StrengthDto
-                    {
-                        Amount = x.Power.Amount,
-                        Unit = x.Power.Unit,
-                    },
+                    Power = x.Power.HasValue()
+                            ? new StrengthDto
+                            {
+                                Amount = x.Power.Amount ?? 0,
+                                Unit = x.Power.Unit
+                            }
+                            : null,
 
                     CreatedAt = x.CreatedAt,
                     CreatedBy = x.CreatedBy,
@@ -150,11 +152,13 @@ namespace MedicineShopApplication.BLL.Services
                     UnitOfMeasureId = x.UnitOfMeasureId,
                     UnitOfMeasureName = x.UnitOfMeasure != null ? x.UnitOfMeasure.Name : "",
 
-                    Power = new StrengthDto
-                    {
-                        Amount = x.Power.Amount,
-                        Unit = x.Power.Unit,
-                    },
+                    Power = x.Power.HasValue()
+                            ? new StrengthDto
+                            {
+                                Amount = x.Power.Amount ?? 0,
+                                Unit = x.Power.Unit
+                            }
+                            : null,
 
                     CreatedAt = x.CreatedAt,
                     CreatedBy = x.CreatedBy,
@@ -219,17 +223,16 @@ namespace MedicineShopApplication.BLL.Services
                 CategoryId = request.CategoryId,
                 UnitOfMeasureId = request.UnitOfMeasureId,
 
+                Power = request.Power.HasValue() && request.Power.HasValidProperties()
+                        ? new Strength
+                        {
+                            Amount = request.Power.Amount,
+                            Unit = request.Power.Unit,
+                        }
+                        : null,
+
                 CreatedBy = userId
             };
-
-            if (request.Power != null)
-            {
-                product.Power = new Strength
-                {
-                    Amount = request.Power.Amount,
-                    Unit = request.Power.Unit,
-                };
-            }
 
             await _unitOfWork.ProductRepository.CreateAsync(product);
             if (!await _unitOfWork.CommitAsync())
@@ -274,11 +277,13 @@ namespace MedicineShopApplication.BLL.Services
                 UnitOfMeasureId = product.UnitOfMeasureId,
                 UnitOfMeasureName = unitOfMeasureName,
 
-                Power = new StrengthDto
-                {
-                    Amount = product.Power.Amount,
-                    Unit = product.Power.Unit,
-                },
+                Power = product.Power.HasValue()
+                        ? new StrengthDto
+                        {
+                            Amount = product.Power.Amount ?? 0,
+                            Unit = product.Power.Unit
+                        }
+                        : null,
 
                 CreatedByName = createdByName,
             };
@@ -344,14 +349,13 @@ namespace MedicineShopApplication.BLL.Services
             product.CategoryId = request.CategoryId;
             product.UnitOfMeasureId = request.UnitOfMeasureId;
 
-            if (request.Power.HasValue())
-            {
-                product.Power = new Strength
-                {
-                    Amount = request.Power.Amount,
-                    Unit = request.Power.Unit,
-                };
-            }
+            product.Power = request.Power.HasValue() && request.Power.HasValidProperties()
+                            ? new Strength
+                            {
+                                Amount = request.Power.Amount,
+                                Unit = request.Power.Unit,
+                            }
+                            : null;
 
             product.UpdatedBy = userId;
             product.UpdatedAt = DateTime.UtcNow;

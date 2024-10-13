@@ -23,6 +23,9 @@ namespace MedicineShopApplication.BLL.Dtos.Product
         public string CategoryName { get; set; }
         public int UnitOfMeasureId { get; set; }
         public string UnitOfMeasureName { get; set; }
+
+        public StrengthDto PowerDto { get; set; }
+
         public string CreatedByName { get; set; }
         public string UpdatedByName { get; set; }
 

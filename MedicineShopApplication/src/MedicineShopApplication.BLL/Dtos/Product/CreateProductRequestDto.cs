@@ -13,5 +13,7 @@
         public int BrandDtoId { get; set; }
         public int CategoryDtoId { get; set; }
         public int UnitOfMeasureDtoId { get; set; }
+
+        public StrengthDto PowerDto { get; set; }
     }
 }

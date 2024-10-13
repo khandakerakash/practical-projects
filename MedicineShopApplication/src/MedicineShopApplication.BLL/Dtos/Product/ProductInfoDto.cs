@@ -10,5 +10,7 @@
         public decimal SellingPrice { get; set; }
         public string Status { get; set; }
         public string ImageUrl { get; set; }
+
+        public StrengthDto PowerDto { get; set; }
     }
 }

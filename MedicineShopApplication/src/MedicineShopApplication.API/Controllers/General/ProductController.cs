@@ -39,7 +39,7 @@ namespace MedicineShopApplication.API.Controllers.General
             return ToActionResult(response);
         }
 
-        [HttpPut("update")]
+        [HttpPut("update/{productId}")]
         public async Task<IActionResult> UpdateProduct(UpdateProductRequestDto request, int productId)
         {
             var userId = User.GetUserIdInt();

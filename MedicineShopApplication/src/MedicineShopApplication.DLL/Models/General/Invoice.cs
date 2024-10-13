@@ -5,6 +5,7 @@ namespace MedicineShopApplication.DLL.Models.General
     public class Invoice : AuditableEntity
     {
         public int InvoiceId { get; set; }
+        public string InvoiceNumber { get; set; }
         public decimal TotalAmount { get; set; }
         public DateTime InvoiceAt { get; set; } = DateTime.UtcNow;
 

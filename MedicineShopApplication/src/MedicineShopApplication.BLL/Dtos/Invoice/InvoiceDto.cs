@@ -6,6 +6,7 @@ namespace MedicineShopApplication.BLL.Dtos.Invoice
     public class InvoiceDto : AuditableEntityDto
     {
         public int InvoiceId { get; set; }
+        public string InvoiceNumber { get; set; }
         public decimal TotalAmount { get; set; }
         public DateTime InvoiceAt { get; set; } = DateTime.UtcNow;
 

@@ -138,9 +138,26 @@ namespace MedicineShopApplication.BLL.Services
             return new ApiResponse<OrderDto>(orderResponse, true, "Order details retrieved successfully.");
         }
 
-        public Task<ApiResponse<string>> UpdatePaymentStatus(int orderId, string paymentStatus)
+        public async Task<ApiResponse<string>> UpdatePaymentStatus(int orderId, string paymentStatus)
         {
-            throw new NotImplementedException();
+            var order = await _unitOfWork.OrderRepository
+                .FindByConditionWithTrackingAsync(x => x.OrderId == orderId)
+                .FirstOrDefaultAsync();
+
+            if (order.HasNoValue())
+            {
+                return new ApiResponse<string>(null, false, "Order not found.");
+            }
+
+            order.PaymentStatus = paymentStatus;
+            _unitOfWork.OrderRepository.Update(order);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<string>(null, false, "Failed to update payment status.");
+            }
+
+            return new ApiResponse<string>(null, true, "Payment status updated successfully.");
         }
     }
 }

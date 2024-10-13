@@ -134,6 +134,8 @@ namespace MedicineShopApplication.BLL.Services
                 Notes = request.Notes,
                 UnitOfMeasureId = request.UnitOfMeasureId,
                 Status = InventoryStatus.Available, // default status when create an inventory
+
+                CreatedBy = requestMaker
             };
 
             await _unitOfWork.InventoryRepository.CreateAsync(inventory);
@@ -173,6 +175,9 @@ namespace MedicineShopApplication.BLL.Services
             inventory.Notes = request.Notes;
             inventory.UnitOfMeasureId = request.UnitOfMeasureId;
             inventory.Status = status;
+
+            inventory.UpdatedBy = requestMaker;
+            inventory.UpdatedAt = DateTime.UtcNow;
 
             _unitOfWork.InventoryRepository.Update(inventory);
 

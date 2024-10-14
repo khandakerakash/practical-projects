@@ -63,6 +63,7 @@ namespace MedicineShopApplication.BLL.Services
                     Code = x.Code,
                     Name = x.Name,
                     NormalizedName = x.NormalizedName,
+                    Description = x.Description,
 
                     CreatedAt = x.CreatedAt,
                     CreatedBy = x.CreatedBy,
@@ -110,11 +111,14 @@ namespace MedicineShopApplication.BLL.Services
                     Code = x.Code,
                     Name = x.Name,
                     NormalizedName = x.NormalizedName,
+                    Description = x.Description,
+
                     CreatedAt = x.CreatedAt,
                     CreatedBy = x.CreatedBy,
                     CreatedByName = users.ContainsKey(x.CreatedBy)
                                     ? users[x.CreatedBy].GetFullName()
                                     : "",
+
                     UpdatedAt = x.UpdatedAt,
                     UpdatedBy = x.UpdatedBy,
                     UpdatedByName = x.UpdatedBy.HasValue && users.ContainsKey(x.UpdatedBy.Value)
@@ -201,6 +205,7 @@ namespace MedicineShopApplication.BLL.Services
                     Code = request.Code,
                     Name = request.Name,
                     NormalizedName = GeneralUtils.NormalizeName(request.Name),
+                    Description = request.Description,
                     CreatedBy = userId
                 };
 
@@ -211,6 +216,7 @@ namespace MedicineShopApplication.BLL.Services
                     Code = newBrand.Code,
                     Name = newBrand.Name,
                     NormalizedName = newBrand.NormalizedName,
+                    Description = newBrand.Description,
                     CreatedByName = createdByName
                 });
             }
@@ -257,6 +263,7 @@ namespace MedicineShopApplication.BLL.Services
             updatingBrand.Code = request.Code;
             updatingBrand.Name = request.Name;
             updatingBrand.NormalizedName = normalizedBrandName;
+            updatingBrand.Description = request.Description;
             updatingBrand.UpdatedBy = userId;
             updatingBrand.UpdatedAt = DateTime.UtcNow;
 

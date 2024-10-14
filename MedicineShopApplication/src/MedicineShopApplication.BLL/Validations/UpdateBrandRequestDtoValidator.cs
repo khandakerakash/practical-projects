@@ -18,6 +18,10 @@ namespace MedicineShopApplication.BLL.Validations
                 .NotEmpty()
                 .MinimumLength(2)
                 .MaximumLength(255);
+
+            RuleFor(x => x.Description)
+                .NotNull()
+                .NotEmpty();
         }
     }
 }

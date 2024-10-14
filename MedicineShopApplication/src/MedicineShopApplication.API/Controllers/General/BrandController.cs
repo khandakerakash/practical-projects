@@ -5,8 +5,6 @@ using MedicineShopApplication.BLL.Dtos.Brand;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.API.Controllers.Base;
 
-
-
 namespace MedicineShopApplication.API.Controllers.General
 {
     public class BrandController : ApiAuthorizeController

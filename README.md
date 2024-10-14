@@ -63,6 +63,13 @@ I want to give special thanks to [Biswanath Ghosh Tapos](https://www.linkedin.co
 - First, build the application.
 - Then, run the migration.
 
+```bash
+dotnet ef migrations add <MigrationName> --project <PathToYourDbContextProject> --startup-project <PathToYourStartupProject>
+```
+```bash
+dotnet ef database update --project MedicineShopApplication.DLL --startup-project MedicineShopApplication.API
+```
+
 ### 2. Run the Application
 - After running the application, it will automatically create the default application roles, including `UserRole`.
 

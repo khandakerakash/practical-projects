@@ -64,7 +64,7 @@ I want to give special thanks to [Biswanath Ghosh Tapos](https://www.linkedin.co
 - Then, run the migration.
 
 ```bash
-dotnet ef migrations add <MigrationName> --project <PathToYourDbContextProject> --startup-project <PathToYourStartupProject>
+dotnet ef migrations add InitialCreate --project MedicineShopApplication.DLL --startup-project MedicineShopApplication.API
 ```
 ```bash
 dotnet ef database update --project MedicineShopApplication.DLL --startup-project MedicineShopApplication.API

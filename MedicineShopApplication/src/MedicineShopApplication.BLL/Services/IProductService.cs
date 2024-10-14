@@ -10,6 +10,7 @@ using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Dtos.Product;
 using MedicineShopApplication.DLL.Models.Enums;
 using MedicineShopApplication.DLL.Models.General;
+using Azure.Core;
 
 
 
@@ -339,11 +340,11 @@ namespace MedicineShopApplication.BLL.Services
 
                 var existingProduct = await _unitOfWork.ProductRepository
                 .FindByConditionAsync(p => p.Code == productCode || (p.NormalizedName == normalizedName && p.BrandId == request.BrandId))
-                .FirstOrDefaultAsync();
+                .AnyAsync();
 
-                if (existingProduct.HasValue())
+                if (existingProduct)
                 {
-                    return new ApiResponse<List<CreateProductResponseDto>>(null, false, $"Duplicate products found: {string.Join(", ", existingProduct.Name)}");
+                    return new ApiResponse<List<CreateProductResponseDto>>(null, false, "A product with the same code or name already exists.");
                 }
 
                 var product = new Product

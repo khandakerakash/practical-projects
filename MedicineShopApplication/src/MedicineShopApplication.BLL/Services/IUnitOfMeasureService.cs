@@ -21,6 +21,7 @@ namespace MedicineShopApplication.BLL.Services
         Task<ApiResponse<List<UnitOfMeasureResponseDto>>> GetAllUnitOfMeasure(PaginationRequest request);
         Task<ApiResponse<UnitOfMeasureResponseDto>> GetUnitOfMeasureById(int unitOfMeasureId);
         Task<ApiResponse<CreateUnitOfMeasureResponseDto>> CreateUnitOfMeasure(CreateUnitOfMeasureRequestDto request, int userId);
+        Task<ApiResponse<List<CreateUnitOfMeasureResponseDto>>> CreateUnitOfMeasures(List<CreateUnitOfMeasureRequestDto> requests, int userId);
         Task<ApiResponse<string>> UpdateUnitOfMeasure(UpdateUnitOfMeasureRequestDto request, int unitOfMeasureId, int userId);
         Task<ApiResponse<string>> DeleteUnitOfMeasure(int unitOfMeasureId, int userId);
         Task<ApiResponse<List<DropdownOptionDto>>> GetUnitOfMeasureDropdownOptions();
@@ -214,6 +215,58 @@ namespace MedicineShopApplication.BLL.Services
             return new ApiResponse<CreateUnitOfMeasureResponseDto>(createdUnitOfMeasure, true, "Unit of measure created successfully.");
         }
 
+        public async Task<ApiResponse<List<CreateUnitOfMeasureResponseDto>>> CreateUnitOfMeasures(List<CreateUnitOfMeasureRequestDto> requests, int userId)
+        {
+            var newUnitOfMeasure = new List<UnitOfMeasure>();
+            var responseUnitOfMeasure = new List<CreateUnitOfMeasureResponseDto>();
+            var validator = new CreateUnitOfMeasureRequestDtoValidator();
+
+            foreach (var request in requests)
+            {
+                var validationResult = await validator.ValidateAsync(request);
+                if (!validationResult.IsValid)
+                {
+                    return new ApiResponse<List<CreateUnitOfMeasureResponseDto>>(validationResult.Errors);
+                }
+
+                var normalizedName = GeneralUtils.NormalizeName(request.Name);
+                if (await ExistsByNameAsync(normalizedName))
+                {
+                    return new ApiResponse<List<CreateUnitOfMeasureResponseDto>>(null, false, "A Unit of measure with this name already exists.");
+                }
+
+                var unitOfMeasure = new UnitOfMeasure
+                {
+                    Name = request.Name,
+                    NormalizedName = normalizedName,
+                    Description = request.Description,
+                    CreatedBy = userId
+                };
+
+                newUnitOfMeasure.Add(unitOfMeasure);
+
+                var createdByName = await _userManager.GetFullNameByIdAsync(userId);
+                var createdUnitOfMeasure = new CreateUnitOfMeasureResponseDto()
+                {
+                    Name = unitOfMeasure.Name,
+                    NormalizedName = unitOfMeasure.NormalizedName,
+                    Description = unitOfMeasure.Description,
+                    CreatedByName = createdByName
+                };
+
+                responseUnitOfMeasure.Add(createdUnitOfMeasure);
+            }
+
+            await _unitOfWork.UnitOfMeasureRepository.CreateRangeAsync(newUnitOfMeasure);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<List<CreateUnitOfMeasureResponseDto>>(null, false, "An error occurred while creating the Unit of measure.");
+            }
+
+            return new ApiResponse<List<CreateUnitOfMeasureResponseDto>>(responseUnitOfMeasure, true, "Unit of measures created successfully.");
+        }
+
         public async Task<ApiResponse<string>> UpdateUnitOfMeasure(UpdateUnitOfMeasureRequestDto request, int unitOfMeasureId, int userId)
         {
             var validator = new UpdateUnitOfMeasureRequestDtoValidator();
@@ -360,11 +413,11 @@ namespace MedicineShopApplication.BLL.Services
         /// Checks if a unitOfMeasure with the specified name already exists in the repository by normalizing the name for consistent comparison.
         /// </summary>
         /// <param name="unitOfMeasure">The unitOfMeasure name to check for existence.</param>
-        /// <returns>A task that represents the asynchronous operation. The task result contains true if the brand exists; otherwise, false.</returns>
+        /// <returns>A task that represents the asynchronous operation. The task result contains true if the unitOfMeasure exists; otherwise, false.</returns>
         private async Task<bool> ExistsByNameAsync(string name)
         {
             return await _unitOfWork.UnitOfMeasureRepository
-                .FindByConditionWithTrackingAsync(x => x.NormalizedName == name)
+                .FindByConditionAsync(x => x.NormalizedName == name)
                 .AnyAsync();
         }
 

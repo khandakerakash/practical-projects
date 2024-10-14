@@ -40,6 +40,15 @@ namespace MedicineShopApplication.API.Controllers.General
             return ToActionResult(response);
         }
 
+        [HttpPost("create-range")]
+        public async Task<IActionResult> CreateUnitOfMeasures(List<CreateUnitOfMeasureRequestDto> requests)
+        {
+            var userId = User.GetUserIdInt();
+
+            var response = await _unitOfMeasureService.CreateUnitOfMeasures(requests, userId);
+            return ToActionResult(response);
+        }
+
         [HttpPut("update/{unitOfMeasureId}")]
         public async Task<IActionResult> UpdateUnitOfMeasure(UpdateUnitOfMeasureRequestDto request, int unitOfMeasureId)
         {

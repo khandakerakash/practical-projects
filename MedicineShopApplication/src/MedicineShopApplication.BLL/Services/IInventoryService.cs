@@ -111,7 +111,7 @@ namespace MedicineShopApplication.BLL.Services
                 .FindByConditionAsync(x => x.ProductId == request.ProductId)
                 .AnyAsync();
 
-            if (product)
+            if (!product)
             {
                 return new ApiResponse<string>(null, false, "Product not found.");
             }
@@ -120,7 +120,7 @@ namespace MedicineShopApplication.BLL.Services
                 .FindByConditionAsync(x => x.UnitOfMeasureId == request.UnitOfMeasureId)
                 .AnyAsync();
 
-            if (unitOfMeasure)
+            if (!unitOfMeasure)
             {
                 return new ApiResponse<string>(null, false, "Unit of measure not found.");
             }

@@ -19,7 +19,7 @@ namespace MedicineShopApplication.API.Controllers.General
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllInventories(PaginationRequest request)
+        public async Task<IActionResult> GetAllInventories([FromQuery] PaginationRequest request)
         {
             var response = await _inventoryService.GetAllInventories(request);
             return ToActionResult(response);

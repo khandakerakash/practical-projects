@@ -23,14 +23,14 @@ namespace MedicineShopApplication.API.Controllers.General
             return ToActionResult(response);
         }
 
-        [HttpGet("invoiceId")]
+        [HttpGet("id/{invoiceId}")]
         public async Task<IActionResult> GetInvoiceById(int invoiceId)
         {
             var response = await _invoiceService.GetInvoiceById(invoiceId);
             return ToActionResult(response);
         }
 
-        [HttpGet("orderId")]
+        [HttpGet("orderid/{orderId}")]
         public async Task<IActionResult> GetInvoiceByOrderId(int orderId)
         {
             var response = await _invoiceService.GetInvoiceByOrderId(orderId);

@@ -37,10 +37,10 @@ namespace MedicineShopApplication.BLL.Services
             }
 
             var existingInvoice = await _unitOfWork.OrderRepository
-                .FindByConditionWithTrackingAsync(x => x.OrderId == orderId)
-                .FirstOrDefaultAsync();
+                .FindByConditionAsync(x => x.OrderId == orderId)
+                .AnyAsync();
 
-            if (existingInvoice.HasNoValue())
+            if (existingInvoice)
             {
                 return new ApiResponse<InvoiceDto>(null, false, "Invoice already exists for this order.");
             }
@@ -97,10 +97,11 @@ namespace MedicineShopApplication.BLL.Services
                 TotalAmount = invoice.TotalAmount,
                 InvoiceAt = invoice.InvoiceAt,
                 OrderId = invoice.OrderId,
+                CreatedBy = invoice.CreatedBy,
                 OrderDto = new OrderDto
                 {
                     OrderId = invoice.Order.OrderId,
-                    PaymentStatus = invoice.Order.PaymentStatus
+                    PaymentStatus = invoice.Order.PaymentStatus,
                 }
             };
 
@@ -126,6 +127,7 @@ namespace MedicineShopApplication.BLL.Services
                 TotalAmount = invoice.TotalAmount,
                 InvoiceAt = invoice.InvoiceAt,
                 OrderId = invoice.OrderId,
+                CreatedBy = invoice.CreatedBy,
                 OrderDto = new OrderDto
                 {
                     OrderId = invoice.Order.OrderId,

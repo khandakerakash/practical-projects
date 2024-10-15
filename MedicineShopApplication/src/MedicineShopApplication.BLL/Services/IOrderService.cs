@@ -37,6 +37,7 @@ namespace MedicineShopApplication.BLL.Services
             var cart = await _unitOfWork.CartRepository
                 .FindByConditionWithTrackingAsync(x => x.UserId == userId)
                 .Include(x => x.CartItems)
+                .ThenInclude(x => x.Product)
                 .FirstOrDefaultAsync();
 
             if (cart.HasNoValue() || !cart.CartItems.Any())
@@ -79,8 +80,8 @@ namespace MedicineShopApplication.BLL.Services
                 .FindByConditionAsync(x => x.OrderId == orderId)
                 .Include(x => x.OrderItems)
                 .Include(x => x.User)
-                .Include(x => x.Payment)
-                .Include(x => x.Invoice)
+                //.Include(x => x.Payment)
+                //.Include(x => x.Invoice)
                 .FirstOrDefaultAsync();
 
             if (order.HasNoValue())
@@ -117,22 +118,22 @@ namespace MedicineShopApplication.BLL.Services
                     Division = order.User.Division,
                     Address = order.User.Address,
                 },
-                PaymentDto = new PaymentDto
-                {
-                    PaymentId = order.Payment.PaymentId,
-                    TransactionId = order.Payment.TransactionId,
-                    PaymentMethod = order.Payment.PaymentMethod,
-                    PaymentAmount = order.Payment.PaymentAmount,
-                    PaymentStatus = order.Payment.PaymentStatus,
-                    OrderId = order.Payment.OrderId,
-                    UserId = order.Payment.UserId,
-                },
-                InvoiceDto = new InvoiceDto
-                {
-                    OrderId = order.Payment.OrderId,
-                    InvoiceId = order.Invoice.InvoiceId,
-                    TotalAmount = order.Invoice.TotalAmount
-                }
+                //PaymentDto = new PaymentDto
+                //{
+                //    PaymentId = order.Payment.PaymentId,
+                //    TransactionId = order.Payment.TransactionId,
+                //    PaymentMethod = order.Payment.PaymentMethod,
+                //    PaymentAmount = order.Payment.PaymentAmount,
+                //    PaymentStatus = order.Payment.PaymentStatus,
+                //    OrderId = order.Payment.OrderId,
+                //    UserId = order.Payment.UserId,
+                //},
+                //InvoiceDto = new InvoiceDto
+                //{
+                //    OrderId = order.Payment.OrderId,
+                //    InvoiceId = order.Invoice.InvoiceId,
+                //    TotalAmount = order.Invoice.TotalAmount
+                //}
             };
 
             return new ApiResponse<OrderDto>(orderResponse, true, "Order details retrieved successfully.");

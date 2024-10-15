@@ -57,6 +57,10 @@ This project aims to develop a simplified medicine shop application similar to [
 
 I want to give special thanks to [Biswanath Ghosh Tapos](https://www.linkedin.com/in/taposg/) for his guidance and project assignments, which helped deepen my understanding of ASP.NET Core 8.
 
+# Initial Assignments for the Medicine Shop Project
+- Here is the [ER-Diagram](https://www.canva.com/design/DAGPtmQ7dOE/DziiDsVTh3prKyJB7xIAtw/edit?utm_content=DAGPtmQ7dOE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton).
+- It's editable, so feel free to add your observations or suggestions. I would greatly appreciate your input and support.
+
 # How to Run the Medicine Application
 
 ### 1. Build and Migrate

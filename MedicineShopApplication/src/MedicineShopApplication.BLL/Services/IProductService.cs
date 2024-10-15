@@ -45,8 +45,20 @@ namespace MedicineShopApplication.BLL.Services
 
             var productsQuery = _unitOfWork.ProductRepository.FindAllAsync();
 
-            productsQuery = SortProductsQuery(productsQuery, request.SortBy);
+            if (request.SearchTerm.HasValue())
+            {
+                productsQuery = productsQuery.Where(x =>
+                    x.Name.Contains(request.SearchTerm) ||
+                    x.GenericName.Contains(request.SearchTerm)
+                );
+            }
 
+            if (request.Ids.HasValue() && request.Ids.Any())
+            {
+                productsQuery = productsQuery.Where(x => request.Ids.Contains(x.CategoryId));
+            }
+
+            productsQuery = SortProductsQuery(productsQuery, request.SortBy);
             var totalProductCount = await productsQuery.CountAsync();
 
             var userIds = productsQuery.Select(x => x.CreatedBy)

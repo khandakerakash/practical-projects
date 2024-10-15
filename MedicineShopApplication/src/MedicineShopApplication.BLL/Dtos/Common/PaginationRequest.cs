@@ -35,5 +35,16 @@
         /// Gets or sets the property name to sort by. Defaults to an empty string.
         /// </summary>
         public string SortBy { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Sets the `SearchTerm` for searchable data. Defaults to null.
+        /// </summary>
+        public string SearchTerm { get; set; } = null;
+
+        /// <summary>
+        /// Sets the `Ids` for searchable data. Defaults to an empty list (for multiple IDs) or null (for a single ID).
+        /// </summary>
+        public List<int> Ids { get; set; } = new List<int>();
+
     }
 }

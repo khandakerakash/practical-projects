@@ -4,7 +4,6 @@ using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
-using MedicineShopApplication.BLL.Dtos.Category;
 
 namespace MedicineShopApplication.API.Controllers.General
 {

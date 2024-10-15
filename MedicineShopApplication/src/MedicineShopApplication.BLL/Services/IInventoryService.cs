@@ -108,19 +108,19 @@ namespace MedicineShopApplication.BLL.Services
             }
             
             var product = await _unitOfWork.ProductRepository
-                .FindByConditionWithTrackingAsync(x => x.ProductId == request.ProductId)
-                .FirstOrDefaultAsync();
+                .FindByConditionAsync(x => x.ProductId == request.ProductId)
+                .AnyAsync();
 
-            if (product.HasNoValue())
+            if (product)
             {
                 return new ApiResponse<string>(null, false, "Product not found.");
             }
 
             var unitOfMeasure = await _unitOfWork.UnitOfMeasureRepository
-                .FindByConditionWithTrackingAsync(x => x.UnitOfMeasureId == request.UnitOfMeasureId)
-                .FirstOrDefaultAsync();
+                .FindByConditionAsync(x => x.UnitOfMeasureId == request.UnitOfMeasureId)
+                .AnyAsync();
 
-            if (!unitOfMeasure.HasNoValue())
+            if (unitOfMeasure)
             {
                 return new ApiResponse<string>(null, false, "Unit of measure not found.");
             }

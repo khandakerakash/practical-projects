@@ -117,8 +117,12 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<string>(null, false, "Cart not found.");
             }
 
-            var cartItem = cart.CartItems
-                .FirstOrDefault(x => x.ProductId == productId);
+            //var cartItem = cart.CartItems
+            //    .FirstOrDefault(x => x.ProductId == productId);
+
+            var cartItem = await _unitOfWork.CartItemRepository
+                .FindByConditionWithTrackingAsync(x => x.CartId == cart.CartId &&  x.ProductId == productId)
+                .FirstOrDefaultAsync();
 
             if (cartItem.HasNoValue())
             {

@@ -41,7 +41,7 @@ namespace MedicineShopApplication.BLL.Services
             }
 
             var productExists = await _unitOfWork.ProductRepository
-                .FindByConditionWithTrackingAsync(x => x.ProductId == request.ProductId)
+                .FindByConditionAsync(x => x.ProductId == request.ProductId)
                 .AnyAsync();
 
             if (!productExists)
@@ -100,11 +100,11 @@ namespace MedicineShopApplication.BLL.Services
         public async Task<ApiResponse<string>> RemoveFromCart(int userId, int productId)
         {
             var product = await _unitOfWork.ProductRepository
-               .FindByConditionWithTrackingAsync(x => x.ProductId == productId)
+               .FindByConditionAsync(x => x.ProductId == productId)
                .AnyAsync();
 
             var productExists = await _unitOfWork.ProductRepository
-                .FindByConditionWithTrackingAsync(x => x.ProductId == productId)
+                .FindByConditionAsync(x => x.ProductId == productId)
                 .AnyAsync();
 
             if (!productExists)

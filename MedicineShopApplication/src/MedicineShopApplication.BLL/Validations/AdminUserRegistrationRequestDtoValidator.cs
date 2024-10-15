@@ -52,7 +52,7 @@ namespace MedicineShopApplication.BLL.Validations
                 .NotNull()
                 .NotEmpty()
                 .Must(BeAvalidRole).WithMessage("Invalid user role.")
-                .WithMessage("User role must be one of the following: developer, superAdmin, admin, manager, moderator, salesman etc.");
+                .WithMessage("User role must be one of the following: developer, superadmin, admin, manager, moderator, salesman etc.");
 
             RuleFor(x => x.DateOfBirth)
                 .NotNull()

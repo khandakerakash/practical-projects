@@ -76,6 +76,7 @@ dotnet ef database update --project MedicineShopApplication.DLL --startup-projec
 
 ### 2. Run the Application
 - After running the application, it will automatically create the default application roles, including `UserRole`.
+- Create a Dockerfile for ASP.NET Core with Redis installation inside the `aspnet-docker` container.
 
 ### 3. Register the User
 - Register a user by hitting the following endpoint: `{{server}}/Account/register`.

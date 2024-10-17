@@ -29,6 +29,13 @@ namespace MedicineShopApplication.DLL.Configs
                 .WithOne(c => c.User)
                 .HasForeignKey<Cart>(c => c.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure User - UserStatusChangeLog (one-to-many) relationship
+            builder
+                .HasMany(u => u.UserStatusChangeLogs)
+                .WithOne(log => log.User)
+                .HasForeignKey(log => log.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -23,6 +23,7 @@ namespace MedicineShopApplication.DLL.Models.Users
         public Cart Cart { get; set; }
         public ICollection<Order> Orders { get; set; } = new List<Order>();
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
+        public ICollection<UserStatusChangeLog> UserStatusChangeLogs { get; set; } = new List<UserStatusChangeLog>();
 
         public int CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;

@@ -13,6 +13,8 @@ using MedicineShopApplication.DLL.Models.Users;
 using Microsoft.Extensions.Caching.Distributed;
 using MedicineShopApplication.API.Controllers.Base;
 using static OpenIddict.Abstractions.OpenIddictConstants;
+using MedicineShopApplication.BLL.Utils;
+using MedicineShopApplication.DLL.Models.Enums;
 
 
 namespace MedicineShopApplication.API.Controllers.General
@@ -48,6 +50,18 @@ namespace MedicineShopApplication.API.Controllers.General
                         [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
                         [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
                             "The username/password couple is invalid."
+                    });
+
+                    return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+                }
+
+                if (UserStatusUtils.GetUserStatus(user.Status) != UserStatusUtils.GetUserStatus(UserStatus.Active))
+                {
+                    var properties = new AuthenticationProperties(new Dictionary<string, string>
+                    {
+                        [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+                        [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
+                            "User not verified."
                     });
 
                     return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);

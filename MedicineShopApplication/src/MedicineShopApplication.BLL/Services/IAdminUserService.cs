@@ -18,6 +18,7 @@ namespace MedicineShopApplication.BLL.Services
         Task<ApiResponse<AdminUserResponseDto>> GetAdminUserById(int userId);
         Task<ApiResponse<AdminUserResponseDto>> CreateAdminUser(AdminUserRegistrationRequestDto request, int requestMaker, string userRoleName);
         Task<ApiResponse<string>> UpdateAdminUser(AdminUserUpdateRequestDto request, int adminId, int userId);
+        Task<ApiResponse<string>> UpdateAdminStatus(AdminUserStatusUpdateRequestDto request, int requestMaker);
         Task<ApiResponse<string>> DeleteAdminUser(int adminId, int userId);
     }
 
@@ -323,6 +324,41 @@ namespace MedicineShopApplication.BLL.Services
             }
 
             return new ApiResponse<string>(null, true, "The admin user updated successfully.");
+        }
+
+        public async Task<ApiResponse<string>> UpdateAdminStatus(AdminUserStatusUpdateRequestDto request, int requestMaker)
+        {
+            var validator = new AdminUserStatusUpdateRequestDtoValidator();
+            var validationResult = await validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                return new ApiResponse<string>(validationResult.Errors);
+            }
+
+            var user = await _unitOfWork.UserRepository
+                .FindByConditionWithTrackingAsync(x => x.Id == request.userId)
+                .FirstOrDefaultAsync();
+
+            if (user.HasNoValue())
+            {
+                return new ApiResponse<string>("User not found.");
+            }
+
+            var status = Enum.Parse<UserStatus>(request.Status, true);
+
+            user.Status = status;
+            user.UpdatedBy = requestMaker;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            _unitOfWork.UserRepository.Update(user);
+
+            if (!await _unitOfWork.CommitAsync())
+            {
+                return new ApiResponse<string>("An error occure while updating the user status.");
+            }
+
+            return new ApiResponse<string>("Status updated successfully");
         }
 
         public async Task<ApiResponse<string>> DeleteAdminUser(int adminId, int userId)

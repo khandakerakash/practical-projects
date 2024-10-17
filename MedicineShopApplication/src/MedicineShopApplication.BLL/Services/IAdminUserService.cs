@@ -18,7 +18,7 @@ namespace MedicineShopApplication.BLL.Services
         Task<ApiResponse<AdminUserResponseDto>> GetAdminUserById(int userId);
         Task<ApiResponse<AdminUserResponseDto>> CreateAdminUser(AdminUserRegistrationRequestDto request, int requestMaker, string userRoleName);
         Task<ApiResponse<string>> UpdateAdminUser(AdminUserUpdateRequestDto request, int adminId, int userId);
-        Task<ApiResponse<string>> UpdateAdminStatus(AdminUserStatusUpdateRequestDto request, int requestMaker);
+        Task<ApiResponse<string>> UpdateAdminUserStatus(AdminUserStatusUpdateRequestDto request, int requestMaker);
         Task<ApiResponse<string>> DeleteAdminUser(int adminId, int userId);
     }
 
@@ -326,7 +326,7 @@ namespace MedicineShopApplication.BLL.Services
             return new ApiResponse<string>(null, true, "The admin user updated successfully.");
         }
 
-        public async Task<ApiResponse<string>> UpdateAdminStatus(AdminUserStatusUpdateRequestDto request, int requestMaker)
+        public async Task<ApiResponse<string>> UpdateAdminUserStatus(AdminUserStatusUpdateRequestDto request, int requestMaker)
         {
             var validator = new AdminUserStatusUpdateRequestDtoValidator();
             var validationResult = await validator.ValidateAsync(request);
@@ -337,7 +337,7 @@ namespace MedicineShopApplication.BLL.Services
             }
 
             var user = await _unitOfWork.UserRepository
-                .FindByConditionWithTrackingAsync(x => x.Id == request.userId)
+                .FindByConditionWithTrackingAsync(x => x.UserName == request.UserName)
                 .FirstOrDefaultAsync();
 
             if (user.HasNoValue())
@@ -346,12 +346,24 @@ namespace MedicineShopApplication.BLL.Services
             }
 
             var status = Enum.Parse<UserStatus>(request.Status, true);
-
+            var oldStatus = user.Status;
             user.Status = status;
             user.UpdatedBy = requestMaker;
             user.UpdatedAt = DateTime.UtcNow;
 
             _unitOfWork.UserRepository.Update(user);
+
+            var userStatusChangeLog = new UserStatusChangeLog
+            {
+                UserId = user.Id,
+                OldStatus = oldStatus,
+                NewStatus = status,
+                ReasonForChange = request.ReasonForChange,
+                ChangedBy = requestMaker, 
+                ChangedAt = DateTime.UtcNow
+            };
+
+            await _unitOfWork.UserStatusChangeLogRepository.CreateAsync(userStatusChangeLog);
 
             if (!await _unitOfWork.CommitAsync())
             {

@@ -9,17 +9,21 @@ namespace MedicineShopApplication.BLL.Validations
     {
         public AdminUserStatusUpdateRequestDtoValidator()
         {
-            RuleFor(x => x.userId)
+            RuleFor(x => x.UserName)
                 .NotNull()
-                .NotEmpty()
-                .GreaterThan(0)
-                .WithMessage("Admin user id must be greater than zero (0)");
+                .NotEmpty();
 
             RuleFor(x => x.Status)
                 .NotNull()
                 .NotEmpty()
                 .Must(BeAvalidStatus).WithMessage("Invalid user status.")
                 .WithMessage("User role must be one of the following: Active, Inactive, Pending, Banned, Suspended etc.");
+
+            RuleFor(x => x.ReasonForChange)
+                .NotNull()
+                .NotEmpty()
+                .MinimumLength(4)
+                .MaximumLength(255);
         }
 
         private bool BeAvalidStatus(string statusName)

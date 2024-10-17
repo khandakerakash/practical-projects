@@ -49,6 +49,15 @@ namespace MedicineShopApplication.API.Controllers.General
             return ToActionResult(response);
         }
 
+        [HttpPut("update-status")]
+        public async Task<IActionResult> UpdateAdminUserStatus(AdminUserStatusUpdateRequestDto request)
+        {
+            var requestMaker = User.GetUserIdInt();
+
+            var response = await _adminUserService.UpdateAdminUserStatus(request, requestMaker);
+            return ToActionResult(response);
+        }
+
         [HttpPost("delete/{adminId}")]
         public async Task<IActionResult> DeleteAdminUser(int adminId)
         {

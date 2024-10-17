@@ -1,13 +1,13 @@
 ﻿using MedicineShopApplication.API.Controllers.Base;
-using MedicineShopApplication.BLL.Dtos.Admin;
 using MedicineShopApplication.BLL.Dtos.Common;
+using MedicineShopApplication.BLL.Dtos.Admin;
 using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedicineShopApplication.API.Controllers.General
 {
-    public class AdminUserController : ApiAuthorizeController
+    public class AdminUserController : AdminAuthorizeController
     {
         private readonly IAdminUserService _adminUserService;
 

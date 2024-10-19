@@ -1,4 +1,5 @@
-﻿using MedicineShopApplication.DLL.Models.Users;
+﻿using MedicineShopApplication.DLL.Models.Enums;
+using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.BLL.Dtos.Admin;
@@ -8,7 +9,6 @@ using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using MedicineShopApplication.DLL.Models.Enums;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -367,10 +367,10 @@ namespace MedicineShopApplication.BLL.Services
 
             if (!await _unitOfWork.CommitAsync())
             {
-                return new ApiResponse<string>("An error occure while updating the user status.");
+                return new ApiResponse<string>(null, false, "An error occure while updating the user status.");
             }
 
-            return new ApiResponse<string>("Status updated successfully");
+            return new ApiResponse<string>(null, true, "Status updated successfully");
         }
 
         public async Task<ApiResponse<string>> DeleteAdminUser(int adminId, int userId)

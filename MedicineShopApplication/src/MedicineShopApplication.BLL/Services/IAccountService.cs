@@ -6,6 +6,8 @@ using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Enums;
 using MedicineShopApplication.BLL.Dtos.Account;
+using MedicineShopApplication.BLL.Utils;
+using MedicineShopApplication.DLL.Models.Enums;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -42,7 +44,8 @@ namespace MedicineShopApplication.BLL.Services
             {
                 PhoneNumber = request.PhoneNumber,
                 UserName = request.PhoneNumber,
-                PhoneNumberConfirmed = true
+                PhoneNumberConfirmed = true,
+                Status = UserStatus.Active
             };
 
             var userCreationResponse = await _userManager.CreateAsync(user, request.Password);

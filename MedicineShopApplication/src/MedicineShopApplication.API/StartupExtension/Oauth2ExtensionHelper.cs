@@ -53,7 +53,7 @@ namespace MedicineShopApplication.API.StartupExtension
                            .EnableTokenEndpointPassthrough();
 
                     // Set the access token lifetime to 10 minutes
-                    options.SetAccessTokenLifetime(TimeSpan.FromMinutes(10));
+                    options.SetAccessTokenLifetime(TimeSpan.FromMinutes(3));
 
                     // Set the access refresh token lifetime to 60 minutes
                     options.SetRefreshTokenLifetime(TimeSpan.FromDays(30));

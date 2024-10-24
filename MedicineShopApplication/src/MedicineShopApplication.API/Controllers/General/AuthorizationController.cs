@@ -15,6 +15,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using MedicineShopApplication.DLL.Models.Enums;
 using MedicineShopApplication.API.Controllers.Base;
 using static OpenIddict.Abstractions.OpenIddictConstants;
+using MedicineShopApplication.BLL.Dtos.Common;
 
 
 namespace MedicineShopApplication.API.Controllers.General
@@ -188,8 +189,18 @@ namespace MedicineShopApplication.API.Controllers.General
             var username = User.GetUserName();
             var key = $"{username}-access-key";
 
-            await _cache.RemoveAsync(key);
-            return Ok("Logout successfully.");
+            try
+            {
+                await _cache.RemoveAsync(key);
+
+                var response = new ApiResponse<string>(null, true, "Logout successful");
+                return ToActionResult(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new ApiResponse<string>(null, false, "Failed to logout. Please try again.");
+                return ToActionResult(response);
+            }
         }
 
         private async Task<string> TokenGenerateValue(string username)

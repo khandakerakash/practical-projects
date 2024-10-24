@@ -78,11 +78,15 @@ dotnet ef database update --project MedicineShopApplication.DLL --startup-projec
 - After running the application, it will automatically create the default application roles, including `UserRole`.
 - Create a Dockerfile for ASP.NET Core with Redis installation inside the `aspnet-docker` container.
 
-### 3. Register the User
+### 3. Postman Collection
+- You can access the Postman collection for this project using the link below:
+- [View Postman Collection](https://learning-dotnet.postman.co/workspace/Learning-dotnet-Workspace~7b5f8c1a-55c1-4ff4-adee-eba137d6bcea/collection/38564146-caf1e641-712b-4e41-9ce9-92f48bd57009?action=share&creator=38564146&active-environment=38564146-6e7a4d1c-b57e-4cbb-9c75-75e3d81813b4)
+
+### 4. Register the User
 - Register a user by hitting the following endpoint: `{{server}}/Account/register`.
 - By default, this will create an admin user with the role name `developer`.
 
-### 4. Obtain an Access Token
+### 5. Obtain an Access Token
 - Use Postman to hit the following endpoint: `{{server}}/connect/token` with the following parameters:
   - `username: 01670047320`
   - `password: 12345`
@@ -92,7 +96,7 @@ dotnet ef database update --project MedicineShopApplication.DLL --startup-projec
   
 Once successfully logged in, proceed with creating the initial data.
 
-### 5. Create Initial Data
+### 6. Create Initial Data
 - **Create Brands:**  
   Hit the endpoint: `{{server}}/Brand/create-range`
   

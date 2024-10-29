@@ -1,17 +1,17 @@
 ﻿using FluentValidation;
 using MedicineShopApplication.BLL.Services;
+using MedicineShopApplication.BLL.Dtos.Cart;
+using MedicineShopApplication.BLL.Dtos.Admin;
+using MedicineShopApplication.BLL.Dtos.Order;
 using MedicineShopApplication.BLL.Dtos.Brand;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.BLL.Dtos.Product;
 using MedicineShopApplication.BLL.Dtos.Account;
 using Microsoft.Extensions.DependencyInjection;
 using MedicineShopApplication.BLL.Dtos.Category;
-using MedicineShopApplication.BLL.Dtos.UnitOfMeasure;
-using MedicineShopApplication.BLL.Dtos.Admin;
 using MedicineShopApplication.BLL.Dtos.Customer;
-using MedicineShopApplication.BLL.Dtos.Cart;
 using MedicineShopApplication.BLL.Dtos.Inventory;
-using MedicineShopApplication.BLL.Dtos.Order;
+using MedicineShopApplication.BLL.Dtos.UnitOfMeasure;
 
 namespace MedicineShopApplication.BLL
 {
@@ -20,6 +20,7 @@ namespace MedicineShopApplication.BLL
         public static IServiceCollection AddBLLDependency(this IServiceCollection services)
         {
             services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IAdminUserService, AdminUserService>();
             services.AddScoped<ICustomerService, CustomerService>();

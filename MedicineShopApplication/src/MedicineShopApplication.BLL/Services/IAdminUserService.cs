@@ -9,6 +9,7 @@ using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using MedicineShopApplication.BLL.Dtos.Account;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -37,7 +38,6 @@ namespace MedicineShopApplication.BLL.Services
             _userManager = userManager;
             _roleManager = roleManager;
         }
-
 
         public async Task<ApiResponse<List<AdminUserResponseDto>>> GetAllAdminUsers(PaginationRequest request)
         {

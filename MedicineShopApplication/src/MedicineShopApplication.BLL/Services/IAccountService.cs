@@ -1,13 +1,16 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MedicineShopApplication.DLL.UOW;
+using MedicineShopApplication.BLL.Enums;
+using MedicineShopApplication.BLL.Utils;
+using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.DLL.Models.Users;
-using MedicineShopApplication.BLL.Enums;
 using MedicineShopApplication.BLL.Dtos.Account;
-using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.Models.Enums;
+
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -18,10 +21,14 @@ namespace MedicineShopApplication.BLL.Services
 
     public class AccountService : IAccountService
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountService(UserManager<ApplicationUser> userManager)
+        public AccountService(
+            IUnitOfWork unitOfWork,
+            UserManager<ApplicationUser> userManager)
         {
+            _unitOfWork = unitOfWork;
             _userManager = userManager;
         }
 

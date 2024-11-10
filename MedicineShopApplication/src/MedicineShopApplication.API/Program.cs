@@ -1,6 +1,7 @@
 using Serilog;
 using MedicineShopApplication.DLL;
 using MedicineShopApplication.BLL;
+using Microsoft.AspNetCore.Authorization;
 using MedicineShopApplication.API.Middleware;
 using MedicineShopApplication.API.StartupExtension;
 
@@ -22,6 +23,9 @@ builder.Services.AddRedisExtensionHelper(builder.Configuration);
 // Register the Global Exception Handler
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
+
+// Register the Custom Authorization Middleware Result Handler
+builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, CustomAuthorizationMiddlewareResultHandler>();
 
 // Register the Serilog
 builder.Services.AddSerilogApplicationExtensionHelper(builder.Configuration);

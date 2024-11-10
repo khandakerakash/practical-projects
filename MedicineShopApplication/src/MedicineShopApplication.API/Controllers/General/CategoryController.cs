@@ -11,10 +11,12 @@ namespace MedicineShopApplication.API.Controllers.General
     public class CategoryController : ApiAuthorizeController
     {
         private readonly ICategoryService _categoryService;
+        private readonly ILogger<CategoryController> _logger;
 
-        public CategoryController(ICategoryService categoryService)
+        public CategoryController(ICategoryService categoryService, ILogger<CategoryController> logger)
         {
             _categoryService = categoryService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -34,9 +36,12 @@ namespace MedicineShopApplication.API.Controllers.General
         [HttpPost("create")]
         public async Task<IActionResult> CreateCategory(CreateCategoryRequestDto request)
         {
-            var userId = User.GetUserIdInt();
+            _logger.LogInformation("starting to create new category");
 
-            var response = await _categoryService.CreateCategory(request, userId);
+            var userId = User.GetUserIdInt();
+            var username = User.GetUserName();
+
+            var response = await _categoryService.CreateCategory(request, userId, username);
             return ToActionResult(response);
         }
 

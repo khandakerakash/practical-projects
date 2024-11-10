@@ -8,6 +8,8 @@ using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Dtos.Category;
 using MedicineShopApplication.DLL.Models.General;
+using Microsoft.Extensions.Logging;
+using MedicineShopApplication.DLL.Repositories;
 
 
 namespace MedicineShopApplication.BLL.Services
@@ -16,7 +18,7 @@ namespace MedicineShopApplication.BLL.Services
     {
         Task<ApiResponse<List<CategoryResponseDto>>> GetAllCategories(PaginationRequest request);
         Task<ApiResponse<CategoryResponseDto>> GetCategoryById(int categoryId);
-        Task<ApiResponse<CreateCategoryResponseDto>> CreateCategory(CreateCategoryRequestDto request, int userId);
+        Task<ApiResponse<CreateCategoryResponseDto>> CreateCategory(CreateCategoryRequestDto request, int userId, string username);
         Task<ApiResponse<List<CreateCategoryResponseDto>>> CreateCategories(List<CreateCategoryRequestDto> requests, int userId);
         Task<ApiResponse<string>> UpdateCategory(UpdateCategoryRequestDto request, int categoryId, int userId);
         Task<ApiResponse<string>> DeleteCategory(int categoryId, int userId);
@@ -28,13 +30,16 @@ namespace MedicineShopApplication.BLL.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<CategoryRepository> _logger;
 
         public CategoryService(
             IUnitOfWork unitOfWork,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ILogger<CategoryRepository> logger)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
+            _logger = logger;
         }
 
         public async Task<ApiResponse<List<CategoryResponseDto>>> GetAllCategories(PaginationRequest request)
@@ -132,28 +137,35 @@ namespace MedicineShopApplication.BLL.Services
             return new ApiResponse<CategoryResponseDto>(categoryResponse, true, "Category found.");
         }
 
-        public async Task<ApiResponse<CreateCategoryResponseDto>> CreateCategory(CreateCategoryRequestDto request, int userId)
+        public async Task<ApiResponse<CreateCategoryResponseDto>> CreateCategory(CreateCategoryRequestDto request, int userId, string username)
         {
+            _logger.LogInformation("validation process started username: {username}", username);
             var validator = new CreateCategoryRequestDtoValidator();
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
             {
+                _logger.LogWarning("validation process failed username: {username} validation error: {validationIssue}", username, validationResult.Errors);
                 return new ApiResponse<CreateCategoryResponseDto>(validationResult.Errors);
             }
 
+            _logger.LogInformation("start checking is the same category exists or not username: {username}" + " " + "category name: {name}", username, request.Name);
             if(await CategoryExistsByNameAsync(request.Name))
             {
+                _logger.LogWarning("category already exists username: {username}" + " " + "category name: {name}", username, request.Name);
                 return new ApiResponse<CreateCategoryResponseDto>(null, false, "A category with this name already exists.");
             }
 
+            _logger.LogInformation("start generating unique category code by category name username: {username}" + " " + "category name: {name}", username, request.Name);
             var generatedCode = await GenerateUniqueCategoryCodeAsync(request.Name);
 
             if (generatedCode.HasNoValue())
             {
+                _logger.LogWarning("generating unique category code failed username: {username}" + " " + "category name: {name}", username, request.Name);
                 return new ApiResponse<CreateCategoryResponseDto>(null, false, $"Generated code is null for category name: {request.Name}");
             }
 
+            _logger.LogInformation("start normalized category name username: {username}" + " " + "category name: {name}", username, request.Name);
             var normalizedCategoryName = GeneralUtils.NormalizeName(request.Name);
 
             var newCategory = new Category()
@@ -169,6 +181,7 @@ namespace MedicineShopApplication.BLL.Services
 
             if(!await _unitOfWork.CommitAsync())
             {
+                _logger.LogWarning("category insert failed username:{username}" + " " + username);
                 return new ApiResponse<CreateCategoryResponseDto>(null, false, "An error occurred while creating the category.");
             }
 
@@ -183,6 +196,7 @@ namespace MedicineShopApplication.BLL.Services
                 createdByName = createdByName
             };
 
+            _logger.LogInformation("category insert successfully username: {username}" + " " + username);
             return new ApiResponse<CreateCategoryResponseDto>(createdCategoryDto, true, "Category created successfully.");
         }
 

@@ -1,7 +1,9 @@
+using Serilog;
 using MedicineShopApplication.DLL;
 using MedicineShopApplication.BLL;
 using MedicineShopApplication.API.Middleware;
 using MedicineShopApplication.API.StartupExtension;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,10 @@ builder.Services.AddRedisExtensionHelper(builder.Configuration);
 // Register the Global Exception Handler
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
+
+// Register the Serilog
+builder.Services.AddSerilogApplicationExtensionHelper(builder.Configuration);
+builder.Host.UseSerilog();
 
 // Register the DLL Dependencies
 builder.Services.AddDLLDependency();

@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using MedicineShopApplication.DLL.Configs;
 using MedicineShopApplication.DLL.Extension;
@@ -96,8 +97,8 @@ namespace MedicineShopApplication.DLL.DbContextInit
             var request = _httpContextAccessor?.HttpContext?.Request;
             var auditEntries = new List<AuditEntry>();
             var userId = _httpContextAccessor?.HttpContext?.User.GetUserName() ?? "System";
-            //  var controller = request?.HttpContext?.GetRouteData()?.Values["controller"]?.ToString();
-            // var action = request?.HttpContext?.GetRouteData()?.Values["action"]?.ToString();
+            var controller = request?.HttpContext?.GetRouteData()?.Values["controller"]?.ToString();
+            var action = request?.HttpContext?.GetRouteData()?.Values["action"]?.ToString();
             foreach (var entry in ChangeTracker.Entries())
             {
                 if (entry.Entity is AuditLog || entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
@@ -108,8 +109,8 @@ namespace MedicineShopApplication.DLL.DbContextInit
                     Action = entry.State.ToString(),
                     Timestamp = DateTime.UtcNow,
                     UserName = userId,
-                    ActionName = "testAction",
-                    ControllerName = "testController",
+                    ActionName = action,
+                    ControllerName = controller,
                 };
 
                 foreach (var property in entry.Properties)

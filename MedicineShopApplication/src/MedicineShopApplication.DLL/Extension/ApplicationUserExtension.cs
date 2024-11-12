@@ -1,14 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.Models.Users;
 
-namespace MedicineShopApplication.BLL.Extension
+namespace MedicineShopApplication.DLL.Extension
 {
     public static class ApplicationUserExtension
     {
         public static string GetFullName(this ApplicationUser user)
         {
-            if (user.HasNoValue())
+            if (user == null)
             {
                 return string.Empty;
             }
@@ -22,7 +21,7 @@ namespace MedicineShopApplication.BLL.Extension
 
         public static async Task<string> GetFullNameByIdAsync(this UserManager<ApplicationUser> userManager, int userId)
         {
-            if (userManager.HasNoValue())
+            if (userManager == null)
             {
                 return string.Empty;
             }

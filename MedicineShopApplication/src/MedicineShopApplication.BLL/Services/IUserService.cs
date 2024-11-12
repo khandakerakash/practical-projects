@@ -1,6 +1,6 @@
 ﻿using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Dtos.User;
-using MedicineShopApplication.BLL.Extension;
+using MedicineShopApplication.DLL.Extension;
 using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.EntityFrameworkCore;

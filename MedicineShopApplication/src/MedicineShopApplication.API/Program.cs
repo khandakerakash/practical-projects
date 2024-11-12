@@ -44,6 +44,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerExtensionHelper();
 
+// Register the HTTP Context Accessor
+builder.Services.AddHttpContextAccessor();
+
+
 // Allow CORS for the client app
 builder.Services.AddCors(options =>
 {

@@ -3,11 +3,11 @@ using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.BLL.Dtos.Brand;
-using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MedicineShopApplication.DLL.Extension;
 
 namespace MedicineShopApplication.BLL.Services
 {

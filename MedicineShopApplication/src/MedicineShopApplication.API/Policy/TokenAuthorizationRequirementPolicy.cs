@@ -1,6 +1,6 @@
 ﻿using MedicineShopApplication.BLL.Utils;
 using Microsoft.AspNetCore.Authorization;
-using MedicineShopApplication.BLL.Extension;
+using MedicineShopApplication.DLL.Extension;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace MedicineShopApplication.API.Policy

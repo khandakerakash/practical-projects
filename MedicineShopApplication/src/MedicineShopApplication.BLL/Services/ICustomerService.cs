@@ -1,15 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using MedicineShopApplication.DLL.UOW;
 using MedicineShopApplication.BLL.Enums;
 using MedicineShopApplication.BLL.Utils;
+using MedicineShopApplication.DLL.Extension;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Validations;
+using MedicineShopApplication.DLL.Models.Enums;
 using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Dtos.Customer;
-using MedicineShopApplication.BLL.Extension;
-using FluentValidation;
-using MedicineShopApplication.DLL.Models.Enums;
 
 namespace MedicineShopApplication.BLL.Services
 {

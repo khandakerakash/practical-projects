@@ -35,7 +35,7 @@ namespace MedicineShopApplication.DLL.Configs
                 .HasMany(u => u.UserStatusChangeLogs)
                 .WithOne(log => log.User)
                 .HasForeignKey(log => log.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

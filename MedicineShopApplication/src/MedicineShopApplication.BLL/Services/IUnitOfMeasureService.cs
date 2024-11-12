@@ -1,17 +1,15 @@
 ﻿using MedicineShopApplication.BLL.Dtos.UnitOfMeasure;
+using MedicineShopApplication.BLL.Dtos.Inventory;
 using MedicineShopApplication.DLL.Models.General;
 using MedicineShopApplication.DLL.Models.Users;
+using MedicineShopApplication.BLL.Dtos.Product;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.BLL.Dtos.Common;
-using MedicineShopApplication.BLL.Extension;
+using MedicineShopApplication.DLL.Extension;
 using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Bogus.DataSets;
-using MedicineShopApplication.BLL.Dtos.Brand;
-using MedicineShopApplication.BLL.Dtos.Product;
-using MedicineShopApplication.BLL.Dtos.Inventory;
 
 
 namespace MedicineShopApplication.BLL.Services
@@ -329,7 +327,6 @@ namespace MedicineShopApplication.BLL.Services
             {
                 return new ApiResponse<string>(null, false, "Cannot delete the UnitOfMeasure as it is still referenced by Products.");
             }
-
 
             _unitOfWork.UnitOfMeasureRepository.Delete(unit);
 

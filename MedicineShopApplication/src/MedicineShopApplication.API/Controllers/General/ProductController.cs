@@ -1,7 +1,7 @@
 ﻿using MedicineShopApplication.API.Controllers.Base;
 using MedicineShopApplication.BLL.Dtos.Product;
 using MedicineShopApplication.BLL.Dtos.Common;
-using MedicineShopApplication.BLL.Extension;
+using MedicineShopApplication.DLL.Extension;
 using MedicineShopApplication.BLL.Services;
 using Microsoft.AspNetCore.Mvc;
 

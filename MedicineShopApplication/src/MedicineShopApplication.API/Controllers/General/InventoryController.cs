@@ -1,10 +1,8 @@
-﻿using Azure.Core;
-using MedicineShopApplication.API.Controllers.Base;
+﻿using MedicineShopApplication.API.Controllers.Base;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Dtos.Inventory;
-using MedicineShopApplication.BLL.Extension;
+using MedicineShopApplication.DLL.Extension;
 using MedicineShopApplication.BLL.Services;
-using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedicineShopApplication.API.Controllers.General

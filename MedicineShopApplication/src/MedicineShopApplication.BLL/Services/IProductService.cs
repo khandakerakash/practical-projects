@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using MedicineShopApplication.DLL.UOW;
 using MedicineShopApplication.BLL.Utils;
-using MedicineShopApplication.BLL.Extension;
+using MedicineShopApplication.DLL.Extension;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.DLL.Models.Users;
@@ -515,9 +515,17 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<string>(null, false, "Product not found.");
             }
 
+            var isReferenced = await _unitOfWork.UnitOfMeasureRepository
+                .FindByConditionWithTrackingAsync(u => u.UnitOfMeasureId == product.UnitOfMeasureId)
+                .AnyAsync();
+            if (isReferenced)
+            {
+                return new ApiResponse<string>(null, false, "Cannot delete the UnitOfMeasure as it is still referenced by Units.");
+            }
+
             product.UpdatedBy = userId;
             product.UpdatedAt = DateTime.Now;
-            _unitOfWork.ProductRepository.SoftDelete(product);
+            _unitOfWork.ProductRepository.Delete(product);
 
             if (!await _unitOfWork.CommitAsync())
             {

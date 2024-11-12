@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MedicineShopApplication.DLL.UOW;
 using MedicineShopApplication.BLL.Enums;
-using MedicineShopApplication.BLL.Utils;
-using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.DLL.Models.Users;

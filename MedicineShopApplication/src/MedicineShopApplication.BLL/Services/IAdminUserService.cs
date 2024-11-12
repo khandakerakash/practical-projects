@@ -3,13 +3,13 @@ using MedicineShopApplication.DLL.Models.Users;
 using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.BLL.Validations;
 using MedicineShopApplication.BLL.Dtos.Admin;
-using MedicineShopApplication.BLL.Extension;
 using MedicineShopApplication.BLL.Enums;
 using MedicineShopApplication.BLL.Utils;
 using MedicineShopApplication.DLL.UOW;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using MedicineShopApplication.BLL.Dtos.Account;
+using MedicineShopApplication.DLL.Extension;
+using MedicineShopApplication.DLL.Models.General;
 
 namespace MedicineShopApplication.BLL.Services
 {
@@ -389,9 +389,26 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<string>(null, false, "You can't delete yourself.");
             }
 
+            var referenceOrder = await _unitOfWork.OrderRepository
+                .FindByConditionWithTrackingAsync(x => x.UserId == userId)
+                .AnyAsync();
+
+            var referencePayment = await _unitOfWork.PaymentRepository
+                .FindByConditionWithTrackingAsync(x => x.UserId == userId)
+                .AnyAsync();
+
+            var referenceCart = await _unitOfWork.CartRepository
+                .FindByConditionWithTrackingAsync(x => x.UserId == userId)
+                .AnyAsync();
+
+            if (referenceOrder || referencePayment || referenceCart)
+            {
+                return new ApiResponse<string>(null, false, "Cannot delete the User as it is still referenced by Orders/Payment/Cart.");
+            }
+
             user.UpdatedBy = userId;
             user.UpdatedAt = DateTime.Now;
-            _unitOfWork.UserRepository.SoftDelete(user);
+            _unitOfWork.UserRepository.Delete(user);
 
             if (!await _unitOfWork.CommitAsync())
             {

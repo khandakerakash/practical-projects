@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
-namespace MedicineShopApplication.BLL.Extension
+namespace MedicineShopApplication.DLL.Extension
 {
     public static class ClaimExtension
     {

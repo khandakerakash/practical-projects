@@ -9,13 +9,13 @@ using OpenIddict.Validation.AspNetCore;
 using MedicineShopApplication.BLL.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
-using MedicineShopApplication.BLL.Extension;
+using MedicineShopApplication.DLL.Extension;
+using MedicineShopApplication.BLL.Dtos.Common;
 using MedicineShopApplication.DLL.Models.Users;
 using Microsoft.Extensions.Caching.Distributed;
 using MedicineShopApplication.DLL.Models.Enums;
 using MedicineShopApplication.API.Controllers.Base;
 using static OpenIddict.Abstractions.OpenIddictConstants;
-using MedicineShopApplication.BLL.Dtos.Common;
 
 
 namespace MedicineShopApplication.API.Controllers.General

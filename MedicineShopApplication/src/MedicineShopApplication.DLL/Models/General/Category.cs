@@ -10,9 +10,8 @@ namespace MedicineShopApplication.DLL.Models.General
         public string Name { get; set; }
         public string NormalizedName { get; set; }
         public string Description { get; set; }
-        public ICollection<Product> Products { get; set; } = new List<Product>();
-
-        public bool IsDeleted { get; set; } = false;
+        public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

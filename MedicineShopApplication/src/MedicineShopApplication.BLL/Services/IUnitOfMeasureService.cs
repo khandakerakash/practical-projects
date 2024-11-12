@@ -322,6 +322,15 @@ namespace MedicineShopApplication.BLL.Services
                 return new ApiResponse<string>(null, false, "Unit of measure not found.");
             }
 
+            var isReferenced = await _unitOfWork.ProductRepository
+                .FindByConditionWithTrackingAsync(p => p.UnitOfMeasureId == unitOfMeasureId)
+                .AnyAsync();
+            if (isReferenced)
+            {
+                return new ApiResponse<string>(null, false, "Cannot delete the UnitOfMeasure as it is still referenced by Products.");
+            }
+
+
             _unitOfWork.UnitOfMeasureRepository.Delete(unit);
 
             if (!await _unitOfWork.CommitAsync())

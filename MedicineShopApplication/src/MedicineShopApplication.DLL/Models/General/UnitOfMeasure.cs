@@ -1,13 +1,16 @@
 ﻿using MedicineShopApplication.DLL.Models.Common;
+using MedicineShopApplication.DLL.Models.Interfaces;
 
 namespace MedicineShopApplication.DLL.Models.General
 {
-    public class UnitOfMeasure : AuditableEntity
+    public class UnitOfMeasure : AuditableEntity, ISoftDeletable
     {
         public int UnitOfMeasureId { get; set; }
         public string Name { get; set; }
         public string NormalizedName { get; set; }
         public string Description { get; set; }
+        public bool IsDeleted { get; set; }
+        public DateTime? DeletedAt { get; set; }
         public ICollection<Product> Products { get; set; } = new List<Product>();
         public ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
     }

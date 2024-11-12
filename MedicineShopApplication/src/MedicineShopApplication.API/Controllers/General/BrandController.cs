@@ -57,7 +57,7 @@ namespace MedicineShopApplication.API.Controllers.General
             return ToActionResult(response);
         }
 
-        [HttpPost("delete/{brandId}")]
+        [HttpDelete("delete/{brandId}")]
         public async Task<IActionResult> DeleteBrand(int brandId)
         {
             var userId = User.GetUserIdInt();

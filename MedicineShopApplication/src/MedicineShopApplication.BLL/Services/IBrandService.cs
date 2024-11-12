@@ -309,7 +309,7 @@ namespace MedicineShopApplication.BLL.Services
 
             brand.UpdatedBy = userId;
             brand.UpdatedAt = DateTime.Now;
-            _unitOfWork.BrandRepository.SoftDelete(brand);
+            _unitOfWork.BrandRepository.Delete(brand);
 
             if (!await _unitOfWork.CommitAsync())
             {

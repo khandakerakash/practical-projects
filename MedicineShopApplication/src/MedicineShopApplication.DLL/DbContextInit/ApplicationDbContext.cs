@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MedicineShopApplication.DLL.Configs;
 using MedicineShopApplication.DLL.Extension;
 using MedicineShopApplication.DLL.Models.Users;
@@ -9,17 +10,25 @@ using MedicineShopApplication.DLL.Models.Common;
 using MedicineShopApplication.DLL.Models.General;
 using MedicineShopApplication.DLL.Models.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using System.Linq;
 
 
 namespace MedicineShopApplication.DLL.DbContextInit
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
     {
+        private readonly DbContextOptions options;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _configuration;
 
-        public ApplicationDbContext(DbContextOptions options, IHttpContextAccessor httpContextAccessor) : base(options)
+        public ApplicationDbContext(DbContextOptions options, 
+            IHttpContextAccessor httpContextAccessor,
+            IConfiguration configuration) 
+            : base(options)
         {
+            this.options = options;
             _httpContextAccessor = httpContextAccessor;
+            _configuration = configuration;
         }
 
         public DbSet<Category> Categories { get; set; }
@@ -99,6 +108,12 @@ namespace MedicineShopApplication.DLL.DbContextInit
             var userId = _httpContextAccessor?.HttpContext?.User.GetUserName() ?? "System";
             var controller = request?.HttpContext?.GetRouteData()?.Values["controller"]?.ToString();
             var action = request?.HttpContext?.GetRouteData()?.Values["action"]?.ToString();
+
+            // Load excluded properties from configuration
+            var excludedProperties = _configuration
+                .GetSection("AuditSettings:ExcludedProperties")
+                .Get<List<string>>() ?? new List<string>();
+
             foreach (var entry in ChangeTracker.Entries())
             {
                 if (entry.Entity is AuditLog || entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
@@ -116,12 +131,19 @@ namespace MedicineShopApplication.DLL.DbContextInit
                 foreach (var property in entry.Properties)
                 {
                     // Check if the property should be excluded based on the ExcludeFromAuditAttribute
-                    var propertyInfo = entry.Entity.GetType().GetProperty(property.Metadata.Name);
+                    //var propertyInfo = entry.Entity.GetType().GetProperty(property.Metadata.Name);
                     // if (propertyInfo != null && Attribute.IsDefined(propertyInfo, typeof(ExcludeFromAuditAttribute)))
                     // {
                     //     // Skip adding this property to the audit log if it's marked with ExcludeFromAuditAttribute
                     //     continue;
                     // }
+
+                    // Skip excluded properties
+                    var propertyInfo = property.Metadata.Name;
+                    if (excludedProperties.Contains(propertyInfo))
+                    {
+                        continue;
+                    }
 
                     if (property.IsTemporary)
                     {

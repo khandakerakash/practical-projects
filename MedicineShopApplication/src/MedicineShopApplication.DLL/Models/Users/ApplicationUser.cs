@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MedicineShopApplication.DLL.Models.Enums;
 using MedicineShopApplication.DLL.Models.General;
 using MedicineShopApplication.DLL.Models.Interfaces;
-using MedicineShopApplication.DLL.Models.Enums;
+
 
 namespace MedicineShopApplication.DLL.Models.Users
 {

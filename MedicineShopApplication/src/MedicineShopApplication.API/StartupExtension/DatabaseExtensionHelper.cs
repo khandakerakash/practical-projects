@@ -1,5 +1,6 @@
 ﻿using MedicineShopApplication.DLL.BogusData;
 using MedicineShopApplication.DLL.DbContextInit;
+using MedicineShopApplication.DLL.Models.General;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedicineShopApplication.API.StartupExtension
@@ -19,32 +20,51 @@ namespace MedicineShopApplication.API.StartupExtension
 
         public static IApplicationBuilder RunMigration(this IApplicationBuilder app)
         {
-            using (var scope = app.ApplicationServices.CreateScope())
+            using var scope = app.ApplicationServices.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            db.Database.Migrate();
+
+            var categories = new List<Category>();
+            var brands = new List<Brand>();
+            var unitOfMeasures = new List<UnitOfMeasure>();
+            var products = new List<Product>();
+                
+            // Application user role seed
+            DataSeeder.GenerateRolesWithUser(scope.ServiceProvider);
+
+            if (!db.Categories.Any())
             {
-                //var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                //db.Database.Migrate();
-
-                // Seed data if the User, Category, Product and Inventory Tables are empty
-                //if(!db.Users.Any() && !db.Categories.Any() && !db.Products.Any() && !db.Inventories.Any())
-                //{
-                //    var categories = DataSeeder.GenerateCategories(10);
-                //    var products = DataSeeder.GenerateProducts(50, categories);
-                //    var inventories = DataSeeder.GenerateInventories(50, products);
-                //    var users = DataSeeder.GenerateUsers(20);
-
-                //    db.Categories.AddRange(categories);
-                //    db.Products.AddRange(products);
-                //    db.Inventories.AddRange(inventories);
-                //    db.Users.AddRange(users);
-                //    db.SaveChanges();
-                //}
-
-                // Application seed
-                DataSeeder.GenerateApplication(scope.ServiceProvider);
-
-                // Application user role seed
-                DataSeeder.GenerateRoles(scope.ServiceProvider);
+                categories = DataSeeder.GenerateCategories(10);
+                db.Categories.AddRange(categories);
             }
+
+            if (!db.Brands.Any())
+            {
+                brands = DataSeeder.GenerateBrands(10);
+                db.Brands.AddRange(brands);
+            }
+                
+            if (!db.UnitOfMeasures.Any())
+            {
+                unitOfMeasures = DataSeeder.GenerateUnitsOfMeasure(10);
+                db.UnitOfMeasures.AddRange(unitOfMeasures);
+            }
+                
+            if (!db.Products.Any())
+            {
+                products = DataSeeder.GenerateProducts(50, categories,brands,unitOfMeasures);
+                db.Products.AddRange(products);
+            }
+                
+            if (!db.Inventories.Any())
+            {
+                var  inventories = DataSeeder.GenerateInventories(50, products);
+                db.Inventories.AddRange(inventories);
+            }
+                
+
+            // Application seed
+            DataSeeder.GenerateApplication(scope.ServiceProvider);
             return app;
         }
     }

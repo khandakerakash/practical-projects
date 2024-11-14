@@ -48,37 +48,71 @@ namespace MedicineShopApplication.DLL.BogusData
             }
         }
 
-        public static void GenerateRoles(IServiceProvider serviceProvider)
+        public static void GenerateRolesWithUser(IServiceProvider serviceProvider)
         {
-            var rolesWithTypes = new Dictionary<string, string>
+             var  roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+             EnsureRoleExists("Admin", roleManager).GetAwaiter().GetResult();
+             EnsureRoleExists("Customer", roleManager).GetAwaiter().GetResult();
+             EnsureRoleExists("Manager", roleManager).GetAwaiter().GetResult();
+             EnsureRoleExists("Salesman", roleManager).GetAwaiter().GetResult();
+             
+             
+             var  userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+             // Create Users
+              CreateUsersWithRoles(50,userManager).GetAwaiter().GetResult();;
+        }
+
+        private static async Task CreateUsersWithRoles(int count, UserManager<ApplicationUser> userManager)
+        {
+            
+            var roles = new[] { "Admin", "Customer", "Manager", "Salesman" };
+            var userFaker = new Faker<ApplicationUser>()
+                .RuleFor(u => u.UserName, f => f.Internet.UserName())
+                .RuleFor(u => u.FirstName, f => f.Name.FirstName())
+                .RuleFor(u => u.LastName, f => f.Name.LastName())
+                .RuleFor(u => u.Email, f => f.Internet.Email())
+                .RuleFor(u => u.PhoneNumber, f => f.Phone.PhoneNumber())
+                .RuleFor(u => u.Address, f => f.Address.FullAddress())
+                .RuleFor(u => u.Orders, _ => new List<Order>())
+                .RuleFor(u => u.Payments, _ => new List<Payment>());
+            
+            var fakeData =  userFaker.Generate(count);
+
+            var faker = new Faker();
+            
+            
+            
+
+            foreach (var user in fakeData)
             {
-                { "Developer", "Admin" },
-                { "SuperAdmin", "Admin" },
-                { "Admin", "Admin" },
-                { "Manager", "Admin" },
-                { "Moderator", "Admin" },
-                { "Salesman", "Admin" },
-                { "Customer", "Customer" }
-            };
+                var checkUserAlreadyExist = await userManager.FindByNameAsync(user.UserName);
 
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-
-            foreach (var role in rolesWithTypes)
-            {
-                var key = role.Key.ToLower();
-                var value = role.Value.ToLower();
-                var isRoleExists = roleManager.RoleExistsAsync(key).Result;
-
-                if (!isRoleExists)
+                if (checkUserAlreadyExist == null)
                 {
-                    var response = roleManager.CreateAsync(new ApplicationRole()
+                    var result = await userManager.CreateAsync(user, "12345");
+                    if (result.Succeeded)
                     {
-                        Name = key,
-                        RoleType = value
-                    }).Result;
+                        var role = faker.PickRandom(roles);
+                        await userManager.AddToRoleAsync(user, role);
+                    }
                 }
+                
+            }
+            
+            
+        }
+
+        private static async Task EnsureRoleExists(string roleName, RoleManager<ApplicationRole> roleManager)
+        {
+            if (!await roleManager.RoleExistsAsync(roleName))
+            {
+                await roleManager.CreateAsync(new ApplicationRole()
+                {
+                    Name = roleName,
+                });
             }
         }
+
 
         public static List<ApplicationUser> GenerateUsers(int count)
         {
@@ -96,6 +130,31 @@ namespace MedicineShopApplication.DLL.BogusData
             return null;
         }
 
+        public static List<Brand> GenerateBrands(int count)
+        {
+            var brandFaker = new Faker<Brand>()
+                .RuleFor(b => b.Code, f => f.Commerce.Ean8())
+                .RuleFor(b => b.Name, f => f.Company.CompanyName())
+                .RuleFor(b => b.NormalizedName, (f, b) => b.Name.ToUpper())
+                .RuleFor(b => b.Description, f => f.Commerce.ProductDescription())
+                .RuleFor(b => b.Products, _ => new List<Product>());
+
+            return brandFaker.Generate(count);
+        }
+        
+        public static List<UnitOfMeasure> GenerateUnitsOfMeasure(int count)
+        {
+            var unitOfMeasureFaker = new Faker<UnitOfMeasure>()
+                .RuleFor(u => u.Name, f => f.Commerce.ProductMaterial())
+                .RuleFor(u => u.NormalizedName, (f, u) => u.Name.ToUpper())
+                .RuleFor(u => u.Description, f => f.Commerce.ProductDescription())
+                .RuleFor(u => u.Products, _ => new List<Product>())
+                .RuleFor(u => u.Inventories, _ => new List<Inventory>());
+
+            return unitOfMeasureFaker.Generate(count);
+        }
+        
+        
         public static List<Category> GenerateCategories(int count)
         {
             var categoryFaker = new Faker<Category>()
